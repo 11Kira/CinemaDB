@@ -19,6 +19,7 @@ kotlinxCoroutinesCore = "1.8.1-Beta"
 kotlinxCoroutinesAndroid = "1.8.1-Beta"
 lifecycleViewmodelKtx = "2.7.0"
 lifecycleExtensions = "2.2.0"
+org-jetbrains-kotlin-android = "1.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,4 +51,5 @@ androidx-lifecycle-extensions = { group = "androidx.lifecycle", name = "lifecycl
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+org-jetbrains-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "org-jetbrains-kotlin-android" }
 

@@ -22,7 +22,7 @@ class MovieViewModel @Inject constructor(
     private val mutableMovieState: MutableSharedFlow<MovieState> = MutableSharedFlow()
     val movieState = mutableMovieState.asSharedFlow()
 
-    fun getPopularMovies() {
+    init {
         viewModelScope.launch(
             CoroutineExceptionHandler {_, error ->
                 runBlocking {
@@ -31,6 +31,7 @@ class MovieViewModel @Inject constructor(
             }
         ) {
             val popularMovies = useCase.getPopularMovies(header, language, 1)
+            mutableMovieState.emit(MovieState.SetPopularMovies(popularMovies))
         }
     }
 }
