@@ -9,7 +9,9 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import v.kira.cinemadb.network.Constants
 import v.kira.cinemadb.network.Constants.BASE_URL
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -36,7 +38,13 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        return OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor).build()
+        return OkHttpClient
+            .Builder()
+            .connectTimeout(Constants.CONNECT_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(Constants.WRITE_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(Constants.READ_TIMEOUT, TimeUnit.SECONDS)
+            .addInterceptor(httpLoggingInterceptor)
+            .build()
     }
 
     @Singleton
