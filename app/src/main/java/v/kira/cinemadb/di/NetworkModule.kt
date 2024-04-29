@@ -9,11 +9,18 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import v.kira.cinemadb.network.Constants.BASE_URL
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
+    @Singleton
+    @Provides
+    fun provideBaseUrl(): String {
+        return BASE_URL
+    }
+
     @Singleton
     @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
