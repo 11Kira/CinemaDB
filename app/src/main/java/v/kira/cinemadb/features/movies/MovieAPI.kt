@@ -1,4 +1,4 @@
-package v.kira.cinemadb.network
+package v.kira.cinemadb.features.movies
 
 import retrofit2.Response
 import retrofit2.http.GET
@@ -6,7 +6,7 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 import v.kira.cinemadb.model.CinemaResult
 
-interface ApiService {
+interface MovieAPI {
     @GET("movie/now_playing")
     suspend fun getNowPlayingMovies(
         @Header("Authorization") header: String,
