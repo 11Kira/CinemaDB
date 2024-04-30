@@ -16,7 +16,7 @@ kotlinxCoroutinesCore = "1.8.1-Beta"
 kotlinxCoroutinesAndroid = "1.8.1-Beta"
 lifecycleViewmodelKtx = "2.7.0"
 lifecycleExtensions = "2.2.0"
-ksp-version = "1.9.23-1.0.20"
+ksp-version = "1.9.0-1.0.13"
 hilt-version = "2.51.1"
 
 [libraries]
