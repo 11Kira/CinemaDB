@@ -28,7 +28,7 @@ class MovieRemoteSource @Inject constructor(
         movieAPI.getPopularMovies(
             header = token,
             language = language,
-            page = page
+            page = page,
         )
     }
 

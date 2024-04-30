@@ -49,7 +49,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun SetupViewModel(viewModel: MovieViewModel) {
     MainScreen(viewModel.movieState)
+    viewModel.getPopular()
 }
+
 
 @Composable
 fun MainScreen(sharedFlow: SharedFlow<MovieState>) {

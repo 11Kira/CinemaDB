@@ -6,15 +6,15 @@ data class CinemaResult (
     @SerializedName("id")
     val id: Long,
     @SerializedName("original_language")
-    val originalLanguage: Long,
+    val originalLanguage: String,
     @SerializedName("original_title")
-    val originalTitle: Long,
+    val originalTitle: String,
     @SerializedName("overview")
-    val overview: Long,
+    val overview: String,
     @SerializedName("poster_path")
-    val posterPath: Long,
+    val posterPath: String,
     @SerializedName("release_date")
-    val releaseDate: Long,
+    val releaseDate: String,
     @SerializedName("title")
     val title: String,
 )
