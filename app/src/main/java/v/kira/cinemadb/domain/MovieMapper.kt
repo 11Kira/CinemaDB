@@ -2,9 +2,10 @@ package v.kira.cinemadb.domain
 
 import retrofit2.Response
 import v.kira.cinemadb.model.CinemaResult
+import v.kira.cinemadb.model.ResponseObject
 
-fun Response<List<CinemaResult>>.mapMovieResultToDomain(): List<CinemaResult> {
-    return this.body()?.map { movie ->
+fun Response<ResponseObject>.mapMovieResultToDomain(): List<CinemaResult> {
+    return this.body()?.results?.map { movie ->
         CinemaResult(
             id = movie.id,
             originalLanguage = movie.originalLanguage,
