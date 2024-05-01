@@ -8,6 +8,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
+import v.kira.cinemadb.MainActivity.Companion.POPULAR
+import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
+import v.kira.cinemadb.model.CinemaResult
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,14 +26,28 @@ class MovieViewModel @Inject constructor(
     private val mutableMovieState: MutableSharedFlow<MovieState> = MutableSharedFlow()
     val movieState = mutableMovieState.asSharedFlow()
 
-    fun getPopular() {
+    fun getMovieList(type: Int, page: Int) {
         viewModelScope.launch (CoroutineExceptionHandler {_, error ->
             runBlocking {
                     mutableMovieState.emit(MovieState.ShowError(error))
             }
         }) {
-            val popularMovies = useCase.getPopularMovies(header, language, 1)
-            mutableMovieState.emit(MovieState.SetPopularMovies(popularMovies))
+            val movieList: List<CinemaResult>
+            when (type) {
+                POPULAR -> {
+                    movieList = useCase.getPopularMovies(header, language, page)
+                    mutableMovieState.emit(MovieState.SetPopularMovies(movieList))
+                }
+                NOW_PLAYING -> {
+                    movieList = useCase.getNowPlayingMovies(header, language, page)
+                    mutableMovieState.emit(MovieState.SetNowPlayingMovies(movieList))
+                }
+
+                TOP_RATED -> {
+                    movieList = useCase.getTopRatedMovies(header, language, page)
+                    mutableMovieState.emit(MovieState.SetTopRatedMovies(movieList))
+                }
+            }
         }
     }
 }

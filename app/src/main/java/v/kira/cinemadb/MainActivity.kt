@@ -29,10 +29,12 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.SharedFlow
+import v.kira.cinemadb.MainActivity.Companion.POPULAR
 import v.kira.cinemadb.features.movies.MovieState
 import v.kira.cinemadb.features.movies.MovieViewModel
 import v.kira.cinemadb.model.CinemaResult
 import v.kira.cinemadb.ui.theme.CinemaDBTheme
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -52,18 +54,26 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    companion object {
+        const val POPULAR = 1
+        const val NOW_PLAYING = 2
+        const val TOP_RATED = 3
+    }
 }
 
 @Composable
 fun SetupViewModel(viewModel: MovieViewModel) {
     MainScreen(viewModel.movieState)
-    viewModel.getPopular()
+    viewModel.getMovieList(POPULAR, 1)
+    //viewModel.getMovieList(NOW_PLAYING, 1)
+    //viewModel.getMovieList(TOP_RATED, 1)
 }
 
 
 @Composable
 fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
-    val popularMovies = remember { mutableStateListOf<CinemaResult>() }
+    val movieList = remember { mutableStateListOf<CinemaResult>() }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(key1 = Unit) {
@@ -71,22 +81,26 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
             sharedFlow.collect { state ->
                 when (state) {
                     is MovieState.SetPopularMovies -> {
-                        popularMovies.addAll(state.popularMovies)
+                        movieList.addAll(state.popularMovies)
+                    }
+
+                    is MovieState.SetNowPlayingMovies -> {
+                        movieList.addAll(state.nowPlayingMovies)
+                    }
+
+                    is MovieState.SetTopRatedMovies -> {
+                        movieList.addAll(state.topRatedMovies)
                     }
 
                     is MovieState.ShowError -> {
                         Log.e("Error: ", state.error.toString())
-                    }
-
-                    else -> {
-                        Log.e("Error: ", state.toString())
                     }
                 }
             }
         }
     }
 
-    PopulateGrid(popularMovies)
+    PopulateGrid(movieList)
 }
 
 @Composable
