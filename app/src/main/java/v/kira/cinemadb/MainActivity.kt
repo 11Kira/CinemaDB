@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.primarySurface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,11 +26,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
+import v.kira.cinemadb.MainActivity.Companion.POPULAR
+import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
+import v.kira.cinemadb.features.movies.MovieListScreen
 import v.kira.cinemadb.features.navigation.AccountScreen
 import v.kira.cinemadb.features.navigation.BottomMenuItem
-import v.kira.cinemadb.features.navigation.FavoriteScreen
-import v.kira.cinemadb.features.navigation.HomeScreen
-import v.kira.cinemadb.features.navigation.WatchListScreen
 
 
 @AndroidEntryPoint
@@ -43,6 +42,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             MainScreenView()
         }
+    }
+
+    companion object {
+        const val POPULAR = 1
+        const val NOW_PLAYING = 2
+        const val TOP_RATED = 3
     }
 }
 
@@ -69,7 +74,7 @@ fun BottomNavigation(navController: NavController) {
     Box(modifier = Modifier.fillMaxSize()) {
         BottomNavigation(
             modifier = Modifier.align(alignment = Alignment.BottomCenter),
-            backgroundColor = MaterialTheme.colors.primarySurface,
+            backgroundColor = Color.DarkGray,
         ) {
             items.forEach {
                 BottomNavigationItem(
@@ -95,7 +100,8 @@ fun BottomNavigation(navController: NavController) {
                     icon = {
                         Icon(
                             imageVector  = it.icon,
-                            contentDescription = it.label
+                            contentDescription = it.label,
+                            tint = Color.White
                         )
                     }
                 )
@@ -107,9 +113,9 @@ fun BottomNavigation(navController: NavController) {
 @Composable
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = BottomMenuItem.Home.screenRoute) {
-        composable(BottomMenuItem.Home.screenRoute) { HomeScreen() }
-        composable(BottomMenuItem.Watchlist.screenRoute) { WatchListScreen() }
-        composable(BottomMenuItem.Favorites.screenRoute) { FavoriteScreen() }
+        composable(BottomMenuItem.Home.screenRoute) { MovieListScreen(POPULAR) }
+        composable(BottomMenuItem.Watchlist.screenRoute) { MovieListScreen(NOW_PLAYING) }
+        composable(BottomMenuItem.Favorites.screenRoute) { MovieListScreen(TOP_RATED) }
         composable(BottomMenuItem.Account.screenRoute) { AccountScreen() }
     }
 }

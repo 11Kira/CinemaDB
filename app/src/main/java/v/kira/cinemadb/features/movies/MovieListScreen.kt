@@ -1,51 +1,38 @@
 package v.kira.cinemadb.features.movies
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import dagger.hilt.android.AndroidEntryPoint
-import v.kira.cinemadb.ui.theme.CinemaDBTheme
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import kotlinx.coroutines.flow.SharedFlow
+import v.kira.cinemadb.model.CinemaResult
 
-@AndroidEntryPoint
-class MovieListActivity : ComponentActivity() {
 
-    //private val viewModel: MovieViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            CinemaDBTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    //SetupViewModel(viewModel = viewModel)
-                }
-            }
-        }
-    }
-
-/*    companion object {
-        const val POPULAR = 1
-        const val NOW_PLAYING = 2
-        const val TOP_RATED = 3
-    }*/
-}
-
-/*
 @Composable
-fun SetupViewModel(viewModel: MovieViewModel) {
+fun MovieListScreen(movieListType: Int) {
+    val viewModel: MovieViewModel = hiltViewModel()
     MainScreen(viewModel.movieState)
-    viewModel.getMovieList(POPULAR, 1)
+    viewModel.getMovieList(movieListType, 1)
     //viewModel.getMovieList(NOW_PLAYING, 1)
     //viewModel.getMovieList(TOP_RATED, 1)
 }
-
 
 @Composable
 fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
@@ -81,6 +68,7 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
 
 @Composable
 fun PopulateGrid(movies: List<CinemaResult>) {
+
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         verticalItemSpacing = 8.dp,
@@ -92,10 +80,11 @@ fun PopulateGrid(movies: List<CinemaResult>) {
                     model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                     contentDescription = "Description",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
                 )
             }
-        },
-
-        )
-}*/
+        }
+    )
+}

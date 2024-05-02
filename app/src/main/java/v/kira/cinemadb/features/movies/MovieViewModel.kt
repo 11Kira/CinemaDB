@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import v.kira.cinemadb.features.movies.MovieListActivity.Companion.NOW_PLAYING
-import v.kira.cinemadb.features.movies.MovieListActivity.Companion.POPULAR
-import v.kira.cinemadb.features.movies.MovieListActivity.Companion.TOP_RATED
+import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
+import v.kira.cinemadb.MainActivity.Companion.POPULAR
+import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.model.CinemaResult
 import javax.inject.Inject
 
