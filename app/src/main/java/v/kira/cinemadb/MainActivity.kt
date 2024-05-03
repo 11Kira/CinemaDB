@@ -19,6 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -66,7 +68,7 @@ fun BottomNavigation(navController: NavController) {
     var selectedItem by remember { mutableStateOf("Home") }
     val items = listOf(
         BottomMenuItem.Home,
-        BottomMenuItem.Favorites,
+        BottomMenuItem.TV,
         BottomMenuItem.Watchlist,
         BottomMenuItem.Account
     )
@@ -98,7 +100,7 @@ fun BottomNavigation(navController: NavController) {
                         ) },
                     icon = {
                         Icon(
-                            imageVector  = it.icon,
+                            imageVector  = ImageVector.vectorResource(it.icon),
                             contentDescription = it.label,
                             tint = Color.White
                         )
@@ -113,8 +115,8 @@ fun BottomNavigation(navController: NavController) {
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = BottomMenuItem.Home.screenRoute) {
         composable(BottomMenuItem.Home.screenRoute) { MovieListScreen() }
+        composable(BottomMenuItem.TV.screenRoute) { FavoriteScreen() }
         composable(BottomMenuItem.Watchlist.screenRoute) { WatchListScreen() }
-        composable(BottomMenuItem.Favorites.screenRoute) { FavoriteScreen() }
         composable(BottomMenuItem.Account.screenRoute) { AccountScreen() }
     }
 }
