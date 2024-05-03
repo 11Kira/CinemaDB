@@ -12,7 +12,7 @@ import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.POPULAR
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.UPCOMING
-import v.kira.cinemadb.model.CinemaResult
+import v.kira.cinemadb.model.MovieResult
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,7 +33,7 @@ class MovieViewModel @Inject constructor(
                     mutableMovieState.emit(MovieState.ShowError(error))
             }
         }) {
-            val movieList: List<CinemaResult>
+            val movieList: List<MovieResult>
             when (type) {
                 POPULAR -> {
                     movieList = useCase.getPopularMovies(header, language, page)

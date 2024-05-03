@@ -32,7 +32,7 @@ import v.kira.cinemadb.features.movies.MovieListScreen
 import v.kira.cinemadb.features.navigation.AccountScreen
 import v.kira.cinemadb.features.navigation.BottomMenuItem
 import v.kira.cinemadb.features.navigation.SearchScreen
-import v.kira.cinemadb.features.navigation.TVScreen
+import v.kira.cinemadb.features.tv.TVShowListScreen
 
 
 @AndroidEntryPoint
@@ -116,7 +116,7 @@ fun BottomNavigation(navController: NavController) {
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = BottomMenuItem.Home.screenRoute) {
         composable(BottomMenuItem.Home.screenRoute) { MovieListScreen() }
-        composable(BottomMenuItem.TV.screenRoute) { TVScreen() }
+        composable(BottomMenuItem.TV.screenRoute) { TVShowListScreen() }
         composable(BottomMenuItem.Search.screenRoute) { SearchScreen() }
         composable(BottomMenuItem.Account.screenRoute) { AccountScreen() }
     }

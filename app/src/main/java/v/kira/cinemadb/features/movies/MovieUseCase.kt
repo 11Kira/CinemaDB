@@ -1,6 +1,6 @@
 package v.kira.cinemadb.features.movies
 
-import v.kira.cinemadb.model.CinemaResult
+import v.kira.cinemadb.model.MovieResult
 import javax.inject.Inject
 
 class MovieUseCase @Inject constructor(
@@ -11,7 +11,7 @@ class MovieUseCase @Inject constructor(
         token: String,
         language: String,
         page: Int
-    ): List<CinemaResult> {
+    ): List<MovieResult> {
         return repository.getNowPlayingMovies(token, language, page)
     }
 
@@ -19,7 +19,7 @@ class MovieUseCase @Inject constructor(
         token: String,
         language: String,
         page: Int
-    ): List<CinemaResult> {
+    ): List<MovieResult> {
         return repository.getTopRatedMovies(token, language, page)
     }
 
@@ -27,7 +27,7 @@ class MovieUseCase @Inject constructor(
         token: String,
         language: String,
         page: Int
-    ): List<CinemaResult> {
+    ): List<MovieResult> {
         return repository.getPopularMovies(token, language, page)
     }
 
@@ -35,7 +35,7 @@ class MovieUseCase @Inject constructor(
         token: String,
         language: String,
         page: Int
-    ): List<CinemaResult> {
+    ): List<MovieResult> {
         return repository.getUpcomingMovies(token, language, page)
     }
 }
