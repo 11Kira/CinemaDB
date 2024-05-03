@@ -16,4 +16,7 @@ class MovieRepository @Inject constructor(
     suspend fun getTopRatedMovies(token: String, language: String, page: Int): List<CinemaResult> {
         return remoteSource.getTopRatedMovies(token, language, page).mapMovieResultToDomain()
     }
+    suspend fun getUpcomingMovies(token: String, language: String, page: Int): List<CinemaResult> {
+        return remoteSource.getUpcomingMovies(token, language, page).mapMovieResultToDomain()
+    }
 }

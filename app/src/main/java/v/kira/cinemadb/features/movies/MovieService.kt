@@ -27,4 +27,11 @@ interface MovieService {
         @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ResponseObject>
+
+    @GET("movie/upcoming")
+    suspend fun getUpcomingMovies(
+        @Header("Authorization") header: String,
+        @Query("language") language: String,
+        @Query("page") page: Int
+    ): Response<ResponseObject>
 }

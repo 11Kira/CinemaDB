@@ -7,4 +7,6 @@ sealed class MovieState {
     data class SetPopularMovies(val popularMovies: List<CinemaResult>): MovieState()
     data class SetTopRatedMovies(val topRatedMovies: List<CinemaResult>): MovieState()
     data class SetNowPlayingMovies(val nowPlayingMovies: List<CinemaResult>): MovieState()
+    data class SetUpcomingMovies(val upcomingMovies: List<CinemaResult>): MovieState()
+
 }

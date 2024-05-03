@@ -30,4 +30,12 @@ class MovieUseCase @Inject constructor(
     ): List<CinemaResult> {
         return repository.getPopularMovies(token, language, page)
     }
+
+    suspend fun getUpcomingMovies(
+        token: String,
+        language: String,
+        page: Int
+    ): List<CinemaResult> {
+        return repository.getUpcomingMovies(token, language, page)
+    }
 }

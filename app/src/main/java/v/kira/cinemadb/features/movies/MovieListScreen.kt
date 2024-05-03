@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.POPULAR
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
+import v.kira.cinemadb.MainActivity.Companion.UPCOMING
 import v.kira.cinemadb.R
 import v.kira.cinemadb.model.CinemaResult
 
@@ -80,6 +81,11 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
                         movieList.addAll(state.topRatedMovies)
                     }
 
+                    is MovieState.SetUpcomingMovies -> {
+                        movieList.clear()
+                        movieList.addAll(state.upcomingMovies)
+                    }
+
                     is MovieState.ShowError -> {
                         Log.e("Error: ", state.error.toString())
                     }
@@ -88,13 +94,14 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
         }
     }
 
-    val categoryList = listOf("Popular", "Now Playing", "Top Rated")
+    val categoryList = listOf("Popular", "Now Playing", "Top Rated", "Upcoming")
     Column {
         SegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> { viewModel.getMovieList(POPULAR, 1) }
                 1 -> { viewModel.getMovieList(NOW_PLAYING, 1) }
-                else -> { viewModel.getMovieList(TOP_RATED, 1) }
+                2 -> { viewModel.getMovieList(TOP_RATED, 1)}
+                else -> { viewModel.getMovieList(UPCOMING, 1) }
             }
         }
         PopulateGrid(movieList)
@@ -119,13 +126,13 @@ fun SegmentedControl(
                         0 -> {
                             Modifier
                                 .fillMaxWidth()
-                                .weight(3f)
+                                .weight(2f)
                                 .offset(0.dp, 0.dp)
                                 .zIndex(if (selectedIndex.value == index) 1f else 0f)
                         } else -> {
                             Modifier
                                 .fillMaxWidth()
-                                .weight(3f)
+                                .weight(2f)
                                 .offset((-1 * index).dp, 0.dp)
                                 .zIndex(if (selectedIndex.value == index) 1f else 0f)
                         }
@@ -172,7 +179,7 @@ fun SegmentedControl(
                     Text(
                         text = item,
                         style = LocalTextStyle.current.copy(
-                            fontSize = 14.sp,
+                            fontSize = 12.sp,
                             fontWeight = if (selectedIndex.value == index)
                                 LocalTextStyle.current.fontWeight
                             else

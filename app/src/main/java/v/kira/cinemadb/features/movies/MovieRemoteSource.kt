@@ -43,4 +43,16 @@ class MovieRemoteSource @Inject constructor(
             page = page
         )
     }
+
+    suspend fun getUpcomingMovies(
+        token: String,
+        language: String,
+        page: Int
+    ) = withContext(Dispatchers.IO) {
+        movieService.getUpcomingMovies(
+            header = token,
+            language = language,
+            page = page
+        )
+    }
 }
