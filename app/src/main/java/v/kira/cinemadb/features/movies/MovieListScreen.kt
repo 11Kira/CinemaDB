@@ -87,10 +87,7 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
         }
     }
 
-    val categoryList = arrayListOf<String>()
-    categoryList.add("Popular")
-    categoryList.add("Now Playing")
-    categoryList.add("Top Rated")
+    val categoryList = listOf("Popular", "Now Playing", "Top Rated")
     Column {
         SegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
