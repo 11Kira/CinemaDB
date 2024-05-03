@@ -6,6 +6,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import v.kira.cinemadb.features.movies.MovieRemoteSource
 import v.kira.cinemadb.features.movies.MovieService
+import v.kira.cinemadb.features.tv.TVRemoteSource
+import v.kira.cinemadb.features.tv.TVService
 import javax.inject.Singleton
 
 @Module
@@ -17,4 +19,10 @@ class RemoteSourceModule {
     fun provideMovieRemoteSource(
         movieService: MovieService
     ) = MovieRemoteSource(movieService = movieService)
+
+    @Provides
+    @Singleton
+    fun provideTVRemoteSource(
+        tvService: TVService
+    ) = TVRemoteSource(tvService = tvService)
 }
