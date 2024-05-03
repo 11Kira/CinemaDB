@@ -31,8 +31,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import v.kira.cinemadb.features.movies.MovieListScreen
 import v.kira.cinemadb.features.navigation.AccountScreen
 import v.kira.cinemadb.features.navigation.BottomMenuItem
-import v.kira.cinemadb.features.navigation.FavoriteScreen
-import v.kira.cinemadb.features.navigation.WatchListScreen
+import v.kira.cinemadb.features.navigation.SearchScreen
+import v.kira.cinemadb.features.navigation.TVScreen
 
 
 @AndroidEntryPoint
@@ -69,7 +69,7 @@ fun BottomNavigation(navController: NavController) {
     val items = listOf(
         BottomMenuItem.Home,
         BottomMenuItem.TV,
-        BottomMenuItem.Watchlist,
+        BottomMenuItem.Search,
         BottomMenuItem.Account
     )
     Box(modifier = Modifier.fillMaxSize()) {
@@ -115,8 +115,8 @@ fun BottomNavigation(navController: NavController) {
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = BottomMenuItem.Home.screenRoute) {
         composable(BottomMenuItem.Home.screenRoute) { MovieListScreen() }
-        composable(BottomMenuItem.TV.screenRoute) { FavoriteScreen() }
-        composable(BottomMenuItem.Watchlist.screenRoute) { WatchListScreen() }
+        composable(BottomMenuItem.TV.screenRoute) { TVScreen() }
+        composable(BottomMenuItem.Search.screenRoute) { SearchScreen() }
         composable(BottomMenuItem.Account.screenRoute) { AccountScreen() }
     }
 }
