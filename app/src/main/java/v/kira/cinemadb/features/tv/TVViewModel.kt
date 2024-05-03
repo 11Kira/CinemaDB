@@ -31,9 +31,9 @@ class TVViewModel @Inject constructor(
         }) {
             val tvShowList: List<TVResult>
             when (type) {
-                MainActivity.POPULAR -> {
-                    tvShowList = useCase.getPopularTVShows(header, language, page)
-                    mutableTVShowState.emit(TVShowState.SetPopularTVShows(tvShowList))
+                MainActivity.TRENDING -> {
+                    tvShowList = useCase.getTrendingTVShows(header, language, page)
+                    mutableTVShowState.emit(TVShowState.SetTrendingTVShows(tvShowList))
                 }
                 MainActivity.NOW_PLAYING -> {
                     tvShowList = useCase.getAiringTodayTVShows(header, language, page)

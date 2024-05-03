@@ -23,12 +23,12 @@ class MovieUseCase @Inject constructor(
         return repository.getTopRatedMovies(token, language, page)
     }
 
-    suspend fun getPopularMovies(
+    suspend fun getTrendingMovies(
         token: String,
         language: String,
         page: Int
     ): List<MovieResult> {
-        return repository.getPopularMovies(token, language, page)
+        return repository.getTrendingMovies(token, language, page)
     }
 
     suspend fun getUpcomingMovies(

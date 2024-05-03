@@ -20,12 +20,12 @@ class TVRemoteSource @Inject constructor(
         )
     }
 
-    suspend fun getPopularTVShows(
+    suspend fun getTrendingTVShows(
         token: String,
         language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        tvService.getPopularTvShows(
+        tvService.getTrendingTvShows(
             header = token,
             language = language,
             page = page,

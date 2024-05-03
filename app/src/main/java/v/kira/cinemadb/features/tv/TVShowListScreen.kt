@@ -51,7 +51,7 @@ lateinit var viewModel: TVViewModel
 fun TVShowListScreen() {
     viewModel = hiltViewModel()
     MainScreen(viewModel.tvShowState)
-    viewModel.getTVShowList(MainActivity.POPULAR, 1)
+    viewModel.getTVShowList(MainActivity.TRENDING, 1)
 }
 
 @Composable
@@ -63,9 +63,9 @@ fun MainScreen(sharedFlow: SharedFlow<TVShowState>) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             sharedFlow.collect { state ->
                 when (state) {
-                    is TVShowState.SetPopularTVShows -> {
+                    is TVShowState.SetTrendingTVShows -> {
                         movieList.clear()
-                        movieList.addAll(state.popularTVShows)
+                        movieList.addAll(state.trendingTVShows)
                     }
 
                     is TVShowState.SetAiringTodayTVShows -> {
@@ -86,11 +86,11 @@ fun MainScreen(sharedFlow: SharedFlow<TVShowState>) {
         }
     }
 
-    val categoryList = listOf("Popular", "Airing Today", "Top Rated")
+    val categoryList = listOf("Trending", "Airing Today", "Top Rated")
     Column {
         SegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
-                0 -> { viewModel.getTVShowList(MainActivity.POPULAR, 1) }
+                0 -> { viewModel.getTVShowList(MainActivity.TRENDING, 1) }
                 1 -> { viewModel.getTVShowList(MainActivity.NOW_PLAYING, 1) }
                 else -> { viewModel.getTVShowList(MainActivity.TOP_RATED, 1) }
             }

@@ -23,11 +23,11 @@ class TVUseCase @Inject constructor(
         return repository.getTopRatedTVShows(token, language, page)
     }
 
-    suspend fun getPopularTVShows(
+    suspend fun getTrendingTVShows(
         token: String,
         language: String,
         page: Int
     ): List<TVResult> {
-        return repository.getPopularTVShows(token, language, page)
+        return repository.getTrendingTVShows(token, language, page)
     }
 }

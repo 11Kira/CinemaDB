@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
-import v.kira.cinemadb.MainActivity.Companion.POPULAR
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
+import v.kira.cinemadb.MainActivity.Companion.TRENDING
 import v.kira.cinemadb.MainActivity.Companion.UPCOMING
 import v.kira.cinemadb.model.MovieResult
 import javax.inject.Inject
@@ -35,9 +35,9 @@ class MovieViewModel @Inject constructor(
         }) {
             val movieList: List<MovieResult>
             when (type) {
-                POPULAR -> {
-                    movieList = useCase.getPopularMovies(header, language, page)
-                    mutableMovieState.emit(MovieState.SetPopularMovies(movieList))
+                TRENDING -> {
+                    movieList = useCase.getTrendingMovies(header, language, page)
+                    mutableMovieState.emit(MovieState.SetTrendingMovies(movieList))
                 }
                 NOW_PLAYING -> {
                     movieList = useCase.getNowPlayingMovies(header, language, page)

@@ -15,8 +15,8 @@ interface MovieService {
         @Query("page") page: Int
     ): Response<ResponseObject<List<MovieResult>>>
 
-    @GET("movie/popular")
-    suspend fun getPopularMovies(
+    @GET("trending/movie/week")
+    suspend fun getTrendingMovies(
         @Header("Authorization") header: String,
         @Query("language") language: String,
         @Query("page") page: Int,

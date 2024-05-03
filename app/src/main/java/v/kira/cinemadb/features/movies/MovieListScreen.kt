@@ -42,8 +42,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.flow.SharedFlow
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
-import v.kira.cinemadb.MainActivity.Companion.POPULAR
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
+import v.kira.cinemadb.MainActivity.Companion.TRENDING
 import v.kira.cinemadb.MainActivity.Companion.UPCOMING
 import v.kira.cinemadb.R
 import v.kira.cinemadb.model.MovieResult
@@ -54,7 +54,7 @@ lateinit var viewModel: MovieViewModel
 fun MovieListScreen() {
     viewModel = hiltViewModel()
     MainScreen(viewModel.movieState)
-    viewModel.getMovieList(POPULAR, 1)
+    viewModel.getMovieList(TRENDING, 1)
 }
 
 @Composable
@@ -66,9 +66,9 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             sharedFlow.collect { state ->
                 when (state) {
-                    is MovieState.SetPopularMovies -> {
+                    is MovieState.SetTrendingMovies -> {
                         movieList.clear()
-                        movieList.addAll(state.popularMovies)
+                        movieList.addAll(state.trendingMovies)
                     }
 
                     is MovieState.SetNowPlayingMovies -> {
@@ -94,11 +94,11 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
         }
     }
 
-    val categoryList = listOf("Popular", "Now Playing", "Top Rated", "Upcoming")
+    val categoryList = listOf("Trending", "Now Playing", "Top Rated", "Upcoming")
     Column {
         SegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
-                0 -> { viewModel.getMovieList(POPULAR, 1) }
+                0 -> { viewModel.getMovieList(TRENDING, 1) }
                 1 -> { viewModel.getMovieList(NOW_PLAYING, 1) }
                 2 -> { viewModel.getMovieList(TOP_RATED, 1)}
                 else -> { viewModel.getMovieList(UPCOMING, 1) }

@@ -15,8 +15,8 @@ interface TVService {
         @Query("page") page: Int
     ): Response<ResponseObject<List<TVResult>>>
 
-    @GET("tv/popular")
-    suspend fun getPopularTvShows(
+    @GET("trending/tv/week")
+    suspend fun getTrendingTvShows(
         @Header("Authorization") header: String,
         @Query("language") language: String,
         @Query("page") page: Int

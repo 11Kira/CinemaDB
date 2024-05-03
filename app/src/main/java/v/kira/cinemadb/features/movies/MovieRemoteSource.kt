@@ -20,12 +20,12 @@ class MovieRemoteSource @Inject constructor(
         )
     }
 
-    suspend fun getPopularMovies(
+    suspend fun getTrendingMovies(
         token: String,
         language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        movieService.getPopularMovies(
+        movieService.getTrendingMovies(
             header = token,
             language = language,
             page = page,

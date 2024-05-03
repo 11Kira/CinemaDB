@@ -10,8 +10,8 @@ class MovieRepository @Inject constructor(
     suspend fun getNowPlayingMovies(token: String, language: String, page: Int): List<MovieResult> {
         return remoteSource.getNowPlayingMovies(token, language, page).mapMovieResultToDomain()
     }
-    suspend fun getPopularMovies(token: String, language: String, page: Int): List<MovieResult> {
-        return remoteSource.getPopularMovies(token, language, page).mapMovieResultToDomain()
+    suspend fun getTrendingMovies(token: String, language: String, page: Int): List<MovieResult> {
+        return remoteSource.getTrendingMovies(token, language, page).mapMovieResultToDomain()
     }
     suspend fun getTopRatedMovies(token: String, language: String, page: Int): List<MovieResult> {
         return remoteSource.getTopRatedMovies(token, language, page).mapMovieResultToDomain()
