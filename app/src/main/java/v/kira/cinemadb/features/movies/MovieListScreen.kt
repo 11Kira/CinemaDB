@@ -1,24 +1,22 @@
 package v.kira.cinemadb.features.movies
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,10 +29,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.POPULAR
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
+import v.kira.cinemadb.R
 import v.kira.cinemadb.model.CinemaResult
 
 lateinit var viewModel: MovieViewModel
@@ -106,93 +107,84 @@ fun SegmentedControl(
     onItemSelection: (selectedItemIndex: Int) -> Unit
 ) {
     val selectedIndex = remember { mutableStateOf(0) }
-    val itemIndex = remember { mutableStateOf(0) }
     Box(modifier = Modifier.background(Color.Black)) {
-        Card(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(38.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = if (selectedIndex.value == itemIndex.value) {
-                    MaterialTheme.colorScheme.background
-                } else {
-                    MaterialTheme.colorScheme.secondary
-                }
-            ),
-            shape = RoundedCornerShape(24.dp)
+                .align(Alignment.Center)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.secondary),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                items.forEachIndexed { index, item ->
-                    itemIndex.value - index
-                    Card(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(2.dp),
-                        onClick = {
-                            selectedIndex.value = index
-                            onItemSelection(selectedIndex.value)
-                        },
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (selectedIndex.value == index) {
-                                MaterialTheme.colorScheme.background
-                            } else {
-                                MaterialTheme.colorScheme.secondary
-                            },
-                            contentColor = if (selectedIndex.value == index) {
-                                MaterialTheme.colorScheme.scrim
-                            } else {
-                                MaterialTheme.colorScheme.onSecondary
-                            }
-                        ),
-                        shape = when (index) {
-                            0 -> RoundedCornerShape(
-                                topStartPercent = 24,
-                                topEndPercent = 24,
-                                bottomStartPercent = 24,
-                                bottomEndPercent = 24
-                            )
-
-                            items.size - 1 -> RoundedCornerShape(
-                                topStartPercent = 24,
-                                topEndPercent = 24,
-                                bottomStartPercent = 24,
-                                bottomEndPercent = 24
-                            )
-
-                            else -> RoundedCornerShape(
-                                topStartPercent = 0,
-                                topEndPercent = 0,
-                                bottomStartPercent = 0,
-                                bottomEndPercent = 0
-                            )
-                        },
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = item,
-                                style = LocalTextStyle.current.copy(
-                                    fontSize = 14.sp,
-                                    fontWeight = if (selectedIndex.value == index)
-                                        LocalTextStyle.current.fontWeight
-                                    else
-                                        FontWeight.Normal,
-                                    color = if (selectedIndex.value == index)
-                                        MaterialTheme.colorScheme.scrim
-                                    else
-                                        MaterialTheme.colorScheme.onSecondary
-                                ),
-                                textAlign = TextAlign.Center
-                            )
+            items.forEachIndexed { index, item ->
+                OutlinedButton(
+                    modifier = when (index) {
+                        0 -> {
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(3f)
+                                .offset(0.dp, 0.dp)
+                                .zIndex(if (selectedIndex.value == index) 1f else 0f)
+                        } else -> {
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(3f)
+                                .offset((-1 * index).dp, 0.dp)
+                                .zIndex(if (selectedIndex.value == index) 1f else 0f)
                         }
-                    }
+                    },
+                    onClick = {
+                        selectedIndex.value = index
+                        onItemSelection(selectedIndex.value)
+                    },
+                    colors = if (selectedIndex.value == index) {
+                        ButtonDefaults.outlinedButtonColors(backgroundColor = colorResource(id = R.color.teal_200))
+                    } else {
+                        ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent)
+                    },
+                    shape = when (index) {
+                        0 -> RoundedCornerShape(
+                            topStartPercent = 24,
+                            topEndPercent = 0,
+                            bottomStartPercent = 24,
+                            bottomEndPercent = 0
+                        )
+
+                        items.size - 1 -> RoundedCornerShape(
+                            topStartPercent = 0,
+                            topEndPercent = 24,
+                            bottomStartPercent = 0,
+                            bottomEndPercent = 24
+                        )
+
+                        else -> RoundedCornerShape(
+                            topStartPercent = 0,
+                            topEndPercent = 0,
+                            bottomStartPercent = 0,
+                            bottomEndPercent = 0
+                        )
+                    },
+                    border = BorderStroke(
+                        1.dp, if (selectedIndex.value == index) {
+                            colorResource(id = R.color.teal_200)
+                        } else {
+                            colorResource(id = R.color.teal_200).copy(alpha = 0.75f)
+                        }
+                    ),
+                ) {
+                    Text(
+                        text = item,
+                        style = LocalTextStyle.current.copy(
+                            fontSize = 14.sp,
+                            fontWeight = if (selectedIndex.value == index)
+                                LocalTextStyle.current.fontWeight
+                            else
+                                FontWeight.Normal,
+                            color = if (selectedIndex.value == index) {
+                                Color.White
+                            } else {
+                                colorResource(id = R.color.teal_200).copy(alpha = 0.9f)
+                            },
+                        ),
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
