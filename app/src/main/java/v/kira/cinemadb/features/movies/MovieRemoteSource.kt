@@ -5,7 +5,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MovieRemoteSource @Inject constructor(
-    private val movieAPI: MovieAPI
+    private val movieService: MovieService
 ) {
 
     suspend fun getNowPlayingMovies(
@@ -13,7 +13,7 @@ class MovieRemoteSource @Inject constructor(
         language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        movieAPI.getNowPlayingMovies(
+        movieService.getNowPlayingMovies(
             header = token,
             language = language,
             page = page
@@ -25,7 +25,7 @@ class MovieRemoteSource @Inject constructor(
         language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        movieAPI.getPopularMovies(
+        movieService.getPopularMovies(
             header = token,
             language = language,
             page = page,
@@ -37,7 +37,7 @@ class MovieRemoteSource @Inject constructor(
         language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        movieAPI.getTopRatedMovies(
+        movieService.getTopRatedMovies(
             header = token,
             language = language,
             page = page

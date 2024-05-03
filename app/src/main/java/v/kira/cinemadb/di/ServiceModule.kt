@@ -5,7 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
-import v.kira.cinemadb.features.movies.MovieAPI
+import v.kira.cinemadb.features.movies.MovieService
 import javax.inject.Singleton
 
 @Module
@@ -14,6 +14,6 @@ class ServiceModule {
 
     @Singleton
     @Provides
-    fun provideMovieAPI(retrofit: Retrofit): MovieAPI =
-        retrofit.create(MovieAPI::class.java)
+    fun provideMovieAPI(retrofit: Retrofit): MovieService =
+        retrofit.create(MovieService::class.java)
 }

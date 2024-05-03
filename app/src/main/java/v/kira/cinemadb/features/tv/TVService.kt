@@ -1,4 +1,4 @@
-package v.kira.cinemadb.features.movies
+package v.kira.cinemadb.features.tv
 
 import retrofit2.Response
 import retrofit2.http.GET
@@ -6,23 +6,23 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 import v.kira.cinemadb.model.ResponseObject
 
-interface MovieAPI {
-    @GET("movie/now_playing")
-    suspend fun getNowPlayingMovies(
+interface TVService {
+    @GET("tv/airing_today")
+    suspend fun getAiringTodayTvShows(
         @Header("Authorization") header: String,
         @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ResponseObject>
 
-    @GET("movie/popular")
-    suspend fun getPopularMovies(
+    @GET("tv/popular")
+    suspend fun getPopularTvShows(
         @Header("Authorization") header: String,
         @Query("language") language: String,
-        @Query("page") page: Int,
+        @Query("page") page: Int
     ): Response<ResponseObject>
 
-    @GET("movie/top_rated")
-    suspend fun getTopRatedMovies(
+    @GET("tv/top_rated")
+    suspend fun getTopRatedTvShows(
         @Header("Authorization") header: String,
         @Query("language") language: String,
         @Query("page") page: Int
