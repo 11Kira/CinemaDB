@@ -35,7 +35,7 @@ fun HomeScreen() {
 }
 
 @Composable
-fun FavoriteScreen() {
+fun TVScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +43,7 @@ fun FavoriteScreen() {
             .wrapContentSize(Alignment.Center)
     ) {
         Text(
-            text = "Favorites",
+            text = "TV",
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -54,7 +54,7 @@ fun FavoriteScreen() {
 }
 
 @Composable
-fun WatchListScreen() {
+fun SearchScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,7 +62,7 @@ fun WatchListScreen() {
             .wrapContentSize(Alignment.Center)
     ) {
         Text(
-            text = "Watch List",
+            text = "Search",
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally),

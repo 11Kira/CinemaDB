@@ -1,4 +1,4 @@
-package v.kira.cinemadb.features.movies
+package v.kira.cinemadb.features.tv
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
@@ -41,52 +41,44 @@ import androidx.lifecycle.repeatOnLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.flow.SharedFlow
-import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
-import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
-import v.kira.cinemadb.MainActivity.Companion.TRENDING
-import v.kira.cinemadb.MainActivity.Companion.UPCOMING
+import v.kira.cinemadb.MainActivity
 import v.kira.cinemadb.R
-import v.kira.cinemadb.model.MovieResult
+import v.kira.cinemadb.model.TVResult
 
-lateinit var viewModel: MovieViewModel
+lateinit var viewModel: TVViewModel
 
 @Composable
-fun MovieListScreen() {
+fun TVShowListScreen() {
     viewModel = hiltViewModel()
-    MainScreen(viewModel.movieState)
-    viewModel.getMovieList(TRENDING, 1)
+    MainScreen(viewModel.tvShowState)
+    viewModel.getTVShowList(MainActivity.TRENDING, 1)
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
-    val movieList = remember { mutableStateListOf<MovieResult>() }
+fun MainScreen(sharedFlow: SharedFlow<TVShowState>) {
+    val movieList = remember { mutableStateListOf<TVResult>() }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(key1 = Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             sharedFlow.collect { state ->
                 when (state) {
-                    is MovieState.SetTrendingMovies -> {
+                    is TVShowState.SetTrendingTVShows -> {
                         movieList.clear()
-                        movieList.addAll(state.trendingMovies)
+                        movieList.addAll(state.trendingTVShows)
                     }
 
-                    is MovieState.SetNowPlayingMovies -> {
+                    is TVShowState.SetAiringTodayTVShows -> {
                         movieList.clear()
-                        movieList.addAll(state.nowPlayingMovies)
+                        movieList.addAll(state.airingTodayTVShows)
                     }
 
-                    is MovieState.SetTopRatedMovies -> {
+                    is TVShowState.SetTopRatedTVShows -> {
                         movieList.clear()
-                        movieList.addAll(state.topRatedMovies)
+                        movieList.addAll(state.topRatedTVShows)
                     }
 
-                    is MovieState.SetUpcomingMovies -> {
-                        movieList.clear()
-                        movieList.addAll(state.upcomingMovies)
-                    }
-
-                    is MovieState.ShowError -> {
+                    is TVShowState.ShowError -> {
                         Log.e("Error: ", state.error.toString())
                     }
                 }
@@ -94,14 +86,13 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
         }
     }
 
-    val categoryList = listOf("Trending", "Now Playing", "Top Rated", "Upcoming")
+    val categoryList = listOf("Trending", "Airing Today", "Top Rated")
     Column {
         SegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
-                0 -> { viewModel.getMovieList(TRENDING, 1) }
-                1 -> { viewModel.getMovieList(NOW_PLAYING, 1) }
-                2 -> { viewModel.getMovieList(TOP_RATED, 1)}
-                else -> { viewModel.getMovieList(UPCOMING, 1) }
+                0 -> { viewModel.getTVShowList(MainActivity.TRENDING, 1) }
+                1 -> { viewModel.getTVShowList(MainActivity.NOW_PLAYING, 1) }
+                else -> { viewModel.getTVShowList(MainActivity.TOP_RATED, 1) }
             }
         }
         PopulateGrid(movieList)
@@ -200,14 +191,14 @@ fun SegmentedControl(
 }
 
 @Composable
-fun PopulateGrid(movies: List<MovieResult>) {
+fun PopulateGrid(tvShows: List<TVResult>) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         verticalItemSpacing = 8.dp,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         content = {
-            items(movies) { movie ->
-                val posterPath = "https://image.tmdb.org/t/p/original/"+movie.posterPath
+            items(tvShows) { tvShow ->
+                val posterPath = "https://image.tmdb.org/t/p/original/"+tvShow.posterPath
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                     contentDescription = "Description",
