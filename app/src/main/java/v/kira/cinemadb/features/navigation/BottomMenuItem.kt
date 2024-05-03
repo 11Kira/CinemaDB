@@ -1,15 +1,10 @@
 package v.kira.cinemadb.features.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.ui.graphics.vector.ImageVector
+import v.kira.cinemadb.R
 
-sealed class BottomMenuItem(val label: String, val icon: ImageVector, val screenRoute: String) {
-    data object Home : BottomMenuItem("Home", Icons.Filled.Home, "home")
-    data object Favorites : BottomMenuItem("Favorites", Icons.Filled.Favorite, "favorites")
-    data object Watchlist : BottomMenuItem("Watch List", Icons.Filled.CheckCircle, "watchlist")
-    data object Account : BottomMenuItem("Account", Icons.Filled.Person, "account")
+sealed class BottomMenuItem(val label: String, val icon: Int, val screenRoute: String) {
+    data object Home : BottomMenuItem("Home", R.drawable.ic_movie, "home")
+    data object TV : BottomMenuItem("TV Series", R.drawable.ic_tv, "tv")
+    data object Watchlist : BottomMenuItem("Watch List", R.drawable.ic_list, "watchlist")
+    data object Account : BottomMenuItem("Account", R.drawable.ic_account, "account")
 }
