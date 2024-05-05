@@ -1,8 +1,9 @@
 [versions]
 agp = "8.3.2"
+animation = "1.6.7"
 coil = "2.6.0"
 coilCompose = "2.6.0"
-foundation = "1.6.6"
+foundation = "1.6.7"
 hiltNavigationCompose = "1.2.0"
 kotlin = "1.9.23"
 coreKtx = "1.13.0"
@@ -26,6 +27,7 @@ ksp-version = "1.9.23-1.0.20"
 hilt-version = "2.51.1"
 
 [libraries]
+androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
