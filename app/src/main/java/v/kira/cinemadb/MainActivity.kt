@@ -24,10 +24,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import v.kira.cinemadb.features.details.DetailsScreen
 import v.kira.cinemadb.features.movies.MovieListScreen
 import v.kira.cinemadb.features.navigation.AccountScreen
 import v.kira.cinemadb.features.navigation.BottomMenuItem
@@ -115,9 +118,28 @@ fun BottomNavigation(navController: NavController) {
 @Composable
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = BottomMenuItem.Home.screenRoute) {
-        composable(BottomMenuItem.Home.screenRoute) { MovieListScreen() }
+        composable(BottomMenuItem.Home.screenRoute) {
+            MovieListScreen(onItemClick = { movieId, movieImage ->
+                navController.navigate("details/$movieId/$movieImage")
+            })
+        }
         composable(BottomMenuItem.TV.screenRoute) { TVShowListScreen() }
         composable(BottomMenuItem.Search.screenRoute) { SearchScreen() }
         composable(BottomMenuItem.Account.screenRoute) { AccountScreen() }
+        composable(
+            route = "details/{movieId}/{movieImage}",
+            arguments = listOf(
+                navArgument("movieId") {
+                    type = NavType.LongType
+                },
+                navArgument("movieImage") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            val movieId = it.arguments?.getLong("movieId") ?: 0
+            val movieImage = it.arguments?.getString("movieImage") ?: ""
+            DetailsScreen(movieId = movieId, movieImage = movieImage)
+        }
     }
 }

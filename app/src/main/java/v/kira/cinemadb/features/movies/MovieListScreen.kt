@@ -3,6 +3,7 @@ package v.kira.cinemadb.features.movies
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,14 +52,16 @@ import v.kira.cinemadb.model.MovieResult
 lateinit var viewModel: MovieViewModel
 
 @Composable
-fun MovieListScreen() {
+fun MovieListScreen(
+    onItemClick: (Long, String) -> Unit
+) {
     viewModel = hiltViewModel()
-    MainScreen(viewModel.movieState)
+    MainScreen(viewModel.movieState, onItemClick)
     viewModel.getMovieList(TRENDING, 1)
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
+fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, String) -> Unit) {
     val movieList = remember { mutableStateListOf<MovieResult>() }
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -104,7 +107,7 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
                 else -> { viewModel.getMovieList(UPCOMING, 1) }
             }
         }
-        PopulateGrid(movieList)
+        PopulateGrid(movieList, onItemClick)
     }
 }
 
@@ -200,7 +203,10 @@ fun SegmentedControl(
 }
 
 @Composable
-fun PopulateGrid(movies: List<MovieResult>) {
+fun PopulateGrid(
+    movies: List<MovieResult>,
+    onItemClick: (Long, String) -> Unit
+) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         verticalItemSpacing = 8.dp,
@@ -215,6 +221,9 @@ fun PopulateGrid(movies: List<MovieResult>) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
+                        .clickable {
+                            onItemClick(movie.id, posterPath)
+                        }
                 )
             }
         }

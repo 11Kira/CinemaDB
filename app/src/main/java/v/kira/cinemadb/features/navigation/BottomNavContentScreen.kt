@@ -16,44 +16,6 @@ import androidx.compose.ui.unit.sp
 import v.kira.cinemadb.R
 
 @Composable
-fun HomeScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(id = R.color.purple_700))
-            .wrapContentSize(Alignment.Center)
-    ) {
-        Text(
-            text = "Home",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp
-        )
-    }
-}
-
-@Composable
-fun TVScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(id = R.color.black))
-            .wrapContentSize(Alignment.Center)
-    ) {
-        Text(
-            text = "TV",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp
-        )
-    }
-}
-
-@Composable
 fun SearchScreen() {
     Column(
         modifier = Modifier
