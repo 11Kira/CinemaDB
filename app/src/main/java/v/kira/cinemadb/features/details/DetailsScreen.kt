@@ -1,27 +1,26 @@
 package v.kira.cinemadb.features.details
 
 import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.flow.SharedFlow
+
+lateinit var viewModel: DetailsViewModel
 
 @Composable
 fun DetailsScreen (
     movieId: Long,
     movieImage: String
 ) {
-    Log.e("testId", movieId.toString())
-    Column(
+    viewModel = hiltViewModel()
+    MainScreen(viewModel.detailsState)
+    viewModel.getMovieDetails(movieId)
+
+    /*Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
@@ -34,5 +33,26 @@ fun DetailsScreen (
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = movieId.toString())
+    }*/
+
+}
+
+@Composable
+fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(key1 = Unit) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            sharedFlow.collect { state ->
+                when (state) {
+                    is DetailsState.SetMovieDetails -> {
+                        Log.e("details", state.movieDetails.toString())
+                    }
+                    is DetailsState.ShowError -> {
+                        Log.e("Error: ", state.error.toString())
+                    }
+                }
+            }
+        }
     }
 }
