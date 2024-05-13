@@ -1,5 +1,6 @@
 package v.kira.cinemadb.features.details
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ fun DetailsScreen (
     movieId: Long,
     movieImage: String
 ) {
+    Log.e("testId", movieId.toString())
     Column(
         modifier = Modifier
             .fillMaxSize()

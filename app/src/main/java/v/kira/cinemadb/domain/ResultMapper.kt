@@ -32,3 +32,15 @@ fun Response<ResponseObject<List<TVResult>>>.mapTVSeriesResultToDomain(): List<T
         )
     } ?: emptyList()
 }
+
+fun MovieResult.mapMovieDetailsToDomain(): MovieResult {
+    return MovieResult(
+        id = this.id,
+        originalLanguage = this.originalLanguage,
+        originalTitle = this.originalTitle,
+        overview = this.overview,
+        posterPath = this.posterPath,
+        releaseDate = this.releaseDate,
+        title = this.title
+    )
+}
