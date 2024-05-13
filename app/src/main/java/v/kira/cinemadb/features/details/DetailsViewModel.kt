@@ -28,7 +28,7 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            val result = useCase.getMovieDetails(token, movieId, language)
+            val result = useCase.getMovieDetails(header, movieId, language)
             mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
     }

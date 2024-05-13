@@ -7,7 +7,7 @@ import retrofit2.http.Query
 import v.kira.cinemadb.model.MovieResult
 
 interface DetailsService {
-    @GET("movie/now_playing")
+    @GET("movie/{movie_id}")
     suspend fun getMovieDetails(
         @Header("Authorization") header: String,
         @Path("movie_id") movieId: Long,
