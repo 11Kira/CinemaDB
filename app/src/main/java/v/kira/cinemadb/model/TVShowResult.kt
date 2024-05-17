@@ -2,7 +2,7 @@ package v.kira.cinemadb.model
 
 import com.google.gson.annotations.SerializedName
 
-data class TVResult (
+data class TVShowResult (
     @SerializedName("id")
     val id: Long,
     @SerializedName("original_language")

@@ -43,4 +43,16 @@ class TVRemoteSource @Inject constructor(
             page = page
         )
     }
+
+    suspend fun getTvShowDetails(
+        token: String,
+        tvSeriesId: Long,
+        language: String
+    ) = withContext(Dispatchers.IO) {
+        tvService.getTvShowDetails(
+            header = token,
+            seriesId = tvSeriesId,
+            language = language
+        )
+    }
 }

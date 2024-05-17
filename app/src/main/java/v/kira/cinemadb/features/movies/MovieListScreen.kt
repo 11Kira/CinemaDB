@@ -53,7 +53,7 @@ lateinit var viewModel: MovieViewModel
 
 @Composable
 fun MovieListScreen(
-    onItemClick: (Long) -> Unit
+    onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
     MainScreen(viewModel.movieState, onItemClick)
@@ -61,7 +61,7 @@ fun MovieListScreen(
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long) -> Unit) {
+fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, Int) -> Unit) {
     val movieList = remember { mutableStateListOf<MovieResult>() }
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -87,6 +87,8 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long) -> Unit) 
                     is MovieState.ShowError -> {
                         Log.e("Error: ", state.error.toString())
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -199,7 +201,7 @@ fun SegmentedControl(
 @Composable
 fun PopulateGrid(
     movies: List<MovieResult>,
-    onItemClick: (Long) -> Unit
+    onItemClick: (Long, Int) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyVerticalStaggeredGrid(
@@ -217,7 +219,7 @@ fun PopulateGrid(
                             .fillMaxWidth()
                             .height(300.dp)
                             .clickable {
-                                onItemClick(movie.id)
+                                onItemClick(movie.id, 1)
                             }
                     )
                 }

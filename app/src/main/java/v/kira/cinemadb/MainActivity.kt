@@ -55,7 +55,6 @@ class MainActivity : ComponentActivity() {
         const val TRENDING = 1
         const val NOW_PLAYING = 2
         const val TOP_RATED = 3
-        const val UPCOMING = 4
     }
 }
 
@@ -126,15 +125,15 @@ fun NavigationGraph(navController: NavHostController) {
     ) {
         composable(BottomMenuItem.Home.screenRoute) {
             MovieListScreen(
-                onItemClick = { movieId ->
-                    navController.navigate("${Graph.DETAILS_GRAPH}/${movieId}")
+                onItemClick = { movieId, type ->
+                    navController.navigate("${Graph.DETAILS_GRAPH}/${movieId}/${type}")
                 }
             )
         }
         composable(BottomMenuItem.TV.screenRoute) {
             TVShowListScreen(
-                onItemClick = { tvShowId ->
-                    navController.navigate("${Graph.DETAILS_GRAPH}/${tvShowId}")
+                onItemClick = { tvShowId, type ->
+                    navController.navigate("${Graph.DETAILS_GRAPH}/${tvShowId}/${type}")
                 }
             )
         }
@@ -147,25 +146,29 @@ fun NavigationGraph(navController: NavHostController) {
 fun NavGraphBuilder.detailsNavGraph(navController: NavHostController) {
 
     navigation(
-        route = "${Graph.DETAILS_GRAPH}/{movieId}",
+        route = "${Graph.DETAILS_GRAPH}/{id}/{type}",
         startDestination = DETAILS_SCREEN_ROUTE,
     ) {
         composable(
             route = DETAILS_SCREEN_ROUTE,
             arguments = listOf(
-                navArgument("movieId") {
+                navArgument("id") {
+                    type = NavType.StringType
+                },
+                navArgument("type") {
                     type = NavType.StringType
                 },
             )
         ) {
-            val movieId = it.arguments?.getString("movieId")?.toLong() ?: 0L
-            DetailsScreen(movieId = movieId)
+            val id = it.arguments?.getString("id")?.toLong() ?: 0L
+            val type = it.arguments?.getString("type")?.toInt() ?: 0
+            DetailsScreen(id, type)
         }
     }
 }
 
 object Graph {
     const val DETAILS_GRAPH = "details_graph"
-    const val DETAILS_SCREEN_ROUTE = "details/{movieId}"
+    const val DETAILS_SCREEN_ROUTE = "details/{id}/{type}"
 }
 

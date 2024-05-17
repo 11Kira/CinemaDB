@@ -31,11 +31,11 @@ class MovieUseCase @Inject constructor(
         return repository.getTrendingMovies(token, language, page)
     }
 
-    suspend fun getUpcomingMovies(
+    suspend fun getMovieDetails(
         token: String,
-        language: String,
-        page: Int
-    ): List<MovieResult> {
-        return repository.getUpcomingMovies(token, language, page)
+        movieId: Long,
+        language: String
+    ): MovieResult {
+        return repository.getMovieDetails(token, movieId, language)
     }
 }

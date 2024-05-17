@@ -4,8 +4,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import v.kira.cinemadb.features.details.DetailsRemoteSource
-import v.kira.cinemadb.features.details.DetailsRepository
 import v.kira.cinemadb.features.movies.MovieRemoteSource
 import v.kira.cinemadb.features.movies.MovieRepository
 import v.kira.cinemadb.features.tv.TVRemoteSource
@@ -27,10 +25,4 @@ class RepositoryModule {
     fun provideTVRepository(
         tvRemoteSource: TVRemoteSource
     ) = TVRepository(remoteSource = tvRemoteSource)
-
-    @Provides
-    @Singleton
-    fun provideDetailsRepository(
-        detailsRemoteSource: DetailsRemoteSource
-    ) = DetailsRepository(remoteSource = detailsRemoteSource)
 }

@@ -44,13 +44,13 @@ import coil.request.ImageRequest
 import kotlinx.coroutines.flow.SharedFlow
 import v.kira.cinemadb.MainActivity
 import v.kira.cinemadb.R
-import v.kira.cinemadb.model.TVResult
+import v.kira.cinemadb.model.TVShowResult
 
 lateinit var viewModel: TVViewModel
 
 @Composable
 fun TVShowListScreen(
-    onItemClick: (Long) -> Unit
+    onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
     MainScreen(viewModel.tvShowState, onItemClick)
@@ -58,8 +58,8 @@ fun TVShowListScreen(
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<TVShowState>, onItemClick: (Long) -> Unit) {
-    val movieList = remember { mutableStateListOf<TVResult>() }
+fun MainScreen(sharedFlow: SharedFlow<TVShowState>, onItemClick: (Long, Int) -> Unit) {
+    val movieList = remember { mutableStateListOf<TVShowResult>() }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(key1 = Unit) {
@@ -195,8 +195,8 @@ fun SegmentedControl(
 
 @Composable
 fun PopulateGrid(
-    tvShows: List<TVResult>,
-    onItemClick: (Long) -> Unit
+    tvShows: List<TVShowResult>,
+    onItemClick: (Long, Int) -> Unit
 ) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
@@ -213,7 +213,7 @@ fun PopulateGrid(
                         .fillMaxWidth()
                         .height(300.dp)
                         .clickable {
-                            onItemClick(tvShow.id)
+                            onItemClick(tvShow.id, 2)
                         }
                 )
             }
