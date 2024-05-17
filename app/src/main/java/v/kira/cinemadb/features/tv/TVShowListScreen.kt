@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -193,9 +194,10 @@ fun SegmentedControl(
 @Composable
 fun PopulateGrid(tvShows: List<TVResult>) {
     LazyVerticalStaggeredGrid(
+        contentPadding = PaddingValues(bottom = 60.dp),
         columns = StaggeredGridCells.Fixed(2),
-        verticalItemSpacing = 8.dp,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalItemSpacing = 5.dp,
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
         content = {
             items(tvShows) { tvShow ->
                 val posterPath = "https://image.tmdb.org/t/p/original/"+tvShow.posterPath
@@ -205,7 +207,7 @@ fun PopulateGrid(tvShows: List<TVResult>) {
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(260.dp)
+                        .height(300.dp)
                 )
             }
         }

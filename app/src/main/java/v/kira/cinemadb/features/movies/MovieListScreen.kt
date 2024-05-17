@@ -7,7 +7,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -207,25 +209,28 @@ fun PopulateGrid(
     movies: List<MovieResult>,
     onItemClick: (Long, String) -> Unit
 ) {
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
-        verticalItemSpacing = 8.dp,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        content = {
-            items(movies) { movie ->
-                val posterPath = "https://image.tmdb.org/t/p/original/"+movie.posterPath
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
-                    contentDescription = "Description",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(260.dp)
-                        .clickable {
-                            onItemClick(movie.id, posterPath)
-                        }
-                )
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyVerticalStaggeredGrid(
+            contentPadding = PaddingValues(bottom = 60.dp),
+            columns = StaggeredGridCells.Fixed(2),
+            verticalItemSpacing = 5.dp,
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            content = {
+                items(movies) { movie ->
+                    val posterPath = "https://image.tmdb.org/t/p/original/"+movie.posterPath
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                        contentDescription = "Description",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .clickable {
+                                onItemClick(movie.id, posterPath)
+                            }
+                    )
+                }
             }
-        }
-    )
+        )
+    }
 }
