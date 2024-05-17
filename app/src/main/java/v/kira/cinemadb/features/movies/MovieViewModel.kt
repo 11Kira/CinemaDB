@@ -11,7 +11,6 @@ import kotlinx.coroutines.runBlocking
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
-import v.kira.cinemadb.MainActivity.Companion.UPCOMING
 import v.kira.cinemadb.model.MovieResult
 import javax.inject.Inject
 
@@ -47,11 +46,6 @@ class MovieViewModel @Inject constructor(
                 TOP_RATED -> {
                     movieList = useCase.getTopRatedMovies(header, language, page)
                     mutableMovieState.emit(MovieState.SetTopRatedMovies(movieList))
-                }
-
-                UPCOMING -> {
-                    movieList = useCase.getUpcomingMovies(header, language, page)
-                    mutableMovieState.emit(MovieState.SetUpcomingMovies(movieList))
                 }
             }
         }

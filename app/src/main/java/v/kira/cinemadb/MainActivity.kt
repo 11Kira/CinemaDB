@@ -5,7 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -16,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,8 +39,6 @@ import v.kira.cinemadb.features.navigation.AccountScreen
 import v.kira.cinemadb.features.navigation.BottomMenuItem
 import v.kira.cinemadb.features.navigation.SearchScreen
 import v.kira.cinemadb.features.tv.TVShowListScreen
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 
 @AndroidEntryPoint
@@ -67,55 +65,55 @@ fun MainScreenView(){
     val navController = rememberNavController()
     Scaffold(
         bottomBar = { BottomNavigation(navController = navController) }
-    ) {
-        NavigationGraph(navController = navController)
+    ) { contentPadding ->
+        Box(modifier = Modifier.padding(contentPadding)) {
+            NavigationGraph(navController = navController)
+        }
     }
 }
 
 @Composable
 fun BottomNavigation(navController: NavController) {
     var selectedItem by remember { mutableStateOf("Home") }
-    val items = listOf(
+    val screens = listOf(
         BottomMenuItem.Home,
         BottomMenuItem.TV,
         BottomMenuItem.Search,
         BottomMenuItem.Account
     )
-    Box(modifier = Modifier.fillMaxSize()) {
-        BottomNavigation(
-            modifier = Modifier.align(alignment = Alignment.BottomCenter),
-            backgroundColor = Color.DarkGray,
-        ) {
-            items.forEach {
-                BottomNavigationItem(
-                    selected = (selectedItem == it.label),
-                    onClick = {
-                        selectedItem = it.label
-                        navController.navigate(it.screenRoute) {
-                            navController.graph.startDestinationRoute?.let { screenRoute ->
-                                popUpTo(screenRoute) {
-                                    saveState = true
-                                }
+    BottomNavigation(
+        modifier = Modifier.fillMaxWidth(),
+        backgroundColor = Color.DarkGray,
+    ) {
+        screens.forEach {
+            BottomNavigationItem(
+                selected = (selectedItem == it.label),
+                onClick = {
+                    selectedItem = it.label
+                    navController.navigate(it.screenRoute) {
+                        navController.graph.startDestinationRoute?.let { screenRoute ->
+                            popUpTo(screenRoute) {
+                                saveState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
-                    },
-                    label = {
-                        Text(
-                            text = it.label,
-                            color = Color.White,
-                            fontSize = 10.sp
-                        ) },
-                    icon = {
-                        Icon(
-                            imageVector  = ImageVector.vectorResource(it.icon),
-                            contentDescription = it.label,
-                            tint = Color.White
-                        )
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                )
-            }
+                },
+                label = {
+                    Text(
+                        text = it.label,
+                        color = Color.White,
+                        fontSize = 10.sp
+                    ) },
+                icon = {
+                    Icon(
+                        imageVector  = ImageVector.vectorResource(it.icon),
+                        contentDescription = it.label,
+                        tint = Color.White
+                    )
+                }
+            )
         }
     }
 }
@@ -128,9 +126,8 @@ fun NavigationGraph(navController: NavHostController) {
     ) {
         composable(BottomMenuItem.Home.screenRoute) {
             MovieListScreen(
-                onItemClick = { movieId, movieImage ->
-                    val encodedMovieImage = URLEncoder.encode(movieImage, StandardCharsets.UTF_8.toString())
-                    navController.navigate("${Graph.DETAILS_GRAPH}/${movieId}/${encodedMovieImage}")
+                onItemClick = { movieId ->
+                    navController.navigate("${Graph.DETAILS_GRAPH}/${movieId}")
                 }
             )
         }
@@ -144,7 +141,7 @@ fun NavigationGraph(navController: NavHostController) {
 fun NavGraphBuilder.detailsNavGraph(navController: NavHostController) {
 
     navigation(
-        route = "${Graph.DETAILS_GRAPH}/{movieId}/{movieImage}",
+        route = "${Graph.DETAILS_GRAPH}/{movieId}",
         startDestination = DETAILS_SCREEN_ROUTE,
     ) {
         composable(
@@ -153,20 +150,16 @@ fun NavGraphBuilder.detailsNavGraph(navController: NavHostController) {
                 navArgument("movieId") {
                     type = NavType.StringType
                 },
-                navArgument("movieImage") {
-                    type = NavType.StringType
-                }
             )
         ) {
             val movieId = it.arguments?.getString("movieId")?.toLong() ?: 0L
-            val movieImage = it.arguments?.getString("movieImage") ?: ""
-            DetailsScreen(movieId = movieId, movieImage = movieImage)
+            DetailsScreen(movieId = movieId)
         }
     }
 }
 
 object Graph {
     const val DETAILS_GRAPH = "details_graph"
-    const val DETAILS_SCREEN_ROUTE = "details/{movieId}/{movieImage}"
+    const val DETAILS_SCREEN_ROUTE = "details/{movieId}"
 }
 

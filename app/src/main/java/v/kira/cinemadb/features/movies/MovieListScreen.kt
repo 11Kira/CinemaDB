@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +46,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
-import v.kira.cinemadb.MainActivity.Companion.UPCOMING
 import v.kira.cinemadb.R
 import v.kira.cinemadb.model.MovieResult
 
@@ -55,7 +53,7 @@ lateinit var viewModel: MovieViewModel
 
 @Composable
 fun MovieListScreen(
-    onItemClick: (Long, String) -> Unit
+    onItemClick: (Long) -> Unit
 ) {
     viewModel = hiltViewModel()
     MainScreen(viewModel.movieState, onItemClick)
@@ -63,7 +61,7 @@ fun MovieListScreen(
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, String) -> Unit) {
+fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long) -> Unit) {
     val movieList = remember { mutableStateListOf<MovieResult>() }
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -86,11 +84,6 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, String) -
                         movieList.addAll(state.topRatedMovies)
                     }
 
-                    is MovieState.SetUpcomingMovies -> {
-                        movieList.clear()
-                        movieList.addAll(state.upcomingMovies)
-                    }
-
                     is MovieState.ShowError -> {
                         Log.e("Error: ", state.error.toString())
                     }
@@ -99,14 +92,13 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, String) -
         }
     }
 
-    val categoryList = listOf("Trending", "Now Playing", "Top Rated", "Upcoming")
+    val categoryList = listOf("Trending", "Now Playing", "Top Rated")
     Column {
         SegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> { viewModel.getMovieList(TRENDING, 1) }
                 1 -> { viewModel.getMovieList(NOW_PLAYING, 1) }
-                2 -> { viewModel.getMovieList(TOP_RATED, 1)}
-                else -> { viewModel.getMovieList(UPCOMING, 1) }
+                else -> { viewModel.getMovieList(TOP_RATED, 1) }
             }
         }
         PopulateGrid(movieList, onItemClick)
@@ -207,11 +199,10 @@ fun SegmentedControl(
 @Composable
 fun PopulateGrid(
     movies: List<MovieResult>,
-    onItemClick: (Long, String) -> Unit
+    onItemClick: (Long) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyVerticalStaggeredGrid(
-            contentPadding = PaddingValues(bottom = 60.dp),
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -226,7 +217,7 @@ fun PopulateGrid(
                             .fillMaxWidth()
                             .height(300.dp)
                             .clickable {
-                                onItemClick(movie.id, posterPath)
+                                onItemClick(movie.id)
                             }
                     )
                 }

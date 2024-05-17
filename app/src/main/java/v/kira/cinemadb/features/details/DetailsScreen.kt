@@ -31,7 +31,6 @@ lateinit var viewModel: DetailsViewModel
 @Composable
 fun DetailsScreen (
     movieId: Long,
-    movieImage: String
 ) {
     viewModel = hiltViewModel()
     MainScreen(viewModel.detailsState)
