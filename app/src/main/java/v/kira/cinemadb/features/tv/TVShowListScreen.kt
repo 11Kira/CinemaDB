@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -198,25 +199,28 @@ fun PopulateGrid(
     tvShows: List<TVShowResult>,
     onItemClick: (Long, Int) -> Unit
 ) {
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
-        verticalItemSpacing = 5.dp,
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
-        content = {
-            items(tvShows) { tvShow ->
-                val posterPath = "https://image.tmdb.org/t/p/original/"+tvShow.posterPath
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
-                    contentDescription = "Description",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .clickable {
-                            onItemClick(tvShow.id, 2)
-                        }
-                )
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.Black)
+    ) {
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            verticalItemSpacing = 5.dp,
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            content = {
+                items(tvShows) { tvShow ->
+                    val posterPath = "https://image.tmdb.org/t/p/original/"+tvShow.posterPath
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .clickable { onItemClick(tvShow.id, 2) },
+                        model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                        contentDescription = "Description",
+                        contentScale = ContentScale.Crop,
+                    )
+                }
             }
-        }
-    )
+        )
+    }
 }

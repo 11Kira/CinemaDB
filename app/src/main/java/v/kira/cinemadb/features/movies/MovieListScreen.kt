@@ -203,7 +203,10 @@ fun PopulateGrid(
     movies: List<MovieResult>,
     onItemClick: (Long, Int) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.Black)
+    ) {
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
@@ -212,15 +215,13 @@ fun PopulateGrid(
                 items(movies) { movie ->
                     val posterPath = "https://image.tmdb.org/t/p/original/"+movie.posterPath
                     AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
-                        contentDescription = "Description",
-                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(300.dp)
-                            .clickable {
-                                onItemClick(movie.id, 1)
-                            }
+                            .clickable { onItemClick(movie.id, 1) },
+                        model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                        contentDescription = "Description",
+                        contentScale = ContentScale.Crop,
                     )
                 }
             }
