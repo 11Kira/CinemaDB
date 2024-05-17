@@ -131,7 +131,13 @@ fun NavigationGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(BottomMenuItem.TV.screenRoute) { TVShowListScreen() }
+        composable(BottomMenuItem.TV.screenRoute) {
+            TVShowListScreen(
+                onItemClick = { tvShowId ->
+                    navController.navigate("${Graph.DETAILS_GRAPH}/${tvShowId}")
+                }
+            )
+        }
         composable(BottomMenuItem.Search.screenRoute) { SearchScreen() }
         composable(BottomMenuItem.Account.screenRoute) { AccountScreen() }
         detailsNavGraph(navController = navController)

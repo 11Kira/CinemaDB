@@ -3,6 +3,7 @@ package v.kira.cinemadb.features.tv
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,14 +49,16 @@ import v.kira.cinemadb.model.TVResult
 lateinit var viewModel: TVViewModel
 
 @Composable
-fun TVShowListScreen() {
+fun TVShowListScreen(
+    onItemClick: (Long) -> Unit
+) {
     viewModel = hiltViewModel()
-    MainScreen(viewModel.tvShowState)
+    MainScreen(viewModel.tvShowState, onItemClick)
     viewModel.getTVShowList(MainActivity.TRENDING, 1)
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<TVShowState>) {
+fun MainScreen(sharedFlow: SharedFlow<TVShowState>, onItemClick: (Long) -> Unit) {
     val movieList = remember { mutableStateListOf<TVResult>() }
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -95,7 +98,7 @@ fun MainScreen(sharedFlow: SharedFlow<TVShowState>) {
                 else -> { viewModel.getTVShowList(MainActivity.TOP_RATED, 1) }
             }
         }
-        PopulateGrid(movieList)
+        PopulateGrid(movieList, onItemClick)
     }
 }
 
@@ -191,7 +194,10 @@ fun SegmentedControl(
 }
 
 @Composable
-fun PopulateGrid(tvShows: List<TVResult>) {
+fun PopulateGrid(
+    tvShows: List<TVResult>,
+    onItemClick: (Long) -> Unit
+) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         verticalItemSpacing = 5.dp,
@@ -206,6 +212,9 @@ fun PopulateGrid(tvShows: List<TVResult>) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(300.dp)
+                        .clickable {
+                            onItemClick(tvShow.id)
+                        }
                 )
             }
         }
