@@ -20,9 +20,9 @@ data class MovieResult (
     @SerializedName("vote_average")
     val voteAverage: Double,
     @SerializedName("tagline")
-    val tagline: String?,
+    val tagline: String,
     @SerializedName("status")
-    val status: String?,
+    val status: String,
     @SerializedName("runtime")
     val runtime: Int
 )

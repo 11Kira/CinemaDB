@@ -2,6 +2,7 @@ package v.kira.cinemadb.features.details
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,8 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,9 +22,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -36,6 +40,7 @@ import coil.request.ImageRequest
 import kotlinx.coroutines.flow.SharedFlow
 import v.kira.cinemadb.model.MovieResult
 import v.kira.cinemadb.model.TVShowResult
+import kotlin.math.roundToInt
 
 lateinit var viewModel: DetailsViewModel
 
@@ -87,18 +92,65 @@ fun SetupMovieDetails(movie: MovieResult) {
     modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)
+        .verticalScroll(rememberScrollState())
     ) {
         val posterPath = "https://image.tmdb.org/t/p/original/"+movie.posterPath
-
-        AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
-        contentDescription = "Poster",
-        modifier = Modifier
+        Box(modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
-        )
+            .wrapContentHeight()) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                contentDescription = "Poster",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            )
+
+            Box(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .align(Alignment.TopEnd)
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentHeight(),
+                    color = Color.White,
+                    text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 25.sp,                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = movie.title)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .padding(top = 10.dp, start = 10.dp, bottom = 10.dp)
+        ) {
+            Text(
+                textAlign = TextAlign.Center,
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth(),
+                text = movie.tagline,
+                color = Color.White
+            )
+            Text(
+                textAlign = TextAlign.Center,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp),
+                text = movie.overview,
+                color = Color.White
+            )
+        }
     }
 }
 
@@ -108,6 +160,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
+            .verticalScroll(rememberScrollState())
     ) {
         val posterPath = "https://image.tmdb.org/t/p/original/"+tvShow.posterPath
 
@@ -124,30 +177,10 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 .fillMaxWidth()
                 .navigationBarsPadding()
                 .padding(top = 10.dp, start = 10.dp, bottom = 10.dp)
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 50.dp,
-                        topEnd = 0.dp,
-                        bottomStart = 0.dp,
-                        bottomEnd = 50.dp
-                    )
-                )
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            Color(0xFF2D01FE),
-                            Color(
-                                0xFF8E3DFD
-                            )
-                        )
-                    ),
-                    shape = RoundedCornerShape(topStart = 30.dp, bottomEnd = 30.dp)
-                )
-                .padding(40.dp)
         ) {
             Text(
                 textAlign = TextAlign.Center,
-                fontSize = 17.sp,
+                fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
                 text = tvShow.name,
@@ -157,7 +190,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
                 text = tvShow.overview,
                 color = Color.White
             )
