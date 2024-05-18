@@ -14,7 +14,11 @@ fun Response<ResponseObject<List<MovieResult>>>.mapMovieResultToDomain(): List<M
             overview = movie.overview,
             posterPath = movie.posterPath,
             releaseDate = movie.releaseDate,
-            title = movie.title
+            title = movie.title,
+            voteAverage = movie.voteAverage,
+            tagline = movie.tagline.orEmpty(),
+            status = movie.status.orEmpty(),
+            runtime = movie.runtime.or(0)
         )
     } ?: emptyList()
 }
@@ -41,7 +45,11 @@ fun MovieResult.mapMovieDetailsToDomain(): MovieResult {
         overview = this.overview,
         posterPath = this.posterPath,
         releaseDate = this.releaseDate,
-        title = this.title
+        title = this.title,
+        voteAverage = this.voteAverage,
+        tagline = this.tagline,
+        status = this.status,
+        runtime = this.runtime
     )
 }
 

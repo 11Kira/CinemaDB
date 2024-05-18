@@ -17,4 +17,12 @@ data class MovieResult (
     val releaseDate: String,
     @SerializedName("title")
     val title: String,
+    @SerializedName("vote_average")
+    val voteAverage: Double,
+    @SerializedName("tagline")
+    val tagline: String?,
+    @SerializedName("status")
+    val status: String?,
+    @SerializedName("runtime")
+    val runtime: Int
 )
