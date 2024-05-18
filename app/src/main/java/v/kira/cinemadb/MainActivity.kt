@@ -28,6 +28,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
@@ -63,12 +64,22 @@ class MainActivity : ComponentActivity() {
 fun MainScreenView(){
     val navController = rememberNavController()
     Scaffold(
-        bottomBar = { BottomNavigation(navController = navController) }
+        bottomBar = {
+            if (currentRoute(navController) != DETAILS_SCREEN_ROUTE) {
+                BottomNavigation(navController = navController)
+            }
+        }
     ) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
             NavigationGraph(navController = navController)
         }
     }
+}
+
+@Composable
+fun currentRoute(navController: NavHostController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
 }
 
 @Composable
