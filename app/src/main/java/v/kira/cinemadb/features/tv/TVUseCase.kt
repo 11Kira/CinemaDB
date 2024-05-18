@@ -36,6 +36,6 @@ class TVUseCase @Inject constructor(
         tvSeriesId: Long,
         language: String
     ): TVShowResult {
-        return repository.getTvShowDetails(token, tvSeriesId, language)
+        return repository.getTVShowDetails(token, tvSeriesId, language)
     }
 }

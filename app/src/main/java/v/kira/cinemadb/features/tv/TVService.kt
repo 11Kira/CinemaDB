@@ -10,28 +10,28 @@ import v.kira.cinemadb.model.TVShowResult
 
 interface TVService {
     @GET("tv/airing_today")
-    suspend fun getAiringTodayTvShows(
+    suspend fun getAiringTodayTVShows(
         @Header("Authorization") header: String,
         @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ResponseObject<List<TVShowResult>>>
 
     @GET("trending/tv/week")
-    suspend fun getTrendingTvShows(
+    suspend fun getTrendingTVShows(
         @Header("Authorization") header: String,
         @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ResponseObject<List<TVShowResult>>>
 
     @GET("tv/top_rated")
-    suspend fun getTopRatedTvShows(
+    suspend fun getTopRatedTVShows(
         @Header("Authorization") header: String,
         @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ResponseObject<List<TVShowResult>>>
 
     @GET("tv/{series_id}")
-    suspend fun getTvShowDetails(
+    suspend fun getTVShowDetails(
         @Header("Authorization") header: String,
         @Path("series_id") seriesId: Long,
         @Query("language") language: String,

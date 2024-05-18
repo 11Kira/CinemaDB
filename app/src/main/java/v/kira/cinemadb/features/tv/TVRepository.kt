@@ -17,7 +17,7 @@ class TVRepository @Inject constructor(
     suspend fun getTopRatedTVShows(token: String, language: String, page: Int): List<TVShowResult> {
         return remoteSource.getTopRatedTVShows(token, language, page).mapTVSeriesResultToDomain()
     }
-    suspend fun getTvShowDetails(token: String, tvSeriesId: Long, language: String): TVShowResult {
-        return remoteSource.getTvShowDetails(token, tvSeriesId, language).mapTVShowDetailsToDomain()
+    suspend fun getTVShowDetails(token: String, tvSeriesId: Long, language: String): TVShowResult {
+        return remoteSource.getTVShowDetails(token, tvSeriesId, language).mapTVShowDetailsToDomain()
     }
 }
