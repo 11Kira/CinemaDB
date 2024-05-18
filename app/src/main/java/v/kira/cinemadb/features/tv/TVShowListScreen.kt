@@ -46,6 +46,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import v.kira.cinemadb.MainActivity
 import v.kira.cinemadb.R
 import v.kira.cinemadb.model.TVShowResult
+import v.kira.cinemadb.util.AppUtil
 
 lateinit var viewModel: TVViewModel
 
@@ -209,7 +210,7 @@ fun PopulateGrid(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             content = {
                 items(tvShows) { tvShow ->
-                    val posterPath = "https://image.tmdb.org/t/p/original/"+tvShow.posterPath
+                    val posterPath = AppUtil.retrievePosterImageUrl(tvShow.posterPath)
                     AsyncImage(
                         modifier = Modifier
                             .fillMaxWidth()

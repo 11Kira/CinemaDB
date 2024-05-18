@@ -40,6 +40,7 @@ import coil.request.ImageRequest
 import kotlinx.coroutines.flow.SharedFlow
 import v.kira.cinemadb.model.MovieResult
 import v.kira.cinemadb.model.TVShowResult
+import v.kira.cinemadb.util.AppUtil
 import kotlin.math.roundToInt
 
 lateinit var viewModel: DetailsViewModel
@@ -94,7 +95,7 @@ fun SetupMovieDetails(movie: MovieResult) {
         .background(Color.Black)
         .verticalScroll(rememberScrollState())
     ) {
-        val posterPath = "https://image.tmdb.org/t/p/original/"+movie.posterPath
+        val posterPath = AppUtil.retrievePosterImageUrl(movie.posterPath)
         Box(modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()) {
@@ -162,8 +163,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             .background(Color.Black)
             .verticalScroll(rememberScrollState())
     ) {
-        val posterPath = "https://image.tmdb.org/t/p/original/"+tvShow.posterPath
-
+        val posterPath = AppUtil.retrievePosterImageUrl(tvShow.posterPath)
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
             contentDescription = "Poster",

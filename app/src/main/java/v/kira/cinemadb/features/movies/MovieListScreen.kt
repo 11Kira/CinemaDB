@@ -48,6 +48,7 @@ import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
 import v.kira.cinemadb.R
 import v.kira.cinemadb.model.MovieResult
+import v.kira.cinemadb.util.AppUtil
 
 lateinit var viewModel: MovieViewModel
 
@@ -213,7 +214,7 @@ fun PopulateGrid(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             content = {
                 items(movies) { movie ->
-                    val posterPath = "https://image.tmdb.org/t/p/original/"+movie.posterPath
+                    val posterPath = AppUtil.retrievePosterImageUrl(movie.posterPath)
                     AsyncImage(
                         modifier = Modifier
                             .fillMaxWidth()
