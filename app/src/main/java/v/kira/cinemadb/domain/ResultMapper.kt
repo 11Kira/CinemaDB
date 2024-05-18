@@ -32,7 +32,12 @@ fun Response<ResponseObject<List<TVShowResult>>>.mapTVSeriesResultToDomain(): Li
             overview = tv.overview,
             posterPath = tv.posterPath,
             firstAirDate = tv.firstAirDate,
-            originalName = tv.originalName
+            originalName = tv.originalName,
+            numberOfEpisodes = tv.numberOfEpisodes.or(0),
+            numberOfSeasons = tv.numberOfSeasons.or(0),
+            voteAverage = tv.voteAverage,
+            tagline = tv.tagline.orEmpty(),
+            status = tv.status.orEmpty(),
         )
     } ?: emptyList()
 }
@@ -61,6 +66,11 @@ fun TVShowResult.mapTVShowDetailsToDomain(): TVShowResult {
         overview = this.overview,
         posterPath = this.posterPath,
         firstAirDate = this.firstAirDate,
-        originalName = this.originalName
+        originalName = this.originalName,
+        numberOfEpisodes = this.numberOfEpisodes,
+        numberOfSeasons = this.numberOfSeasons,
+        voteAverage = this.voteAverage,
+        tagline = this.tagline,
+        status = this.status,
     )
 }

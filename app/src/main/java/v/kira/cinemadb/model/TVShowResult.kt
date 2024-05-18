@@ -17,4 +17,14 @@ data class TVShowResult (
     val firstAirDate: String,
     @SerializedName("name")
     val name: String,
+    @SerializedName("vote_average")
+    val voteAverage: Double,
+    @SerializedName("tagline")
+    val tagline: String,
+    @SerializedName("status")
+    val status: String,
+    @SerializedName("number_of_seasons")
+    val numberOfSeasons: Int,
+    @SerializedName("number_of_episodes")
+    val numberOfEpisodes: Int,
 )

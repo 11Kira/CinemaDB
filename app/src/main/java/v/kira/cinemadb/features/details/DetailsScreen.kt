@@ -164,13 +164,35 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             .verticalScroll(rememberScrollState())
     ) {
         val posterPath = AppUtil.retrievePosterImageUrl(tvShow.posterPath)
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
-            contentDescription = "Poster",
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-        )
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                contentDescription = "Poster",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            )
+
+            Box(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .align(Alignment.TopEnd)
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentHeight(),
+                    color = Color.White,
+                    text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 25.sp,                )
+            }
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Column(
             modifier = Modifier
@@ -183,7 +205,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
-                text = tvShow.name,
+                text = tvShow.tagline,
                 color = Color.White
             )
             Text(
