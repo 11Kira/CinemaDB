@@ -13,8 +13,6 @@ data class TVShowResult (
     val overview: String,
     @SerializedName("poster_path")
     val posterPath: String,
-    @SerializedName("first_air_date")
-    val firstAirDate: String,
     @SerializedName("name")
     val name: String,
     @SerializedName("vote_average")
@@ -27,4 +25,12 @@ data class TVShowResult (
     val numberOfSeasons: Int,
     @SerializedName("number_of_episodes")
     val numberOfEpisodes: Int,
+    @SerializedName("genres")
+    val genres: List<Genre>,
+    @SerializedName("origin_country")
+    val originCountry: List<String>,
+    @SerializedName("first_air_date")
+    val firstAirDate: String,
+    @SerializedName("last_air_date")
+    val lastAirDate: String,
 )

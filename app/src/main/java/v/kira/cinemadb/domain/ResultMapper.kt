@@ -33,13 +33,16 @@ fun Response<ResponseObject<List<TVShowResult>>>.mapTVSeriesResultToDomain(): Li
             name = tv.name,
             overview = tv.overview,
             posterPath = tv.posterPath,
-            firstAirDate = tv.firstAirDate,
             originalName = tv.originalName,
             numberOfEpisodes = tv.numberOfEpisodes.or(0),
             numberOfSeasons = tv.numberOfSeasons.or(0),
             voteAverage = tv.voteAverage,
             tagline = tv.tagline.orEmpty(),
             status = tv.status.orEmpty(),
+            genres = tv.genres.orEmpty(),
+            originCountry = tv.originCountry.orEmpty(),
+            firstAirDate = tv.firstAirDate,
+            lastAirDate = tv.lastAirDate.orEmpty()
         )
     } ?: emptyList()
 }
@@ -69,12 +72,15 @@ fun TVShowResult.mapTVShowDetailsToDomain(): TVShowResult {
         name = this.name,
         overview = this.overview,
         posterPath = this.posterPath,
-        firstAirDate = this.firstAirDate,
         originalName = this.originalName,
         numberOfEpisodes = this.numberOfEpisodes,
         numberOfSeasons = this.numberOfSeasons,
         voteAverage = this.voteAverage,
         tagline = this.tagline,
         status = this.status,
+        genres = this.genres,
+        originCountry = this.originCountry,
+        firstAirDate = this.firstAirDate,
+        lastAirDate = this.lastAirDate
     )
 }

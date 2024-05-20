@@ -206,17 +206,16 @@ fun SetupMovieDetails(movie: MovieResult) {
                 modifier = Modifier
                     .wrapContentWidth()
                     .padding(top = 20.dp),
-                text = "Runtime:",
+                text = "Status:",
                 color = Color.White
             )
-
 
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier.fillMaxWidth(),
-                text = movie.runtime.toString(),
+                text = movie.status,
                 color = Color.White
             )
 
@@ -237,6 +236,26 @@ fun SetupMovieDetails(movie: MovieResult) {
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier.fillMaxWidth(),
                 text = movie.releaseDate,
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Runtime:",
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier.fillMaxWidth(),
+                text = movie.runtime.toString(),
                 color = Color.White
             )
         }
@@ -297,13 +316,162 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 color = Color.White
             )
             Text(
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp),
                 text = tvShow.overview,
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Origin Country:",
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = TextUtils.join(", ",tvShow.originCountry),
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Genres:",
+                color = Color.White
+            )
+
+            val genres = ArrayList<String>()
+            tvShow.genres.forEach { genre -> genres.add(genre.name) }
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = TextUtils.join(", ",genres),
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Status:",
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier.fillMaxWidth(),
+                text = tvShow.status,
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Number of Seasons:",
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = tvShow.numberOfSeasons.toString(),
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Number of Episodes:",
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = tvShow.numberOfEpisodes.toString(),
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "First Air Date:",
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = tvShow.firstAirDate,
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Last Air Date:",
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = tvShow.lastAirDate,
                 color = Color.White
             )
         }
