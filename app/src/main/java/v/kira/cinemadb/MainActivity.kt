@@ -36,10 +36,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import v.kira.cinemadb.Graph.DETAILS_SCREEN_ROUTE
 import v.kira.cinemadb.features.details.DetailsScreen
 import v.kira.cinemadb.features.movies.MovieListScreen
-import v.kira.cinemadb.features.navigation.AccountScreen
-import v.kira.cinemadb.features.navigation.BottomMenuItem
-import v.kira.cinemadb.features.navigation.SearchScreen
 import v.kira.cinemadb.features.tv.TVShowListScreen
+import v.kira.cinemadb.navigation.AccountScreen
+import v.kira.cinemadb.navigation.BottomMenuItem
+import v.kira.cinemadb.navigation.SearchScreen
 
 
 @AndroidEntryPoint
@@ -84,9 +84,9 @@ fun currentRoute(navController: NavHostController): String? {
 
 @Composable
 fun BottomNavigation(navController: NavController) {
-    var selectedItem by remember { mutableStateOf("Home") }
+    var selectedItem by remember { mutableStateOf("Movies") }
     val screens = listOf(
-        BottomMenuItem.Home,
+        BottomMenuItem.Movies,
         BottomMenuItem.TV,
         BottomMenuItem.Search,
         BottomMenuItem.Account
@@ -132,9 +132,9 @@ fun BottomNavigation(navController: NavController) {
 fun NavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = BottomMenuItem.Home.screenRoute
+        startDestination = BottomMenuItem.Movies.screenRoute
     ) {
-        composable(BottomMenuItem.Home.screenRoute) {
+        composable(BottomMenuItem.Movies.screenRoute) {
             MovieListScreen(
                 onItemClick = { movieId, type ->
                     navController.navigate("${Graph.DETAILS_GRAPH}/${movieId}/${type}")

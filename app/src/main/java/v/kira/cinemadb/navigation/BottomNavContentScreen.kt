@@ -1,4 +1,4 @@
-package v.kira.cinemadb.features.navigation
+package v.kira.cinemadb.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
