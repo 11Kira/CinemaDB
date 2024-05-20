@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -44,7 +43,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.flow.SharedFlow
 import v.kira.cinemadb.MainActivity
-import v.kira.cinemadb.R
 import v.kira.cinemadb.model.TVShowResult
 import v.kira.cinemadb.util.AppUtil
 
@@ -138,7 +136,7 @@ fun SegmentedControl(
                         onItemSelection(selectedIndex.value)
                     },
                     colors = if (selectedIndex.value == index) {
-                        ButtonDefaults.outlinedButtonColors(backgroundColor = colorResource(id = R.color.teal_200))
+                        ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray)
                     } else {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent)
                     },
@@ -165,11 +163,7 @@ fun SegmentedControl(
                         )
                     },
                     border = BorderStroke(
-                        1.dp, if (selectedIndex.value == index) {
-                            colorResource(id = R.color.teal_200)
-                        } else {
-                            colorResource(id = R.color.teal_200).copy(alpha = 0.75f)
-                        }
+                        1.5.dp, Color.DarkGray
                     ),
                 ) {
                     Text(
@@ -180,11 +174,7 @@ fun SegmentedControl(
                                 LocalTextStyle.current.fontWeight
                             else
                                 FontWeight.Normal,
-                            color = if (selectedIndex.value == index) {
-                                Color.White
-                            } else {
-                                colorResource(id = R.color.teal_200).copy(alpha = 0.9f)
-                            },
+                            color = Color.White
                         ),
                         textAlign = TextAlign.Center
                     )

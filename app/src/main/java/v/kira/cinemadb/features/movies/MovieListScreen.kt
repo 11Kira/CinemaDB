@@ -168,7 +168,6 @@ fun SegmentedControl(
                     },
                     border = BorderStroke(
                         1.5.dp, Color.DarkGray
-
                     ),
                 ) {
                     Text(
