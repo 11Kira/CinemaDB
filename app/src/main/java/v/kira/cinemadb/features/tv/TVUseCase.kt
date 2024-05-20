@@ -1,6 +1,6 @@
 package v.kira.cinemadb.features.tv
 
-import v.kira.cinemadb.model.TVResult
+import v.kira.cinemadb.model.TVShowResult
 import javax.inject.Inject
 
 class TVUseCase @Inject constructor(
@@ -11,7 +11,7 @@ class TVUseCase @Inject constructor(
         token: String,
         language: String,
         page: Int
-    ): List<TVResult> {
+    ): List<TVShowResult> {
         return repository.getAiringTodayTVShows(token, language, page)
     }
 
@@ -19,7 +19,7 @@ class TVUseCase @Inject constructor(
         token: String,
         language: String,
         page: Int
-    ): List<TVResult> {
+    ): List<TVShowResult> {
         return repository.getTopRatedTVShows(token, language, page)
     }
 
@@ -27,7 +27,15 @@ class TVUseCase @Inject constructor(
         token: String,
         language: String,
         page: Int
-    ): List<TVResult> {
+    ): List<TVShowResult> {
         return repository.getTrendingTVShows(token, language, page)
+    }
+
+    suspend fun getTVShowDetails(
+        token: String,
+        tvSeriesId: Long,
+        language: String
+    ): TVShowResult {
+        return repository.getTVShowDetails(token, tvSeriesId, language)
     }
 }

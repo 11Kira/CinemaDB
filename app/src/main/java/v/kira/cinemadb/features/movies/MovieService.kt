@@ -3,6 +3,7 @@ package v.kira.cinemadb.features.movies
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Path
 import retrofit2.http.Query
 import v.kira.cinemadb.model.MovieResult
 import v.kira.cinemadb.model.ResponseObject
@@ -35,4 +36,11 @@ interface MovieService {
         @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ResponseObject<List<MovieResult>>>
+
+    @GET("movie/{movie_id}")
+    suspend fun getMovieDetails(
+        @Header("Authorization") header: String,
+        @Path("movie_id") movieId: Long,
+        @Query("language") language: String,
+    ): MovieResult
 }

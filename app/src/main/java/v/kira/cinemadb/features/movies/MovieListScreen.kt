@@ -3,13 +3,15 @@ package v.kira.cinemadb.features.movies
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -29,7 +31,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -44,21 +45,22 @@ import kotlinx.coroutines.flow.SharedFlow
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
-import v.kira.cinemadb.MainActivity.Companion.UPCOMING
-import v.kira.cinemadb.R
 import v.kira.cinemadb.model.MovieResult
+import v.kira.cinemadb.util.AppUtil
 
 lateinit var viewModel: MovieViewModel
 
 @Composable
-fun MovieListScreen() {
+fun MovieListScreen(
+    onItemClick: (Long, Int) -> Unit
+) {
     viewModel = hiltViewModel()
-    MainScreen(viewModel.movieState)
+    MainScreen(viewModel.movieState, onItemClick)
     viewModel.getMovieList(TRENDING, 1)
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
+fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, Int) -> Unit) {
     val movieList = remember { mutableStateListOf<MovieResult>() }
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -81,30 +83,26 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
                         movieList.addAll(state.topRatedMovies)
                     }
 
-                    is MovieState.SetUpcomingMovies -> {
-                        movieList.clear()
-                        movieList.addAll(state.upcomingMovies)
-                    }
-
                     is MovieState.ShowError -> {
                         Log.e("Error: ", state.error.toString())
                     }
+
+                    else -> {}
                 }
             }
         }
     }
 
-    val categoryList = listOf("Trending", "Now Playing", "Top Rated", "Upcoming")
+    val categoryList = listOf("Trending", "Now Playing", "Top Rated")
     Column {
         SegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> { viewModel.getMovieList(TRENDING, 1) }
                 1 -> { viewModel.getMovieList(NOW_PLAYING, 1) }
-                2 -> { viewModel.getMovieList(TOP_RATED, 1)}
-                else -> { viewModel.getMovieList(UPCOMING, 1) }
+                else -> { viewModel.getMovieList(TOP_RATED, 1) }
             }
         }
-        PopulateGrid(movieList)
+        PopulateGrid(movieList, onItemClick)
     }
 }
 
@@ -142,7 +140,7 @@ fun SegmentedControl(
                         onItemSelection(selectedIndex.value)
                     },
                     colors = if (selectedIndex.value == index) {
-                        ButtonDefaults.outlinedButtonColors(backgroundColor = colorResource(id = R.color.teal_200))
+                        ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray)
                     } else {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent)
                     },
@@ -169,11 +167,7 @@ fun SegmentedControl(
                         )
                     },
                     border = BorderStroke(
-                        1.dp, if (selectedIndex.value == index) {
-                            colorResource(id = R.color.teal_200)
-                        } else {
-                            colorResource(id = R.color.teal_200).copy(alpha = 0.75f)
-                        }
+                        1.5.dp, Color.DarkGray
                     ),
                 ) {
                     Text(
@@ -184,11 +178,7 @@ fun SegmentedControl(
                                 LocalTextStyle.current.fontWeight
                             else
                                 FontWeight.Normal,
-                            color = if (selectedIndex.value == index) {
-                                Color.White
-                            } else {
-                                colorResource(id = R.color.teal_200).copy(alpha = 0.9f)
-                            },
+                            color = Color.White
                         ),
                         textAlign = TextAlign.Center
                     )
@@ -200,23 +190,32 @@ fun SegmentedControl(
 }
 
 @Composable
-fun PopulateGrid(movies: List<MovieResult>) {
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
-        verticalItemSpacing = 8.dp,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        content = {
-            items(movies) { movie ->
-                val posterPath = "https://image.tmdb.org/t/p/original/"+movie.posterPath
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
-                    contentDescription = "Description",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                )
+fun PopulateGrid(
+    movies: List<MovieResult>,
+    onItemClick: (Long, Int) -> Unit
+) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.Black)
+    ) {
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            verticalItemSpacing = 5.dp,
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            content = {
+                items(movies) { movie ->
+                    val posterPath = AppUtil.retrievePosterImageUrl(movie.posterPath)
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .clickable { onItemClick(movie.id, 1) },
+                        model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                        contentDescription = "Description",
+                        contentScale = ContentScale.Crop,
+                    )
+                }
             }
-        }
-    )
+        )
+    }
 }

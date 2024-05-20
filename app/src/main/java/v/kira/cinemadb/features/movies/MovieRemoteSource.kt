@@ -44,15 +44,15 @@ class MovieRemoteSource @Inject constructor(
         )
     }
 
-    suspend fun getUpcomingMovies(
+    suspend fun getMovieDetails(
         token: String,
-        language: String,
-        page: Int
+        movieId: Long,
+        language: String
     ) = withContext(Dispatchers.IO) {
-        movieService.getUpcomingMovies(
+        movieService.getMovieDetails(
             header = token,
-            language = language,
-            page = page
+            movieId = movieId,
+            language = language
         )
     }
 }

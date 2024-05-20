@@ -7,6 +7,6 @@ sealed class MovieState {
     data class SetTrendingMovies(val trendingMovies: List<MovieResult>): MovieState()
     data class SetTopRatedMovies(val topRatedMovies: List<MovieResult>): MovieState()
     data class SetNowPlayingMovies(val nowPlayingMovies: List<MovieResult>): MovieState()
-    data class SetUpcomingMovies(val upcomingMovies: List<MovieResult>): MovieState()
+    data class SetMovieDetails(val movieDetails: MovieResult): MovieState()
 
 }

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import v.kira.cinemadb.MainActivity
-import v.kira.cinemadb.model.TVResult
+import v.kira.cinemadb.model.TVShowResult
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,7 +29,7 @@ class TVViewModel @Inject constructor(
                 mutableTVShowState.emit(TVShowState.ShowError(error))
             }
         }) {
-            val tvShowList: List<TVResult>
+            val tvShowList: List<TVShowResult>
             when (type) {
                 MainActivity.TRENDING -> {
                     tvShowList = useCase.getTrendingTVShows(header, language, page)
