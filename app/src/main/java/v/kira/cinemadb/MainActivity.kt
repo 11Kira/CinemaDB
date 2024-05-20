@@ -113,14 +113,14 @@ fun BottomNavigation(navController: NavController) {
                 label = {
                     Text(
                         text = it.label,
-                        color = Color.White,
+                        color = if (selectedItem == it.label) Color.White else Color.Gray,
                         fontSize = 10.sp
                     ) },
                 icon = {
                     Icon(
                         imageVector  = ImageVector.vectorResource(it.icon),
                         contentDescription = it.label,
-                        tint = Color.White
+                        tint = if (selectedItem == it.label) Color.White else Color.Gray
                     )
                 }
             )
