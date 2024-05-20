@@ -1,5 +1,6 @@
 package v.kira.cinemadb.features.details
 
+import android.text.TextUtils
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -142,13 +144,99 @@ fun SetupMovieDetails(movie: MovieResult) {
                 color = Color.White
             )
             Text(
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 20.dp),
                 text = movie.overview,
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Origin Country:",
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = TextUtils.join(", ",movie.originCountry),
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Genres:",
+                color = Color.White
+            )
+
+            val genres = ArrayList<String>()
+            movie.genres.forEach { genre -> genres.add(genre.name) }
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = TextUtils.join(", ",genres),
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Runtime:",
+                color = Color.White
+            )
+
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier.fillMaxWidth(),
+                text = movie.runtime.toString(),
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Release date:",
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier.fillMaxWidth(),
+                text = movie.releaseDate,
                 color = Color.White
             )
         }

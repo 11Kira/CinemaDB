@@ -24,5 +24,9 @@ data class MovieResult (
     @SerializedName("status")
     val status: String,
     @SerializedName("runtime")
-    val runtime: Int
+    val runtime: Int,
+    @SerializedName("genres")
+    val genres: List<Genre>,
+    @SerializedName("origin_country")
+    val originCountry: List<String>
 )

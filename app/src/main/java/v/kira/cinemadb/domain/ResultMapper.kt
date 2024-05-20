@@ -18,7 +18,9 @@ fun Response<ResponseObject<List<MovieResult>>>.mapMovieResultToDomain(): List<M
             voteAverage = movie.voteAverage,
             tagline = movie.tagline.orEmpty(),
             status = movie.status.orEmpty(),
-            runtime = movie.runtime.or(0)
+            runtime = movie.runtime.or(0),
+            genres = movie.genres.orEmpty(),
+            originCountry = movie.originCountry.orEmpty()
         )
     } ?: emptyList()
 }
@@ -54,7 +56,9 @@ fun MovieResult.mapMovieDetailsToDomain(): MovieResult {
         voteAverage = this.voteAverage,
         tagline = this.tagline,
         status = this.status,
-        runtime = this.runtime
+        runtime = this.runtime,
+        genres = this.genres,
+        originCountry = this.originCountry
     )
 }
 
