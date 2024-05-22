@@ -30,17 +30,11 @@ interface MovieService {
         @Query("page") page: Int
     ): Response<ResponseObject<List<MovieResult>>>
 
-    @GET("movie/upcoming")
-    suspend fun getUpcomingMovies(
-        @Header("Authorization") header: String,
-        @Query("language") language: String,
-        @Query("page") page: Int
-    ): Response<ResponseObject<List<MovieResult>>>
-
     @GET("movie/{movie_id}")
     suspend fun getMovieDetails(
         @Header("Authorization") header: String,
         @Path("movie_id") movieId: Long,
         @Query("language") language: String,
+        @Query("append_to_response") credits: String = "credits"
     ): MovieResult
 }
