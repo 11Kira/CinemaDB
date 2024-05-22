@@ -208,7 +208,7 @@ fun PopulateGrid(
                     AsyncImage(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(300.dp)
+                            .height(350.dp)
                             .clickable { onItemClick(movie.id, 1) },
                         model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                         contentDescription = "Description",
