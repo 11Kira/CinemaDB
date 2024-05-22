@@ -28,5 +28,7 @@ data class MovieResult (
     @SerializedName("genres")
     val genres: List<Genre>,
     @SerializedName("origin_country")
-    val originCountry: List<String>
+    val originCountry: List<String>,
+    @SerializedName("credits")
+    val credits: Credits?
 )

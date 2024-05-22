@@ -161,6 +161,31 @@ fun SetupMovieDetails(movie: MovieResult) {
                 modifier = Modifier
                     .wrapContentWidth()
                     .padding(top = 20.dp),
+                text = "Cast:",
+                color = Color.White
+            )
+
+            val casts = ArrayList<String>()
+            movie.credits?.cast?.forEach { cast ->
+                if (casts.size < 4) casts.add(cast.name)
+            }
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = TextUtils.join(", ",casts),
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Origin Country:",
                 color = Color.White
             )
@@ -312,7 +337,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
-                text = tvShow.tagline,
+                text = tvShow.tagline.ifBlank { tvShow.originalName },
                 color = Color.White
             )
             Text(
@@ -323,6 +348,32 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     .fillMaxWidth()
                     .padding(top = 10.dp),
                 text = tvShow.overview,
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Cast:",
+                color = Color.White
+            )
+
+            val casts = ArrayList<String>()
+            tvShow.credits?.cast?.forEach { cast ->
+                if (casts.size < 4) casts.add(cast.name)
+            }
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = TextUtils.join(", ",casts),
                 color = Color.White
             )
 
