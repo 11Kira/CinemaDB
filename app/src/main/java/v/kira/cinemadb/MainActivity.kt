@@ -1,125 +1,185 @@
 package v.kira.cinemadb
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.SharedFlow
-import v.kira.cinemadb.MainActivity.Companion.POPULAR
-import v.kira.cinemadb.features.movies.MovieState
-import v.kira.cinemadb.features.movies.MovieViewModel
-import v.kira.cinemadb.model.CinemaResult
-import v.kira.cinemadb.ui.theme.CinemaDBTheme
+import v.kira.cinemadb.Graph.DETAILS_SCREEN_ROUTE
+import v.kira.cinemadb.features.details.DetailsScreen
+import v.kira.cinemadb.features.movies.MovieListScreen
+import v.kira.cinemadb.features.tv.TVShowListScreen
+import v.kira.cinemadb.navigation.AccountScreen
+import v.kira.cinemadb.navigation.BottomMenuItem
+import v.kira.cinemadb.navigation.SearchScreen
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MovieViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            CinemaDBTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    SetupViewModel(viewModel = viewModel)
-                }
-            }
+            MainScreenView()
         }
     }
 
     companion object {
-        const val POPULAR = 1
+        const val TRENDING = 1
         const val NOW_PLAYING = 2
         const val TOP_RATED = 3
     }
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun SetupViewModel(viewModel: MovieViewModel) {
-    MainScreen(viewModel.movieState)
-    viewModel.getMovieList(POPULAR, 1)
-    //viewModel.getMovieList(NOW_PLAYING, 1)
-    //viewModel.getMovieList(TOP_RATED, 1)
-}
-
-
-@Composable
-fun MainScreen(sharedFlow: SharedFlow<MovieState>) {
-    val movieList = remember { mutableStateListOf<CinemaResult>() }
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(key1 = Unit) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            sharedFlow.collect { state ->
-                when (state) {
-                    is MovieState.SetPopularMovies -> {
-                        movieList.addAll(state.popularMovies)
-                    }
-
-                    is MovieState.SetNowPlayingMovies -> {
-                        movieList.addAll(state.nowPlayingMovies)
-                    }
-
-                    is MovieState.SetTopRatedMovies -> {
-                        movieList.addAll(state.topRatedMovies)
-                    }
-
-                    is MovieState.ShowError -> {
-                        Log.e("Error: ", state.error.toString())
-                    }
-                }
+fun MainScreenView(){
+    val navController = rememberNavController()
+    Scaffold(
+        bottomBar = {
+            if (currentRoute(navController) != DETAILS_SCREEN_ROUTE) {
+                BottomNavigation(navController = navController)
             }
         }
+    ) { contentPadding ->
+        Box(modifier = Modifier.padding(contentPadding)) {
+            NavigationGraph(navController = navController)
+        }
     }
-
-    PopulateGrid(movieList)
 }
 
 @Composable
-fun PopulateGrid(movies: List<CinemaResult>) {
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
-        verticalItemSpacing = 8.dp,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        content = {
-            items(movies) { movie ->
-                val posterPath = "https://image.tmdb.org/t/p/original/"+movie.posterPath
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
-                    contentDescription = "Description",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                )
-            }
-        },
-
-    )
+fun currentRoute(navController: NavHostController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
 }
+
+@Composable
+fun BottomNavigation(navController: NavController) {
+    var selectedItem by remember { mutableStateOf("Movies") }
+    val screens = listOf(
+        BottomMenuItem.Movies,
+        BottomMenuItem.TV,
+        BottomMenuItem.Search,
+        BottomMenuItem.Account
+    )
+    BottomNavigation(
+        modifier = Modifier.fillMaxWidth(),
+        backgroundColor = Color.DarkGray,
+    ) {
+        screens.forEach {
+            BottomNavigationItem(
+                selected = (selectedItem == it.label),
+                onClick = {
+                    selectedItem = it.label
+                    navController.navigate(it.screenRoute) {
+                        navController.graph.startDestinationRoute?.let { screenRoute ->
+                            popUpTo(screenRoute) {
+                                saveState = true
+                            }
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                label = {
+                    Text(
+                        text = it.label,
+                        color = if (selectedItem == it.label) Color.White else Color.Gray,
+                        fontSize = 10.sp
+                    ) },
+                icon = {
+                    Icon(
+                        imageVector  = ImageVector.vectorResource(it.icon),
+                        contentDescription = it.label,
+                        tint = if (selectedItem == it.label) Color.White else Color.Gray
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun NavigationGraph(navController: NavHostController) {
+    NavHost(
+        navController = navController,
+        startDestination = BottomMenuItem.Movies.screenRoute
+    ) {
+        composable(BottomMenuItem.Movies.screenRoute) {
+            MovieListScreen(
+                onItemClick = { movieId, type ->
+                    navController.navigate("${Graph.DETAILS_GRAPH}/${movieId}/${type}")
+                }
+            )
+        }
+        composable(BottomMenuItem.TV.screenRoute) {
+            TVShowListScreen(
+                onItemClick = { tvShowId, type ->
+                    navController.navigate("${Graph.DETAILS_GRAPH}/${tvShowId}/${type}")
+                }
+            )
+        }
+        composable(BottomMenuItem.Search.screenRoute) { SearchScreen() }
+        composable(BottomMenuItem.Account.screenRoute) { AccountScreen() }
+        detailsNavGraph(navController = navController)
+    }
+}
+
+fun NavGraphBuilder.detailsNavGraph(navController: NavHostController) {
+
+    navigation(
+        route = "${Graph.DETAILS_GRAPH}/{id}/{type}",
+        startDestination = DETAILS_SCREEN_ROUTE,
+    ) {
+        composable(
+            route = DETAILS_SCREEN_ROUTE,
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                },
+                navArgument("type") {
+                    type = NavType.StringType
+                },
+            )
+        ) {
+            val id = it.arguments?.getString("id")?.toLong() ?: 0L
+            val type = it.arguments?.getString("type")?.toInt() ?: 0
+            DetailsScreen(id, type)
+        }
+    }
+}
+
+object Graph {
+    const val DETAILS_GRAPH = "details_graph"
+    const val DETAILS_SCREEN_ROUTE = "details/{id}/{type}"
+}
+

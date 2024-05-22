@@ -1,57 +1,57 @@
-package v.kira.cinemadb.features.movies
+package v.kira.cinemadb.features.tv
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class MovieRemoteSource @Inject constructor(
-    private val movieService: MovieService
+class TVRemoteSource @Inject constructor(
+    private val tvService: TVService
 ) {
 
-    suspend fun getNowPlayingMovies(
+    suspend fun getAiringTodayTVShows(
         token: String,
         language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        movieService.getNowPlayingMovies(
+        tvService.getAiringTodayTVShows(
             header = token,
             language = language,
             page = page
         )
     }
 
-    suspend fun getTrendingMovies(
+    suspend fun getTrendingTVShows(
         token: String,
         language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        movieService.getTrendingMovies(
+        tvService.getTrendingTVShows(
             header = token,
             language = language,
             page = page,
         )
     }
 
-    suspend fun getTopRatedMovies(
+    suspend fun getTopRatedTVShows(
         token: String,
         language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        movieService.getTopRatedMovies(
+        tvService.getTopRatedTVShows(
             header = token,
             language = language,
             page = page
         )
     }
 
-    suspend fun getMovieDetails(
+    suspend fun getTVShowDetails(
         token: String,
-        movieId: Long,
+        tvSeriesId: Long,
         language: String
     ) = withContext(Dispatchers.IO) {
-        movieService.getMovieDetails(
+        tvService.getTVShowDetails(
             header = token,
-            movieId = movieId,
+            seriesId = tvSeriesId,
             language = language
         )
     }

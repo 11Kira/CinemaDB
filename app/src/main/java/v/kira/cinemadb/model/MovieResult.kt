@@ -2,7 +2,7 @@ package v.kira.cinemadb.model
 
 import com.google.gson.annotations.SerializedName
 
-data class CinemaResult (
+data class MovieResult (
     @SerializedName("id")
     val id: Long,
     @SerializedName("original_language")
@@ -17,4 +17,18 @@ data class CinemaResult (
     val releaseDate: String,
     @SerializedName("title")
     val title: String,
+    @SerializedName("vote_average")
+    val voteAverage: Double,
+    @SerializedName("tagline")
+    val tagline: String,
+    @SerializedName("status")
+    val status: String,
+    @SerializedName("runtime")
+    val runtime: Int,
+    @SerializedName("genres")
+    val genres: List<Genre>,
+    @SerializedName("origin_country")
+    val originCountry: List<String>,
+    @SerializedName("credits")
+    val credits: Credits?
 )
