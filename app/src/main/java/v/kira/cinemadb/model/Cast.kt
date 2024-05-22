@@ -2,7 +2,7 @@ package v.kira.cinemadb.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Credit (
+data class Cast (
     @SerializedName("id")
     val id: Long,
     @SerializedName("gender")
@@ -14,7 +14,7 @@ data class Credit (
     @SerializedName("cast_id")
     val castId: Long,
     @SerializedName("credit_id")
-    val creditId: Long,
+    val creditId: String,
     @SerializedName("order")
     val order: Int,
 )
