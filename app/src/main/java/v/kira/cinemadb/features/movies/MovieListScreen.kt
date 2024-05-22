@@ -22,9 +22,11 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +41,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.flow.SharedFlow
@@ -47,6 +50,7 @@ import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
 import v.kira.cinemadb.model.MovieResult
 import v.kira.cinemadb.util.AppUtil
+
 
 lateinit var viewModel: MovieViewModel
 
@@ -57,12 +61,18 @@ fun MovieListScreen(
     viewModel = hiltViewModel()
     MainScreen(viewModel.movieState, onItemClick)
     viewModel.getMovieList(TRENDING, 1)
+
+
+    //viewModel.getMovies()
+    //Log.e("testPaging",pagingItems.itemCount.toString())
 }
 
 @Composable
 fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, Int) -> Unit) {
     val movieList = remember { mutableStateListOf<MovieResult>() }
     val lifecycleOwner = LocalLifecycleOwner.current
+    val pagingItems = viewModel.uiState.collectAsLazyPagingItems()
+    val movies by rememberUpdatedState(newValue = viewModel.uiState.collectAsLazyPagingItems())
 
     LaunchedEffect(key1 = Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -81,6 +91,10 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, Int) -> U
                     is MovieState.SetTopRatedMovies -> {
                         movieList.clear()
                         movieList.addAll(state.topRatedMovies)
+                    }
+
+                    is MovieState.SetMovie -> {
+                        Log.e("Error: ", state.movie.toString())
                     }
 
                     is MovieState.ShowError -> {
@@ -102,7 +116,8 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, Int) -> U
                 else -> { viewModel.getMovieList(TOP_RATED, 1) }
             }
         }
-        PopulateGrid(movieList, onItemClick)
+        //PopulateGrid(pagingItems, onItemClick)
+        PopulateGrid(movies = movieList, onItemClick)
     }
 }
 
@@ -191,6 +206,7 @@ fun SegmentedControl(
 
 @Composable
 fun PopulateGrid(
+    //movies: LazyPagingItems<MovieResult>,
     movies: List<MovieResult>,
     onItemClick: (Long, Int) -> Unit
 ) {
@@ -203,13 +219,16 @@ fun PopulateGrid(
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             content = {
-                items(movies) { movie ->
-                    val posterPath = AppUtil.retrievePosterImageUrl(movie.posterPath)
+                //items(movies.itemCount) {  movie ->
+                items(movies) {movie ->
+                    //val moviessss = movies[movie]
+
+                    val posterPath = movie.posterPath.let { AppUtil.retrievePosterImageUrl(it) }
                     AsyncImage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(350.dp)
-                            .clickable { onItemClick(movie.id, 1) },
+                            .clickable { movie.id?.let { onItemClick(it, 1) } },
                         model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                         contentDescription = "Description",
                         contentScale = ContentScale.Crop,

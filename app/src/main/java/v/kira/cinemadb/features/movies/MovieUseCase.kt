@@ -1,5 +1,9 @@
 package v.kira.cinemadb.features.movies
 
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import kotlinx.coroutines.flow.Flow
 import v.kira.cinemadb.model.MovieResult
 import javax.inject.Inject
 
@@ -37,5 +41,9 @@ class MovieUseCase @Inject constructor(
         language: String
     ): MovieResult {
         return repository.getMovieDetails(token, movieId, language)
+    }
+
+    suspend fun getMovies(viewModel: MovieViewModel): Flow<PagingData<MovieResult>> {
+        return repository.getMovieResults().cachedIn(viewModel.viewModelScope)
     }
 }

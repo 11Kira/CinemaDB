@@ -1,11 +1,17 @@
 package v.kira.cinemadb.features.movies
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
@@ -25,6 +31,9 @@ class MovieViewModel @Inject constructor(
 
     private val mutableMovieState: MutableSharedFlow<MovieState> = MutableSharedFlow()
     val movieState = mutableMovieState.asSharedFlow()
+
+    private val _uiState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow<PagingData<MovieResult>>(PagingData.empty())
+    val uiState: StateFlow<PagingData<MovieResult>> = _uiState.asStateFlow()
 
     fun getMovieList(type: Int, page: Int) {
         viewModelScope.launch (CoroutineExceptionHandler {_, error ->
@@ -50,4 +59,18 @@ class MovieViewModel @Inject constructor(
             }
         }
     }
+
+    fun getMovies() {
+        viewModelScope.launch {
+            try {
+                useCase.getMovies(this@MovieViewModel).collectLatest { pagingData ->
+                    _uiState.value = pagingData
+                }
+            } catch (e: Exception) {
+                Log.d("XXX:", e.toString())
+
+            }
+        }
+    }
+
 }

@@ -1,5 +1,9 @@
 package v.kira.cinemadb.features.movies
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.Flow
 import v.kira.cinemadb.domain.mapMovieDetailsToDomain
 import v.kira.cinemadb.domain.mapMovieResultToDomain
 import v.kira.cinemadb.model.MovieResult
@@ -20,4 +24,9 @@ class MovieRepository @Inject constructor(
     suspend fun getMovieDetails(token: String, movieId: Long, language: String): MovieResult {
         return remoteSource.getMovieDetails(token, movieId, language).mapMovieDetailsToDomain()
     }
+
+    fun getMovieResults(): Flow<PagingData<MovieResult>> =
+        Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
+            MoviePagingSource(remoteSource)
+        }.flow
 }
