@@ -167,9 +167,8 @@ fun SetupMovieDetails(movie: MovieResult) {
 
             val casts = ArrayList<String>()
             movie.credits?.cast?.forEach { cast ->
-                if (cast.order < 4) casts.add(cast.name)
+                if (casts.size < 4) casts.add(cast.name)
             }
-
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
@@ -349,6 +348,32 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     .fillMaxWidth()
                     .padding(top = 10.dp),
                 text = tvShow.overview,
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Cast:",
+                color = Color.White
+            )
+
+            val casts = ArrayList<String>()
+            tvShow.credits?.cast?.forEach { cast ->
+                if (casts.size < 4) casts.add(cast.name)
+            }
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = TextUtils.join(", ",casts),
                 color = Color.White
             )
 
