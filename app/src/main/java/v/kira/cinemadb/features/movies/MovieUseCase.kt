@@ -10,29 +10,16 @@ import javax.inject.Inject
 class MovieUseCase @Inject constructor(
     private val repository: MovieRepository
 ) {
-
-    suspend fun getNowPlayingMovies(
-        token: String,
-        language: String,
-        page: Int
-    ): List<MovieResult> {
-        return repository.getNowPlayingMovies(token, language, page)
+    suspend fun getNowPlayingMovies(token: String, language: String, viewModel: MovieViewModel): Flow<PagingData<MovieResult>> {
+        return repository.getNowPlayingMovies(token, language).cachedIn(viewModel.viewModelScope)
     }
 
-    suspend fun getTopRatedMovies(
-        token: String,
-        language: String,
-        page: Int
-    ): List<MovieResult> {
-        return repository.getTopRatedMovies(token, language, page)
+    suspend fun getTopRatedMovies(token: String, language: String, viewModel: MovieViewModel): Flow<PagingData<MovieResult>> {
+        return repository.getTopRatedMovies(token, language).cachedIn(viewModel.viewModelScope)
     }
 
-    suspend fun getTrendingMovies(
-        token: String,
-        language: String,
-        page: Int
-    ): List<MovieResult> {
-        return repository.getTrendingMovies(token, language, page)
+    suspend fun getTrendingMovies(token: String, language: String, viewModel: MovieViewModel): Flow<PagingData<MovieResult>> {
+        return repository.getTrendingMovies(token, language).cachedIn(viewModel.viewModelScope)
     }
 
     suspend fun getMovieDetails(
@@ -41,9 +28,5 @@ class MovieUseCase @Inject constructor(
         language: String
     ): MovieResult {
         return repository.getMovieDetails(token, movieId, language)
-    }
-
-    suspend fun getMovies(viewModel: MovieViewModel): Flow<PagingData<MovieResult>> {
-        return repository.getMovieResults().cachedIn(viewModel.viewModelScope)
     }
 }

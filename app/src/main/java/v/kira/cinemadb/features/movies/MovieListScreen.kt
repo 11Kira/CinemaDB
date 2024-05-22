@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
@@ -41,6 +40,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -60,18 +60,13 @@ fun MovieListScreen(
 ) {
     viewModel = hiltViewModel()
     MainScreen(viewModel.movieState, onItemClick)
-    viewModel.getMovieList(TRENDING, 1)
-
-
-    //viewModel.getMovies()
-    //Log.e("testPaging",pagingItems.itemCount.toString())
+    viewModel.getMovies(TRENDING)
 }
 
 @Composable
 fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, Int) -> Unit) {
     val movieList = remember { mutableStateListOf<MovieResult>() }
     val lifecycleOwner = LocalLifecycleOwner.current
-    val pagingItems = viewModel.uiState.collectAsLazyPagingItems()
     val movies by rememberUpdatedState(newValue = viewModel.uiState.collectAsLazyPagingItems())
 
     LaunchedEffect(key1 = Unit) {
@@ -111,13 +106,12 @@ fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, Int) -> U
     Column {
         SegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
-                0 -> { viewModel.getMovieList(TRENDING, 1) }
-                1 -> { viewModel.getMovieList(NOW_PLAYING, 1) }
-                else -> { viewModel.getMovieList(TOP_RATED, 1) }
+                0 -> { viewModel.getMovies(TRENDING) }
+                1 -> { viewModel.getMovies(NOW_PLAYING) }
+                else -> { viewModel.getMovies(TOP_RATED) }
             }
         }
-        //PopulateGrid(pagingItems, onItemClick)
-        PopulateGrid(movies = movieList, onItemClick)
+        PopulateGrid(movies, onItemClick)
     }
 }
 
@@ -181,9 +175,7 @@ fun SegmentedControl(
                             bottomEndPercent = 0
                         )
                     },
-                    border = BorderStroke(
-                        1.5.dp, Color.DarkGray
-                    ),
+                    border = BorderStroke(1.5.dp, Color.DarkGray),
                 ) {
                     Text(
                         text = item,
@@ -206,8 +198,7 @@ fun SegmentedControl(
 
 @Composable
 fun PopulateGrid(
-    //movies: LazyPagingItems<MovieResult>,
-    movies: List<MovieResult>,
+    movies: LazyPagingItems<MovieResult>,
     onItemClick: (Long, Int) -> Unit
 ) {
     Box(modifier = Modifier
@@ -219,16 +210,15 @@ fun PopulateGrid(
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             content = {
-                //items(movies.itemCount) {  movie ->
-                items(movies) {movie ->
-                    //val moviessss = movies[movie]
+                items(movies.itemCount) {  movie ->
+                    val selectedMovie = movies[movie]
 
-                    val posterPath = movie.posterPath.let { AppUtil.retrievePosterImageUrl(it) }
+                    val posterPath = selectedMovie?.posterPath?.let { AppUtil.retrievePosterImageUrl(it) }
                     AsyncImage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(350.dp)
-                            .clickable { movie.id?.let { onItemClick(it, 1) } },
+                            .clickable { selectedMovie?.id?.let { onItemClick(it, 1) } },
                         model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                         contentDescription = "Description",
                         contentScale = ContentScale.Crop,
