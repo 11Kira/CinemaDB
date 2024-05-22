@@ -338,7 +338,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
-                text = tvShow.tagline,
+                text = tvShow.tagline.ifBlank { tvShow.originalName },
                 color = Color.White
             )
             Text(
