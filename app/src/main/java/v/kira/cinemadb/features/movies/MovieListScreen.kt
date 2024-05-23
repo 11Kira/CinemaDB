@@ -62,12 +62,22 @@ fun MovieListScreen(
 fun MainScreen(onItemClick: (Long, Int) -> Unit) {
     val movies by rememberUpdatedState(newValue = viewModel.uiState.collectAsLazyPagingItems())
     val categoryList = listOf("Trending", "Now Playing", "Top Rated")
+    var selectedTab = 0
     Column {
         SegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
-                0 -> { viewModel.getMovies(TRENDING) }
-                1 -> { viewModel.getMovies(NOW_PLAYING) }
-                else -> { viewModel.getMovies(TOP_RATED) }
+                0 -> {
+                    if (selectedTab != 0) viewModel.getMovies(TRENDING)
+                    selectedTab = 0
+                }
+                1 -> {
+                    if (selectedTab != 1) viewModel.getMovies(NOW_PLAYING)
+                    selectedTab = 1
+                }
+                2 -> {
+                    if (selectedTab != 2) viewModel.getMovies(TOP_RATED)
+                    selectedTab = 2
+                }
             }
         }
         PopulateGrid(movies, onItemClick)
