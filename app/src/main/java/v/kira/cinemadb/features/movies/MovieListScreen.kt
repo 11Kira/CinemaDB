@@ -1,6 +1,5 @@
 package v.kira.cinemadb.features.movies
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -31,20 +30,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import kotlinx.coroutines.flow.SharedFlow
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
@@ -59,49 +54,13 @@ fun MovieListScreen(
     onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainScreen(viewModel.movieState, onItemClick)
+    MainScreen(onItemClick)
     viewModel.getMovies(TRENDING)
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<MovieState>, onItemClick: (Long, Int) -> Unit) {
-    val movieList = remember { mutableStateListOf<MovieResult>() }
-    val lifecycleOwner = LocalLifecycleOwner.current
+fun MainScreen(onItemClick: (Long, Int) -> Unit) {
     val movies by rememberUpdatedState(newValue = viewModel.uiState.collectAsLazyPagingItems())
-
-    LaunchedEffect(key1 = Unit) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            sharedFlow.collect { state ->
-                when (state) {
-                    is MovieState.SetTrendingMovies -> {
-                        movieList.clear()
-                        movieList.addAll(state.trendingMovies)
-                    }
-
-                    is MovieState.SetNowPlayingMovies -> {
-                        movieList.clear()
-                        movieList.addAll(state.nowPlayingMovies)
-                    }
-
-                    is MovieState.SetTopRatedMovies -> {
-                        movieList.clear()
-                        movieList.addAll(state.topRatedMovies)
-                    }
-
-                    is MovieState.SetMovie -> {
-                        Log.e("Error: ", state.movie.toString())
-                    }
-
-                    is MovieState.ShowError -> {
-                        Log.e("Error: ", state.error.toString())
-                    }
-
-                    else -> {}
-                }
-            }
-        }
-    }
-
     val categoryList = listOf("Trending", "Now Playing", "Top Rated")
     Column {
         SegmentedControl(categoryList.toList()) { selectedItem ->
@@ -205,6 +164,11 @@ fun PopulateGrid(
         .fillMaxSize()
         .background(Color.Black)
     ) {
+        val lazyRowState = rememberLazyListState()
+
+        LaunchedEffect(movies.itemCount) {
+            lazyRowState.animateScrollToItem(0)
+        }
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
@@ -224,7 +188,7 @@ fun PopulateGrid(
                         contentScale = ContentScale.Crop,
                     )
                 }
-            }
+            },
         )
     }
 }

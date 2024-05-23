@@ -4,11 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -27,43 +26,37 @@ class MovieViewModel @Inject constructor(
     val header = "Bearer $token"
     val language = "en-US"
 
-    private val mutableMovieState: MutableSharedFlow<MovieState> = MutableSharedFlow()
-    val movieState = mutableMovieState.asSharedFlow()
-
-    private val _uiState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(PagingData.empty())
-    val uiState: StateFlow<PagingData<MovieResult>> = _uiState.asStateFlow()
+    private val moviesPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(PagingData.empty())
+    val uiState: StateFlow<PagingData<MovieResult>> = moviesPagingState.asStateFlow()
 
     fun getMovies(type: Int) {
         viewModelScope.launch {
             try {
                 when (type) {
                     TRENDING -> {
-                        useCase.getTrendingMovies(
-                            header,
-                            language,
-                            this@MovieViewModel
-                        ).collectLatest { pagingData ->
-                            _uiState.value = pagingData
+                        useCase
+                            .getTrendingMovies(header, language)
+                            .cachedIn(viewModelScope)
+                            .collectLatest { pagingData ->
+                            moviesPagingState.value = pagingData
                         }
                     }
                     NOW_PLAYING -> {
-                        useCase.getNowPlayingMovies(
-                            header,
-                            language,
-                            this@MovieViewModel
-                        ).collectLatest { pagingData ->
-                            _uiState.value = pagingData
-                        }
+                        useCase
+                            .getNowPlayingMovies(header, language)
+                            .cachedIn(viewModelScope)
+                            .collectLatest { pagingData ->
+                                moviesPagingState.value = pagingData
+                            }
                     }
 
                     TOP_RATED -> {
-                        useCase.getTopRatedMovies(
-                            header,
-                            language,
-                            this@MovieViewModel
-                        ).collectLatest { pagingData ->
-                            _uiState.value = pagingData
-                        }
+                        useCase
+                            .getTopRatedMovies(header, language)
+                            .cachedIn(viewModelScope)
+                            .collectLatest { pagingData ->
+                                moviesPagingState.value = pagingData
+                            }
                     }
                 }
             } catch (e: Exception) {

@@ -14,10 +14,10 @@ class TrendingMoviePagingSource(
         return try {
             val currentPage = params.key ?: 1
             val response = remoteSource.getTrendingMovies(header, language, page = currentPage)
-            val movies = response.body()?.results
+            val movies = response.body()?.results.orEmpty()
 
             LoadResult.Page(
-                data = movies!!,
+                data = movies,
                 prevKey = if (currentPage == 1) null else currentPage - 1,
                 nextKey = if (currentPage < response.body()?.totalPages!!) currentPage + 1 else null
             )
