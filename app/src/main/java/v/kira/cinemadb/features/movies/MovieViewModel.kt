@@ -39,7 +39,7 @@ class MovieViewModel @Inject constructor(
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
                             moviesPagingState.value = pagingData
-                        }
+                            }
                     }
                     NOW_PLAYING -> {
                         useCase
@@ -61,7 +61,6 @@ class MovieViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.d("Exception:", e.toString())
-
             }
         }
     }

@@ -11,10 +11,6 @@ import javax.inject.Inject
 class MovieRepository @Inject constructor(
     private val remoteSource: MovieRemoteSource
 ) {
-    suspend fun getMovieDetails(token: String, movieId: Long, language: String): MovieResult {
-        return remoteSource.getMovieDetails(token, movieId, language).mapMovieDetailsToDomain()
-    }
-
     fun getNowPlayingMovies(token: String, language: String): Flow<PagingData<MovieResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
             NowPlayingMoviePagingSource(token, language, remoteSource)
@@ -29,4 +25,8 @@ class MovieRepository @Inject constructor(
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
             TrendingMoviePagingSource(token, language, remoteSource)
         }.flow
+
+    suspend fun getMovieDetails(token: String, movieId: Long, language: String): MovieResult {
+        return remoteSource.getMovieDetails(token, movieId, language).mapMovieDetailsToDomain()
+    }
 }

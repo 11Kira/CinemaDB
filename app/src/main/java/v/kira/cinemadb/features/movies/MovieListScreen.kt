@@ -184,9 +184,8 @@ fun PopulateGrid(
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             content = {
-                items(movies.itemCount) {  movie ->
-                    val selectedMovie = movies[movie]
-
+                items(movies.itemCount) {  index ->
+                    val selectedMovie = movies[index]
                     val posterPath = selectedMovie?.posterPath?.let { AppUtil.retrievePosterImageUrl(it) }
                     AsyncImage(
                         modifier = Modifier
