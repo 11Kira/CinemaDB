@@ -1,14 +1,19 @@
 package v.kira.cinemadb.features.tv
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import v.kira.cinemadb.MainActivity
+import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
+import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
+import v.kira.cinemadb.MainActivity.Companion.TRENDING
 import v.kira.cinemadb.model.TVShowResult
 import javax.inject.Inject
 
@@ -20,30 +25,44 @@ class TVViewModel @Inject constructor(
     val header = "Bearer $token"
     val language = "en-US"
 
-    private val mutableTVShowState: MutableSharedFlow<TVShowState> = MutableSharedFlow()
-    val tvShowState = mutableTVShowState.asSharedFlow()
+    private val tvShowPagingState: MutableStateFlow<PagingData<TVShowResult>> = MutableStateFlow(
+        PagingData.empty())
+    val uiState: StateFlow<PagingData<TVShowResult>> = tvShowPagingState.asStateFlow()
 
-    fun getTVShowList(type: Int, page: Int) {
-        viewModelScope.launch (CoroutineExceptionHandler { _, error ->
-            runBlocking {
-                mutableTVShowState.emit(TVShowState.ShowError(error))
-            }
-        }) {
-            val tvShowList: List<TVShowResult>
-            when (type) {
-                MainActivity.TRENDING -> {
-                    tvShowList = useCase.getTrendingTVShows(header, language, page)
-                    mutableTVShowState.emit(TVShowState.SetTrendingTVShows(tvShowList))
-                }
-                MainActivity.NOW_PLAYING -> {
-                    tvShowList = useCase.getAiringTodayTVShows(header, language, page)
-                    mutableTVShowState.emit(TVShowState.SetAiringTodayTVShows(tvShowList))
+    fun getTVShowList(type: Int) {
+        viewModelScope.launch {
+            try {
+                when (type) {
+                    TRENDING -> {
+                        useCase
+                            .getTrendingTVShows(header, language)
+                            .cachedIn(viewModelScope)
+                            .collectLatest { pagingData ->
+                                tvShowPagingState.value = pagingData
+                            }
+                    }
+                    NOW_PLAYING -> {
+                        useCase
+                            .getAiringTodayTVShows(header, language)
+                            .cachedIn(viewModelScope)
+                            .collectLatest { pagingData ->
+                                tvShowPagingState.value = pagingData
+                            }
+                    }
+
+                    TOP_RATED -> {
+                        useCase
+                            .getTopRatedTVShows(header, language)
+                            .cachedIn(viewModelScope)
+                            .collectLatest { pagingData ->
+                                tvShowPagingState.value = pagingData
+                            }
+                    }
                 }
 
-                MainActivity.TOP_RATED -> {
-                    tvShowList = useCase.getTopRatedTVShows(header, language, page)
-                    mutableTVShowState.emit(TVShowState.SetTopRatedTVShows(tvShowList))
-                }
+            } catch (e: Exception) {
+                Log.d("Exception:", e.toString())
+
             }
         }
     }

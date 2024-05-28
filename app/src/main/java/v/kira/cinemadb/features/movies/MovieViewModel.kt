@@ -1,13 +1,16 @@
 package v.kira.cinemadb.features.movies
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
@@ -23,30 +26,41 @@ class MovieViewModel @Inject constructor(
     val header = "Bearer $token"
     val language = "en-US"
 
-    private val mutableMovieState: MutableSharedFlow<MovieState> = MutableSharedFlow()
-    val movieState = mutableMovieState.asSharedFlow()
+    private val moviesPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(PagingData.empty())
+    val uiState: StateFlow<PagingData<MovieResult>> = moviesPagingState.asStateFlow()
 
-    fun getMovieList(type: Int, page: Int) {
-        viewModelScope.launch (CoroutineExceptionHandler {_, error ->
-            runBlocking {
-                    mutableMovieState.emit(MovieState.ShowError(error))
-            }
-        }) {
-            val movieList: List<MovieResult>
-            when (type) {
-                TRENDING -> {
-                    movieList = useCase.getTrendingMovies(header, language, page)
-                    mutableMovieState.emit(MovieState.SetTrendingMovies(movieList))
-                }
-                NOW_PLAYING -> {
-                    movieList = useCase.getNowPlayingMovies(header, language, page)
-                    mutableMovieState.emit(MovieState.SetNowPlayingMovies(movieList))
-                }
+    fun getMovies(type: Int) {
+        viewModelScope.launch {
+            try {
+                when (type) {
+                    TRENDING -> {
+                        useCase
+                            .getTrendingMovies(header, language)
+                            .cachedIn(viewModelScope)
+                            .collectLatest { pagingData ->
+                            moviesPagingState.value = pagingData
+                            }
+                    }
+                    NOW_PLAYING -> {
+                        useCase
+                            .getNowPlayingMovies(header, language)
+                            .cachedIn(viewModelScope)
+                            .collectLatest { pagingData ->
+                                moviesPagingState.value = pagingData
+                            }
+                    }
 
-                TOP_RATED -> {
-                    movieList = useCase.getTopRatedMovies(header, language, page)
-                    mutableMovieState.emit(MovieState.SetTopRatedMovies(movieList))
+                    TOP_RATED -> {
+                        useCase
+                            .getTopRatedMovies(header, language)
+                            .cachedIn(viewModelScope)
+                            .collectLatest { pagingData ->
+                                moviesPagingState.value = pagingData
+                            }
+                    }
                 }
+            } catch (e: Exception) {
+                Log.d("Exception:", e.toString())
             }
         }
     }

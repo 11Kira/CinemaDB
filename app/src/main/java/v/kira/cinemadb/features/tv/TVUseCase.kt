@@ -1,5 +1,7 @@
 package v.kira.cinemadb.features.tv
 
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.Flow
 import v.kira.cinemadb.model.TVShowResult
 import javax.inject.Inject
 
@@ -7,28 +9,25 @@ class TVUseCase @Inject constructor(
     private val repository: TVRepository
 ) {
 
-    suspend fun getAiringTodayTVShows(
+    fun getAiringTodayTVShows(
         token: String,
         language: String,
-        page: Int
-    ): List<TVShowResult> {
-        return repository.getAiringTodayTVShows(token, language, page)
+    ): Flow<PagingData<TVShowResult>> {
+        return repository.getAiringTodayTVShows(token, language)
     }
 
-    suspend fun getTopRatedTVShows(
+    fun getTopRatedTVShows(
         token: String,
         language: String,
-        page: Int
-    ): List<TVShowResult> {
-        return repository.getTopRatedTVShows(token, language, page)
+    ): Flow<PagingData<TVShowResult>> {
+        return repository.getTopRatedTVShows(token, language)
     }
 
-    suspend fun getTrendingTVShows(
+    fun getTrendingTVShows(
         token: String,
         language: String,
-        page: Int
-    ): List<TVShowResult> {
-        return repository.getTrendingTVShows(token, language, page)
+    ): Flow<PagingData<TVShowResult>> {
+        return repository.getTrendingTVShows(token, language)
     }
 
     suspend fun getTVShowDetails(
