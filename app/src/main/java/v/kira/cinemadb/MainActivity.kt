@@ -41,12 +41,12 @@ import v.kira.cinemadb.navigation.AccountScreen
 import v.kira.cinemadb.navigation.BottomMenuItem
 import v.kira.cinemadb.navigation.SearchScreen
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             MainScreenView()
         }
