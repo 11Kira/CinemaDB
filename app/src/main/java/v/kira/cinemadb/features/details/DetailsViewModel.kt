@@ -24,9 +24,14 @@ class DetailsViewModel @Inject constructor(
 ): ViewModel() {
 
     val language = "en-US"
+    var header: String
 
     private val mutableDetailsState: MutableSharedFlow<DetailsState> = MutableSharedFlow()
     val movieState = mutableDetailsState.asSharedFlow()
+
+    init {
+        runBlocking { header =  SettingsPrefs(context).getToken.first().toString() }
+    }
 
     fun getMovieDetails(movieId: Long) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
@@ -34,7 +39,6 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            val header =  SettingsPrefs(context).getToken.first().toString()
             val result = movieUseCase.getMovieDetails(header, movieId, language)
             mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
@@ -46,7 +50,6 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            val header =  SettingsPrefs(context).getToken.first().toString()
             val result = tvShowUseCase.getTVShowDetails(header, tvSeriesId, language)
             mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
         }

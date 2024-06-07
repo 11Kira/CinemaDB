@@ -30,10 +30,15 @@ class TVViewModel @Inject constructor(
 ): ViewModel() {
 
     val language = "en-US"
+    var header: String
 
     private val tvShowPagingState: MutableStateFlow<PagingData<TVShowResult>> = MutableStateFlow(
         PagingData.empty())
     val uiState: StateFlow<PagingData<TVShowResult>> = tvShowPagingState.asStateFlow()
+
+    init {
+        runBlocking { header =  SettingsPrefs(context).getToken.first().toString() }
+    }
 
     fun getTVShowList(type: Int) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
@@ -41,7 +46,6 @@ class TVViewModel @Inject constructor(
                 Log.e("ERROR", error.message.toString())
             }
         }) {
-            val header =  SettingsPrefs(context).getToken.first().toString()
             try {
                 when (type) {
                     TRENDING -> {

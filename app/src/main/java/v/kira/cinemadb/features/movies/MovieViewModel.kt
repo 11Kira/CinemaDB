@@ -30,9 +30,14 @@ class MovieViewModel @Inject constructor(
 ): ViewModel() {
 
     val language = "en-US"
+    var header: String
 
     private val moviesPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(PagingData.empty())
     val uiState: StateFlow<PagingData<MovieResult>> = moviesPagingState.asStateFlow()
+
+    init {
+        runBlocking { header =  SettingsPrefs(context).getToken.first().toString() }
+    }
 
     fun getMovies(type: Int) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
@@ -40,7 +45,6 @@ class MovieViewModel @Inject constructor(
                 Log.e("ERROR", error.message.toString())
             }
         }) {
-            val header =  SettingsPrefs(context).getToken.first().toString()
             try {
                 when (type) {
                     TRENDING -> {
