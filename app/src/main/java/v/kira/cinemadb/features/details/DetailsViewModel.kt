@@ -12,13 +12,15 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import v.kira.cinemadb.features.account.AccountUseCase
 import v.kira.cinemadb.util.SettingsPrefs
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     @ApplicationContext val context : Context,
-    private val detailsUseCase: DetailsUseCase
+    private val detailsUseCase: DetailsUseCase,
+    private val accountUseCase: AccountUseCase
 ): ViewModel() {
 
     val language = "en-US"
@@ -55,12 +57,10 @@ class DetailsViewModel @Inject constructor(
 
     fun addToWatchlist(mediaType: Int, mediaId: Long, isWatchlist: Boolean) {
         val jsonObject = JsonObject()
-        val data = JsonObject()
         val type = if (mediaType == 1) "movie" else "tv"
-        data.addProperty("media_type", type)
-        data.addProperty("media_id", mediaId)
-        data.addProperty("watchlist", isWatchlist)
-        jsonObject.add("data", data)
+        jsonObject.addProperty("media_type", type)
+        jsonObject.addProperty("media_id", mediaId)
+        jsonObject.addProperty("watchlist", isWatchlist)
         submitWatchlistObject(jsonObject)
     }
 
@@ -70,7 +70,7 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-
+            accountUseCase.addToWatchlist(header, 7749280, jsonObject)
         }
     }
 }

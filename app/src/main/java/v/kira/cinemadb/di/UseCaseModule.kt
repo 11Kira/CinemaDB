@@ -5,6 +5,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import v.kira.cinemadb.features.account.AccountRepository
+import v.kira.cinemadb.features.account.AccountUseCase
 import v.kira.cinemadb.features.details.DetailsUseCase
 import v.kira.cinemadb.features.movies.MovieRepository
 import v.kira.cinemadb.features.movies.MovieUseCase
@@ -33,4 +35,10 @@ class UseCaseModule {
         movieRepository: MovieRepository,
         tvRepository: TVRepository
     ) = DetailsUseCase(movieRepository, tvRepository)
+
+    @Provides
+    @ViewModelScoped
+    fun provideAccountUseCase(
+        repository: AccountRepository
+    ) = AccountUseCase(repository)
 }

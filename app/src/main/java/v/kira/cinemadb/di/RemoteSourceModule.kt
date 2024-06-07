@@ -4,6 +4,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import v.kira.cinemadb.features.account.AccountRemoteSource
+import v.kira.cinemadb.features.account.AccountService
 import v.kira.cinemadb.features.movies.MovieRemoteSource
 import v.kira.cinemadb.features.movies.MovieService
 import v.kira.cinemadb.features.tv.TVRemoteSource
@@ -25,4 +27,10 @@ class RemoteSourceModule {
     fun provideTVRemoteSource(
         tvService: TVService
     ) = TVRemoteSource(tvService = tvService)
+
+    @Provides
+    @Singleton
+    fun provideAccountRemoteSource(
+        accountService: AccountService
+    ) = AccountRemoteSource(accountService = accountService)
 }
