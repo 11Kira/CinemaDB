@@ -1,5 +1,14 @@
 Android application that features modern architecture integration.
 
+Features:
+1. List of Movies with pagination (Trending, Now Playing, Top Rated)
+2. List of TV Show Series with pagination (Trending, Airing Today, Top Rated)
+3. Movie and TV Show details page
+4. Search Movies and TV Show functionality (Not yet started)
+5. Add Movie and TV Show to user watch list functionality (Not yet started)
+6. Watch list page (Movie list and TV Show list) (Not yet started)
+
+Technologies Used:
 1. Kotlin as main language
 2. API from `https://api.themoviedb.org/`
 3. API integration using Retrofit and OkHttp
