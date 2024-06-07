@@ -1,7 +1,6 @@
 package v.kira.cinemadb.features.details
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
@@ -13,16 +12,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import v.kira.cinemadb.features.movies.MovieUseCase
-import v.kira.cinemadb.features.tv.TVUseCase
 import v.kira.cinemadb.util.SettingsPrefs
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     @ApplicationContext val context : Context,
-    private val movieUseCase: MovieUseCase,
-    private val tvShowUseCase: TVUseCase
+    private val detailsUseCase: DetailsUseCase
 ): ViewModel() {
 
     val language = "en-US"
@@ -41,7 +37,7 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            val result = movieUseCase.getMovieDetails(header, movieId, language)
+            val result = detailsUseCase.getMovieDetails(header, movieId, language)
             mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
     }
@@ -52,7 +48,7 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            val result = tvShowUseCase.getTVShowDetails(header, tvSeriesId, language)
+            val result = detailsUseCase.getTVShowDetails(header, tvSeriesId, language)
             mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
         }
     }
@@ -65,16 +61,16 @@ class DetailsViewModel @Inject constructor(
         data.addProperty("media_id", mediaId)
         data.addProperty("watchlist", isWatchlist)
         jsonObject.add("data", data)
-
-        Log.e("testJSON", jsonObject.toString())
+        submitWatchlistObject(jsonObject)
     }
 
-    fun submitWatchlistObject(jsonObject: JsonObject) {
+    private fun submitWatchlistObject(jsonObject: JsonObject) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
+
         }
     }
 }

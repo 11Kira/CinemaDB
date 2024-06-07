@@ -29,12 +29,4 @@ class TVUseCase @Inject constructor(
     ): Flow<PagingData<TVShowResult>> {
         return repository.getTrendingTVShows(token, language)
     }
-
-    suspend fun getTVShowDetails(
-        token: String,
-        tvSeriesId: Long,
-        language: String
-    ): TVShowResult {
-        return repository.getTVShowDetails(token, tvSeriesId, language)
-    }
 }
