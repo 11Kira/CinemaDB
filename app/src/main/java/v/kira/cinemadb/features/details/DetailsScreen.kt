@@ -98,15 +98,11 @@ fun SetupMovieDetails(movie: MovieResult) {
         .verticalScroll(rememberScrollState())
     ) {
         val posterPath = AppUtil.retrievePosterImageUrl(movie.posterPath)
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()) {
+        Box(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                 contentDescription = "Poster",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
+                modifier = Modifier.fillMaxWidth().wrapContentHeight()
             )
 
             Box(
@@ -119,12 +115,12 @@ fun SetupMovieDetails(movie: MovieResult) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    modifier = Modifier
-                        .wrapContentHeight(),
+                    modifier = Modifier.wrapContentHeight(),
                     color = Color.White,
                     text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp,                )
+                    fontSize = 25.sp
+                )
             }
         }
 
@@ -147,9 +143,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
                 text = movie.overview,
                 color = Color.White
             )
@@ -158,9 +152,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Cast:",
                 color = Color.White
             )
@@ -173,8 +165,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",casts),
                 color = Color.White
             )
@@ -183,9 +174,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Origin Country:",
                 color = Color.White
             )
@@ -194,8 +183,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",movie.originCountry),
                 color = Color.White
             )
@@ -204,9 +192,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Genres:",
                 color = Color.White
             )
@@ -218,8 +204,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",genres),
                 color = Color.White
             )
@@ -228,9 +213,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Status:",
                 color = Color.White
             )
@@ -248,9 +231,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Release date:",
                 color = Color.White
             )
@@ -268,9 +249,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Runtime:",
                 color = Color.White
             )
@@ -296,15 +275,11 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             .verticalScroll(rememberScrollState())
     ) {
         val posterPath = AppUtil.retrievePosterImageUrl(tvShow.posterPath)
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()) {
+        Box(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                 contentDescription = "Poster",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
+                modifier = Modifier.fillMaxWidth().wrapContentHeight()
             )
 
             Box(
@@ -317,8 +292,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    modifier = Modifier
-                        .wrapContentHeight(),
+                    modifier = Modifier.wrapContentHeight(),
                     color = Color.White,
                     text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
                     fontWeight = FontWeight.Bold,
@@ -344,9 +318,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 text = tvShow.overview,
                 color = Color.White
             )
@@ -355,9 +327,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Cast:",
                 color = Color.White
             )
@@ -371,8 +341,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",casts),
                 color = Color.White
             )
@@ -381,9 +350,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Origin Country:",
                 color = Color.White
             )
@@ -392,8 +359,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",tvShow.originCountry),
                 color = Color.White
             )
@@ -402,9 +368,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Genres:",
                 color = Color.White
             )
@@ -416,8 +380,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",genres),
                 color = Color.White
             )
@@ -426,9 +389,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Status:",
                 color = Color.White
             )
@@ -446,9 +407,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Number of Seasons:",
                 color = Color.White
             )
@@ -457,8 +416,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 text = tvShow.numberOfSeasons.toString(),
                 color = Color.White
             )
@@ -467,9 +425,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Number of Episodes:",
                 color = Color.White
             )
@@ -478,8 +434,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 text = tvShow.numberOfEpisodes.toString(),
                 color = Color.White
             )
@@ -488,9 +443,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "First Air Date:",
                 color = Color.White
             )
@@ -499,8 +452,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 text = tvShow.firstAirDate,
                 color = Color.White
             )
@@ -509,9 +461,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
+                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Last Air Date:",
                 color = Color.White
             )
@@ -520,8 +470,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 text = tvShow.lastAirDate,
                 color = Color.White
             )
