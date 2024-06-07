@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
-import v.kira.cinemadb.model.ResponseObject
+import v.kira.cinemadb.model.ListResponseObject
 import v.kira.cinemadb.model.TVShowResult
 
 interface TVService {
@@ -14,21 +14,21 @@ interface TVService {
         @Header("Authorization") header: String,
         @Query("language") language: String,
         @Query("page") page: Int
-    ): Response<ResponseObject<List<TVShowResult>>>
+    ): Response<ListResponseObject<List<TVShowResult>>>
 
     @GET("trending/tv/week")
     suspend fun getTrendingTVShows(
         @Header("Authorization") header: String,
         @Query("language") language: String,
         @Query("page") page: Int
-    ): Response<ResponseObject<List<TVShowResult>>>
+    ): Response<ListResponseObject<List<TVShowResult>>>
 
     @GET("tv/top_rated")
     suspend fun getTopRatedTVShows(
         @Header("Authorization") header: String,
         @Query("language") language: String,
         @Query("page") page: Int
-    ): Response<ResponseObject<List<TVShowResult>>>
+    ): Response<ListResponseObject<List<TVShowResult>>>
 
     @GET("tv/{series_id}")
     suspend fun getTVShowDetails(

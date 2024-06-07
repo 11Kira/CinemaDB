@@ -19,12 +19,4 @@ class MovieUseCase @Inject constructor(
     fun getTrendingMovies(token: String, language: String): Flow<PagingData<MovieResult>> {
         return repository.getTrendingMovies(token, language)
     }
-
-    suspend fun getMovieDetails(
-        token: String,
-        movieId: Long,
-        language: String
-    ): MovieResult {
-        return repository.getMovieDetails(token, movieId, language)
-    }
 }

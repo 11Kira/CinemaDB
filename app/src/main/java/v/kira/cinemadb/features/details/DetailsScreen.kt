@@ -3,6 +3,7 @@ package v.kira.cinemadb.features.details
 import android.text.TextUtils
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -104,6 +105,26 @@ fun SetupMovieDetails(movie: MovieResult) {
                 contentDescription = "Poster",
                 modifier = Modifier.fillMaxWidth().wrapContentHeight()
             )
+
+            Box(
+                modifier = Modifier.wrapContentWidth()
+                    .padding(10.dp)
+                    .align(Alignment.TopStart)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(10.dp)
+                        .clickable { viewModel.addToWatchlist(1, movie.id, true) },
+                    color = Color.White,
+                    text = "Add to Watchlist",
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 20.sp
+                )
+            }
 
             Box(
                 modifier = Modifier
@@ -281,6 +302,26 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 contentDescription = "Poster",
                 modifier = Modifier.fillMaxWidth().wrapContentHeight()
             )
+
+            Box(
+                modifier = Modifier.wrapContentWidth()
+                    .padding(10.dp)
+                    .align(Alignment.TopStart)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(10.dp)
+                        .clickable { viewModel.addToWatchlist(2, tvShow.id, true) },
+                    color = Color.White,
+                    text = "Add to Watchlist",
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 20.sp
+                )
+            }
 
             Box(
                 modifier = Modifier
