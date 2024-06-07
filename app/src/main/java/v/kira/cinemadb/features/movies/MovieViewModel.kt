@@ -8,12 +8,14 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
@@ -33,7 +35,11 @@ class MovieViewModel @Inject constructor(
     val uiState: StateFlow<PagingData<MovieResult>> = moviesPagingState.asStateFlow()
 
     fun getMovies(type: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
+            runBlocking {
+                Log.e("ERROR", error.message.toString())
+            }
+        }) {
             val header =  SettingsPrefs(context).getToken.first().toString()
             try {
                 when (type) {
