@@ -185,7 +185,7 @@ fun PopulateGrid(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(350.dp)
-                            .clickable { selectedTvShow?.id?.let { onItemClick(it, 1) } },
+                            .clickable { selectedTvShow?.id?.let { onItemClick(it, 2) } },
                         model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                         contentDescription = "Description",
                         contentScale = ContentScale.Crop,
