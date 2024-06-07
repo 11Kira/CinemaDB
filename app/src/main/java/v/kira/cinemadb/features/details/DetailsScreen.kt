@@ -106,6 +106,23 @@ fun SetupMovieDetails(movie: MovieResult) {
             )
 
             Box(
+                modifier = Modifier.wrapContentWidth()
+                    .padding(10.dp)
+                    .align(Alignment.TopStart)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier.wrapContentHeight().padding(10.dp),
+                    color = Color.White,
+                    text = "Add to Watchlist",
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 20.sp
+                )
+            }
+
+            Box(
                 modifier = Modifier
                     .padding(10.dp)
                     .align(Alignment.TopEnd)
@@ -281,6 +298,23 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 contentDescription = "Poster",
                 modifier = Modifier.fillMaxWidth().wrapContentHeight()
             )
+
+            Box(
+                modifier = Modifier.wrapContentWidth()
+                    .padding(10.dp)
+                    .align(Alignment.TopStart)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier.wrapContentHeight().padding(10.dp),
+                    color = Color.White,
+                    text = "Add to Watchlist",
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 20.sp
+                )
+            }
 
             Box(
                 modifier = Modifier
