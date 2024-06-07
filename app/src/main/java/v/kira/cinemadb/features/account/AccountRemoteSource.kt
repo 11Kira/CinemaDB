@@ -8,6 +8,16 @@ import javax.inject.Inject
 class AccountRemoteSource @Inject constructor(
     private val accountService: AccountService
 ) {
+    suspend fun getAccountDetails(
+        token: String,
+        accountId: Long,
+    ) = withContext(Dispatchers.IO) {
+        accountService.getAccountDetails(
+            header = token,
+            accountId = accountId
+        )
+    }
+
     suspend fun addToWatchlist(
         token: String,
         accountId: Long,

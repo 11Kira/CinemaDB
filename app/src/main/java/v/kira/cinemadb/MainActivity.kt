@@ -34,10 +34,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import v.kira.cinemadb.Graph.DETAILS_SCREEN_ROUTE
+import v.kira.cinemadb.features.account.AccountScreen
 import v.kira.cinemadb.features.details.DetailsScreen
 import v.kira.cinemadb.features.movies.MovieListScreen
 import v.kira.cinemadb.features.tv.TVShowListScreen
-import v.kira.cinemadb.navigation.AccountScreen
 import v.kira.cinemadb.navigation.BottomMenuItem
 import v.kira.cinemadb.navigation.SearchScreen
 
