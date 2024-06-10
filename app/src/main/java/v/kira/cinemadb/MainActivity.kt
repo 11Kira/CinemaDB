@@ -89,7 +89,7 @@ fun BottomNavigation(navController: NavController) {
         BottomMenuItem.Movies,
         BottomMenuItem.TV,
         BottomMenuItem.Search,
-        BottomMenuItem.Account
+        BottomMenuItem.Watchlist
     )
     BottomNavigation(
         modifier = Modifier.fillMaxWidth(),
@@ -149,7 +149,7 @@ fun NavigationGraph(navController: NavHostController) {
             )
         }
         composable(BottomMenuItem.Search.screenRoute) { SearchScreen() }
-        composable(BottomMenuItem.Account.screenRoute) { WatchlistScreen() }
+        composable(BottomMenuItem.Watchlist.screenRoute) { WatchlistScreen() }
         detailsNavGraph(navController = navController)
     }
 }
