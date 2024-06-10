@@ -29,6 +29,7 @@ class LoadingActivity: ComponentActivity() {
 
     val token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxMmJlYWE5ZjdhYzAwN2YwMDg4ZDBmOWM1NzZjZmU4NCIsInN1YiI6IjVhNTU5ZGUxYzNhMzY4NWVlNjAxYjU0ZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.A_W6hgICqOtrDQl_CfvLEZ8XFeOJ7cnKQZ-_ablYfQY"
     val header = "Bearer $token"
+    val accountId = 7749280
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +37,7 @@ class LoadingActivity: ComponentActivity() {
             LoadingScreenView()
         }
         lifecycleScope.launch {
+            SettingsPrefs(this@LoadingActivity).setAccountId(accountId.toLong())
             SettingsPrefs(this@LoadingActivity).setToken(header)
             delay(3000)
             val intent = Intent(this@LoadingActivity, MainActivity::class.java)

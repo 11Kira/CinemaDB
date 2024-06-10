@@ -34,7 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import v.kira.cinemadb.Graph.DETAILS_SCREEN_ROUTE
-import v.kira.cinemadb.features.account.AccountScreen
+import v.kira.cinemadb.features.account.watchlist.WatchlistScreen
 import v.kira.cinemadb.features.details.DetailsScreen
 import v.kira.cinemadb.features.movies.MovieListScreen
 import v.kira.cinemadb.features.tv.TVShowListScreen
@@ -149,7 +149,7 @@ fun NavigationGraph(navController: NavHostController) {
             )
         }
         composable(BottomMenuItem.Search.screenRoute) { SearchScreen() }
-        composable(BottomMenuItem.Account.screenRoute) { AccountScreen() }
+        composable(BottomMenuItem.Account.screenRoute) { WatchlistScreen() }
         detailsNavGraph(navController = navController)
     }
 }

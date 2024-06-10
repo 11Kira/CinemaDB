@@ -1,8 +1,12 @@
 package v.kira.cinemadb.features.account
 
+import androidx.paging.PagingData
 import com.google.gson.JsonObject
+import kotlinx.coroutines.flow.Flow
 import v.kira.cinemadb.model.Account
+import v.kira.cinemadb.model.MovieResult
 import v.kira.cinemadb.model.ResponseObject
+import v.kira.cinemadb.model.TVShowResult
 import javax.inject.Inject
 
 class AccountUseCase @Inject constructor(
@@ -21,5 +25,13 @@ class AccountUseCase @Inject constructor(
         body: JsonObject
     ): ResponseObject {
         return accountRepository.addToWatchlist(token, accountId, body)
+    }
+
+    fun getMovieWatchlist(token: String, accountId: Long, language: String): Flow<PagingData<MovieResult>> {
+        return accountRepository.getMovieWatchlist(token, accountId, language)
+    }
+
+    fun getTVShowWatchlist(token: String, accountId: Long, language: String): Flow<PagingData<TVShowResult>> {
+        return accountRepository.getTVShowWatchlist(token, accountId, language)
     }
 }
