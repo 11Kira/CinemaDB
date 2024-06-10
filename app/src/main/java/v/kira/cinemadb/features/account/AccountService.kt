@@ -28,7 +28,7 @@ interface AccountService {
         @Body body: JsonObject
     ): ResponseObject
 
-    @GET("account/{account_id}/watchlist/tv")
+    @GET("account/{account_id}/watchlist/movies")
     suspend fun getMovieWatchlist(
         @Header("Authorization") header: String,
         @Path("account_id") accountId: Long,
