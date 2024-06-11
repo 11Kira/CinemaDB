@@ -54,14 +54,16 @@ import kotlin.math.roundToInt
 lateinit var viewModel: WatchlistViewModel
 
 @Composable
-fun WatchlistScreen() {
+fun WatchlistScreen(
+    onItemClick: (Long, Int) -> Unit
+) {
     viewModel = hiltViewModel()
-    MainWatchlistScreen()
+    MainWatchlistScreen(onItemClick)
     viewModel.getMovieWatchlist()
 }
 
 @Composable
-fun MainWatchlistScreen() {
+fun MainWatchlistScreen(onItemClick: (Long, Int) -> Unit) {
     val movieWatchlist by rememberUpdatedState(newValue = viewModel.movieWatchlistState.collectAsLazyPagingItems())
     val tvShowWatchlist by rememberUpdatedState(newValue = viewModel.tvShowWatchlistState.collectAsLazyPagingItems())
     var typeSelected  by remember { mutableStateOf(0) }
@@ -85,9 +87,9 @@ fun MainWatchlistScreen() {
         }
 
         if (typeSelected == 0) {
-            PopulateMovieWatchlistGrid(movieWatchlist)
+            PopulateMovieWatchlistGrid(movieWatchlist, onItemClick)
         } else {
-            PopulateTVShowWatchlistGrid(tvShowWatchlist)
+            PopulateTVShowWatchlistGrid(tvShowWatchlist, onItemClick)
         }
     }
 }
@@ -174,7 +176,8 @@ fun SegmentedControlWatchlist(
 
 @Composable
 fun PopulateMovieWatchlistGrid(
-    movies: LazyPagingItems<MovieResult>
+    movies: LazyPagingItems<MovieResult>,
+    onItemClick: (Long, Int) -> Unit
 ) {
     Box(modifier = Modifier
         .fillMaxSize()
@@ -200,7 +203,7 @@ fun PopulateMovieWatchlistGrid(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(350.dp)
-                                .clickable { selectedMovie?.id?.let { } },
+                                .clickable { selectedMovie?.id?.let { onItemClick(it, 1) } },
                             model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                             contentDescription = "Description",
                             contentScale = ContentScale.Crop,
@@ -232,7 +235,8 @@ fun PopulateMovieWatchlistGrid(
 
 @Composable
 fun PopulateTVShowWatchlistGrid(
-    tvShows: LazyPagingItems<TVShowResult>
+    tvShows: LazyPagingItems<TVShowResult>,
+    onItemClick: (Long, Int) -> Unit
 ) {
     Box(modifier = Modifier
         .fillMaxSize()
@@ -258,7 +262,7 @@ fun PopulateTVShowWatchlistGrid(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(350.dp)
-                                .clickable { selectedTVShow?.id?.let { } },
+                                .clickable { selectedTVShow?.id?.let { onItemClick(it, 2) } },
                             model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                             contentDescription = "Description",
                             contentScale = ContentScale.Crop,

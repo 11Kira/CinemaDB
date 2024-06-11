@@ -149,7 +149,11 @@ fun NavigationGraph(navController: NavHostController) {
             )
         }
         composable(BottomMenuItem.Search.screenRoute) { SearchScreen() }
-        composable(BottomMenuItem.Watchlist.screenRoute) { WatchlistScreen() }
+        composable(BottomMenuItem.Watchlist.screenRoute) { WatchlistScreen(
+            onItemClick = { mediaId, type ->
+                navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
+            }
+        ) }
         detailsNavGraph(navController = navController)
     }
 }
