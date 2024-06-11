@@ -37,9 +37,9 @@ import v.kira.cinemadb.Graph.DETAILS_SCREEN_ROUTE
 import v.kira.cinemadb.features.account.watchlist.WatchlistScreen
 import v.kira.cinemadb.features.details.DetailsScreen
 import v.kira.cinemadb.features.movies.MovieListScreen
+import v.kira.cinemadb.features.search.SearchScreen
 import v.kira.cinemadb.features.tv.TVShowListScreen
 import v.kira.cinemadb.navigation.BottomMenuItem
-import v.kira.cinemadb.navigation.SearchScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
