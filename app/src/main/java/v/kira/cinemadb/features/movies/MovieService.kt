@@ -35,6 +35,6 @@ interface MovieService {
         @Header("Authorization") header: String,
         @Path("movie_id") movieId: Long,
         @Query("language") language: String,
-        @Query("append_to_response") credits: String = "credits"
+        @Query("append_to_response") appendToResponse: String = "account_states,credits"
     ): MovieResult
 }
