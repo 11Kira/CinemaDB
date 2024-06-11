@@ -118,9 +118,15 @@ fun SetupMovieDetails(movie: MovieResult) {
                     modifier = Modifier
                         .wrapContentHeight()
                         .padding(10.dp)
-                        .clickable { viewModel.addToWatchlist(1, movie.id, true) },
+                        .clickable {
+                            if (movie.accountStates?.watchlist == true) {
+                                viewModel.addToWatchlist(1, movie.id, false)
+                            } else {
+                                viewModel.addToWatchlist(1, movie.id, true)
+                            }
+                        },
                     color = Color.White,
-                    text = "Add to Watchlist",
+                    text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
                     fontWeight = FontWeight.Medium,
                     fontSize = 20.sp
                 )
@@ -315,9 +321,15 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     modifier = Modifier
                         .wrapContentHeight()
                         .padding(10.dp)
-                        .clickable { viewModel.addToWatchlist(2, tvShow.id, true) },
+                        .clickable {
+                            if (tvShow.accountStates?.watchlist == true) {
+                                viewModel.addToWatchlist(2, tvShow.id, false)
+                            } else {
+                                viewModel.addToWatchlist(2, tvShow.id, true)
+                            }
+                        },
                     color = Color.White,
-                    text = "Add to Watchlist",
+                    text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
                     fontWeight = FontWeight.Medium,
                     fontSize = 20.sp
                 )

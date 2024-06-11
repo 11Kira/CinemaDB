@@ -61,16 +61,21 @@ class DetailsViewModel @Inject constructor(
         jsonObject.addProperty("media_type", type)
         jsonObject.addProperty("media_id", mediaId)
         jsonObject.addProperty("watchlist", isWatchlist)
-        submitWatchlistObject(jsonObject)
+        submitWatchlistObject(jsonObject, mediaType, mediaId)
     }
 
-    private fun submitWatchlistObject(jsonObject: JsonObject) {
+    private fun submitWatchlistObject(jsonObject: JsonObject, mediaType: Int, mediaId: Long) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            accountUseCase.addToWatchlist(header, 7749280, jsonObject)
+            val invoke = accountUseCase.addToWatchlist(header, 7749280, jsonObject)
+            if (mediaType == 1 && invoke.success) {
+                getMovieDetails(mediaId)
+            } else {
+                getTVShowDetails(mediaId)
+            }
         }
     }
 }
