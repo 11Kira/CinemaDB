@@ -35,6 +35,6 @@ interface TVService {
         @Header("Authorization") header: String,
         @Path("series_id") seriesId: Long,
         @Query("language") language: String,
-        @Query("append_to_response") credits: String = "credits"
+        @Query("append_to_response") appendToResponse: String = "account_states,credits"
     ): TVShowResult
 }
