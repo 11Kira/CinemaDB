@@ -34,10 +34,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import v.kira.cinemadb.Graph.DETAILS_SCREEN_ROUTE
+import v.kira.cinemadb.features.account.watchlist.WatchlistScreen
 import v.kira.cinemadb.features.details.DetailsScreen
 import v.kira.cinemadb.features.movies.MovieListScreen
 import v.kira.cinemadb.features.tv.TVShowListScreen
-import v.kira.cinemadb.navigation.AccountScreen
 import v.kira.cinemadb.navigation.BottomMenuItem
 import v.kira.cinemadb.navigation.SearchScreen
 
@@ -89,7 +89,7 @@ fun BottomNavigation(navController: NavController) {
         BottomMenuItem.Movies,
         BottomMenuItem.TV,
         BottomMenuItem.Search,
-        BottomMenuItem.Account
+        BottomMenuItem.Watchlist
     )
     BottomNavigation(
         modifier = Modifier.fillMaxWidth(),
@@ -149,7 +149,7 @@ fun NavigationGraph(navController: NavHostController) {
             )
         }
         composable(BottomMenuItem.Search.screenRoute) { SearchScreen() }
-        composable(BottomMenuItem.Account.screenRoute) { AccountScreen() }
+        composable(BottomMenuItem.Watchlist.screenRoute) { WatchlistScreen() }
         detailsNavGraph(navController = navController)
     }
 }

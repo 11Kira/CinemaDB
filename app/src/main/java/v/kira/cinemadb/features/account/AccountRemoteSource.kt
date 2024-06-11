@@ -8,6 +8,16 @@ import javax.inject.Inject
 class AccountRemoteSource @Inject constructor(
     private val accountService: AccountService
 ) {
+    suspend fun getAccountDetails(
+        token: String,
+        accountId: Long,
+    ) = withContext(Dispatchers.IO) {
+        accountService.getAccountDetails(
+            header = token,
+            accountId = accountId
+        )
+    }
+
     suspend fun addToWatchlist(
         token: String,
         accountId: Long,
@@ -17,6 +27,34 @@ class AccountRemoteSource @Inject constructor(
             header = token,
             accountId = accountId,
             body = body
+        )
+    }
+
+    suspend fun getMovieWatchlist(
+        token: String,
+        accountId: Long,
+        language: String,
+        page: Int
+    ) = withContext(Dispatchers.IO) {
+        accountService.getMovieWatchlist(
+            header = token,
+            language = language,
+            accountId = accountId,
+            page = page
+        )
+    }
+
+    suspend fun getTVShowWatchlist(
+        token: String,
+        accountId: Long,
+        language: String,
+        page: Int
+    ) = withContext(Dispatchers.IO) {
+        accountService.getTVShowWatchlist(
+            header = token,
+            language = language,
+            accountId = accountId,
+            page = page
         )
     }
 }

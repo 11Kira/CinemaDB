@@ -33,22 +33,3 @@ fun SearchScreen() {
         )
     }
 }
-
-@Composable
-fun AccountScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(id = R.color.black))
-            .wrapContentSize(Alignment.Center)
-    ) {
-        Text(
-            text = "Account",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp
-        )
-    }
-}
