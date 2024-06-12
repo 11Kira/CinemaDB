@@ -14,16 +14,14 @@ class DetailsUseCase @Inject constructor(
     suspend fun getMovieDetails(
         token: String,
         movieId: Long,
-        language: String
     ): MovieResult {
-        return movieRepository.getMovieDetails(token, movieId, language)
+        return movieRepository.getMovieDetails(token, movieId)
     }
 
     suspend fun getTVShowDetails(
         token: String,
         tvSeriesId: Long,
-        language: String
     ): TVShowResult {
-        return tvRepository.getTVShowDetails(token, tvSeriesId, language)
+        return tvRepository.getTVShowDetails(token, tvSeriesId)
     }
 }

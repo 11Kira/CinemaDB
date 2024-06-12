@@ -8,6 +8,8 @@ import v.kira.cinemadb.features.account.AccountRemoteSource
 import v.kira.cinemadb.features.account.AccountRepository
 import v.kira.cinemadb.features.movies.MovieRemoteSource
 import v.kira.cinemadb.features.movies.MovieRepository
+import v.kira.cinemadb.features.search.SearchRemoteSource
+import v.kira.cinemadb.features.search.SearchRepository
 import v.kira.cinemadb.features.tv.TVRemoteSource
 import v.kira.cinemadb.features.tv.TVRepository
 import javax.inject.Singleton
@@ -33,4 +35,10 @@ class RepositoryModule {
     fun provideAccountRepository(
         accountRemoteSource: AccountRemoteSource
     ) = AccountRepository(accountRemoteSource = accountRemoteSource)
+
+    @Provides
+    @Singleton
+    fun provideSearchRepository(
+        searchRemoteSource: SearchRemoteSource
+    ) = SearchRepository(remoteSource = searchRemoteSource)
 }

@@ -6,14 +6,13 @@ import v.kira.cinemadb.model.MovieResult
 
 class TopRatedMoviePagingSource(
     private val header: String,
-    private val language: String,
     private val remoteSource: MovieRemoteSource
 ): PagingSource<Int, MovieResult>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieResult> {
         return try {
             val currentPage = params.key ?: 1
-            val response = remoteSource.getTopRatedMovies(header, language, page = currentPage)
+            val response = remoteSource.getTopRatedMovies(header, page = currentPage)
             val movies = response.body()?.results.orEmpty()
 
             LoadResult.Page(

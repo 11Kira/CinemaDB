@@ -11,22 +11,22 @@ import javax.inject.Inject
 class MovieRepository @Inject constructor(
     private val remoteSource: MovieRemoteSource
 ) {
-    fun getNowPlayingMovies(token: String, language: String): Flow<PagingData<MovieResult>> =
+    fun getNowPlayingMovies(token: String): Flow<PagingData<MovieResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
-            NowPlayingMoviePagingSource(token, language, remoteSource)
+            NowPlayingMoviePagingSource(token, remoteSource)
         }.flow
 
-    fun getTopRatedMovies(token: String, language: String): Flow<PagingData<MovieResult>> =
+    fun getTopRatedMovies(token: String): Flow<PagingData<MovieResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
-            TopRatedMoviePagingSource(token, language, remoteSource)
+            TopRatedMoviePagingSource(token, remoteSource)
         }.flow
 
-    fun getTrendingMovies(token: String, language: String): Flow<PagingData<MovieResult>> =
+    fun getTrendingMovies(token: String): Flow<PagingData<MovieResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
-            TrendingMoviePagingSource(token, language, remoteSource)
+            TrendingMoviePagingSource(token, remoteSource)
         }.flow
 
-    suspend fun getMovieDetails(token: String, movieId: Long, language: String): MovieResult {
-        return remoteSource.getMovieDetails(token, movieId, language).mapMovieDetailsToDomain()
+    suspend fun getMovieDetails(token: String, movieId: Long): MovieResult {
+        return remoteSource.getMovieDetails(token, movieId).mapMovieDetailsToDomain()
     }
 }

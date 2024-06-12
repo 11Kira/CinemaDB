@@ -12,21 +12,18 @@ interface TVService {
     @GET("tv/airing_today")
     suspend fun getAiringTodayTVShows(
         @Header("Authorization") header: String,
-        @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ListResponseObject<List<TVShowResult>>>
 
     @GET("trending/tv/week")
     suspend fun getTrendingTVShows(
         @Header("Authorization") header: String,
-        @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ListResponseObject<List<TVShowResult>>>
 
     @GET("tv/top_rated")
     suspend fun getTopRatedTVShows(
         @Header("Authorization") header: String,
-        @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ListResponseObject<List<TVShowResult>>>
 
@@ -34,7 +31,6 @@ interface TVService {
     suspend fun getTVShowDetails(
         @Header("Authorization") header: String,
         @Path("series_id") seriesId: Long,
-        @Query("language") language: String,
         @Query("append_to_response") appendToResponse: String = "account_states,credits"
     ): TVShowResult
 }
