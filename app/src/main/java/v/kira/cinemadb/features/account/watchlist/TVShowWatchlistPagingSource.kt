@@ -8,14 +8,13 @@ import v.kira.cinemadb.model.TVShowResult
 class TVShowWatchlistPagingSource(
     private val header: String,
     private val accountId: Long,
-    private val language: String,
     private val remoteSource: AccountRemoteSource
 ): PagingSource<Int, TVShowResult>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, TVShowResult> {
         return try {
             val currentPage = params.key ?: 1
-            val response = remoteSource.getTVShowWatchlist(header, accountId, language, currentPage)
+            val response = remoteSource.getTVShowWatchlist(header, accountId, currentPage)
             val movies = response.body()?.results.orEmpty()
 
             LoadResult.Page(

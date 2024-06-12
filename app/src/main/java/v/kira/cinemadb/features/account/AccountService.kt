@@ -32,7 +32,6 @@ interface AccountService {
     suspend fun getMovieWatchlist(
         @Header("Authorization") header: String,
         @Path("account_id") accountId: Long,
-        @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ListResponseObject<List<MovieResult>>>
 
@@ -40,7 +39,6 @@ interface AccountService {
     suspend fun getTVShowWatchlist(
         @Header("Authorization") header: String,
         @Path("account_id") accountId: Long,
-        @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ListResponseObject<List<TVShowResult>>>
 }

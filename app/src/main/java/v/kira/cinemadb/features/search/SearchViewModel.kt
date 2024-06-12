@@ -1,4 +1,4 @@
-package v.kira.cinemadb.features.account.watchlist
+package v.kira.cinemadb.features.search
 
 import android.content.Context
 import android.util.Log
@@ -16,48 +16,42 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import v.kira.cinemadb.features.account.AccountUseCase
 import v.kira.cinemadb.model.MovieResult
 import v.kira.cinemadb.model.TVShowResult
 import v.kira.cinemadb.util.SettingsPrefs
 import javax.inject.Inject
 
 @HiltViewModel
-class WatchlistViewModel @Inject constructor(
+class SearchViewModel @Inject constructor(
     @ApplicationContext val context : Context,
-    private val useCase: AccountUseCase
+    private val searchUseCase: SearchUseCase
 ): ViewModel() {
-
-    private val movieWatchlistPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(
-        PagingData.empty())
-    val movieWatchlistState: StateFlow<PagingData<MovieResult>> = movieWatchlistPagingState.asStateFlow()
-
-    private val tvShowWatchlistPagingState: MutableStateFlow<PagingData<TVShowResult>> = MutableStateFlow(
-        PagingData.empty())
-    val tvShowWatchlistState: StateFlow<PagingData<TVShowResult>> = tvShowWatchlistPagingState.asStateFlow()
-
     var header: String
-    var accountId: Long
+
+    private val movieSearchPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(
+        PagingData.empty())
+    val movieSearchState: StateFlow<PagingData<MovieResult>> = movieSearchPagingState.asStateFlow()
+
+    private val tvShowSearchPagingState: MutableStateFlow<PagingData<TVShowResult>> = MutableStateFlow(
+        PagingData.empty())
+    val tvShowSearchState: StateFlow<PagingData<TVShowResult>> = tvShowSearchPagingState.asStateFlow()
 
     init {
-        runBlocking {
-            accountId = SettingsPrefs(context).getAccountId.first()
-            header =  SettingsPrefs(context).getToken.first().toString()
-        }
+        runBlocking { header =  SettingsPrefs(context).getToken.first().toString() }
     }
 
-    fun getMovieWatchlist() {
+    fun searchMovie(query: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {
                 Log.e("ERROR", error.message.toString())
             }
         }) {
             try {
-                useCase
-                    .getMovieWatchlist(header, accountId)
+                searchUseCase
+                    .searchMovie(header, query)
                     .cachedIn(viewModelScope)
                     .collectLatest { pagingData ->
-                        movieWatchlistPagingState.value = pagingData
+                        movieSearchPagingState.value = pagingData
                     }
             } catch (e: Exception) {
                 Log.d("Exception:", e.toString())
@@ -65,18 +59,18 @@ class WatchlistViewModel @Inject constructor(
         }
     }
 
-    fun getTVShowWatchlist() {
+    fun searchTVShow(query: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {
                 Log.e("ERROR", error.message.toString())
             }
         }) {
             try {
-                useCase
-                    .getTVShowWatchlist(header, accountId)
+                searchUseCase
+                    .searchTVShow(header, query)
                     .cachedIn(viewModelScope)
                     .collectLatest { pagingData ->
-                        tvShowWatchlistPagingState.value = pagingData
+                        tvShowSearchPagingState.value = pagingData
                     }
             } catch (e: Exception) {
                 Log.d("Exception:", e.toString())
