@@ -25,14 +25,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+
+lateinit var viewModel: SearchViewModel
 
 @Composable
-fun SearchScreen() {
-    MainSearchScreen()
+fun SearchScreen(
+    onItemClick: (Long, Int) -> Unit
+) {
+    viewModel = hiltViewModel()
+    MainSearchScreen(onItemClick)
 }
 
 @Composable
-fun MainSearchScreen() {
+fun MainSearchScreen(onItemClick: (Long, Int) -> Unit) {
     var typeSelected by remember { mutableStateOf(0) }
     val typeList = listOf("Movies", "TV Shows")
     var selectedTab = 0
