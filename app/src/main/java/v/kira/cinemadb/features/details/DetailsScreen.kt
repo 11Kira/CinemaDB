@@ -146,7 +146,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                     color = Color.White,
                     text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp
+                    fontSize = 20.sp
                 )
             }
         }
@@ -163,7 +163,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
-                text = movie.tagline,
+                text = movie.tagline.ifBlank { movie.originalTitle },
                 color = Color.White
             )
             Text(
@@ -349,7 +349,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     color = Color.White,
                     text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp,                )
+                    fontSize = 20.sp,                )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
