@@ -36,8 +36,17 @@ class SearchViewModel @Inject constructor(
         PagingData.empty())
     val tvShowSearchState: StateFlow<PagingData<TVShowResult>> = tvShowSearchPagingState.asStateFlow()
 
+    private val mutableSearchText = MutableStateFlow("")
+    val searchText = mutableSearchText.asStateFlow()
+
+
     init {
         runBlocking { header =  SettingsPrefs(context).getToken.first().toString() }
+    }
+
+    fun onSearchMovieTextChange(text: String) {
+        mutableSearchText.value = text
+        searchMovie(text)
     }
 
     fun searchMovie(query: String) {
@@ -57,6 +66,11 @@ class SearchViewModel @Inject constructor(
                 Log.d("Exception:", e.toString())
             }
         }
+    }
+
+    fun onSearchTVShowTextChange(text: String) {
+        mutableSearchText.value = text
+        searchTVShow(text)
     }
 
     fun searchTVShow(query: String) {
