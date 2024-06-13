@@ -195,7 +195,7 @@ fun SearchField(typeSelected: Int) {
                 focusedBorderColor = Color.White,
                 unfocusedBorderColor = Color.DarkGray,
                 focusedTextColor = Color.White,
-                unfocusedTextColor = Color.DarkGray,
+                unfocusedTextColor = Color.White,
             ),
             placeholder = {
                 Text(
