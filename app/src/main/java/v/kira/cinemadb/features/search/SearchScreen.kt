@@ -189,20 +189,23 @@ fun SearchField(typeSelected: Int) {
             onValueChange = onSearchTextChange,
             modifier = Modifier.fillMaxWidth().padding(top = 5.dp, bottom = 10.dp),
             shape = RoundedCornerShape(24),
+            singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 cursorColor = Color.White,
                 focusedBorderColor = Color.White,
                 unfocusedBorderColor = Color.DarkGray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.DarkGray,
             ),
             placeholder = {
                 Text(
                     text = if (typeSelected == 0) "Search Movie" else "Search TV Show",
                     style = TextStyle(
                         fontSize = 14.sp,
-                        color = Color.LightGray
-                    )
+                        color = Color.White
+                    ),
                 )
-            }
+            },
         )
     }
 
