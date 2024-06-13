@@ -148,17 +148,21 @@ fun NavigationGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(BottomMenuItem.Search.screenRoute) { SearchScreen() }
+        composable(BottomMenuItem.Search.screenRoute) { SearchScreen(
+            onItemClick = { mediaId, type ->
+                navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
+            }
+        ) }
         composable(BottomMenuItem.Watchlist.screenRoute) { WatchlistScreen(
             onItemClick = { mediaId, type ->
                 navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
             }
         ) }
-        detailsNavGraph(navController = navController)
+        detailsNavGraph()
     }
 }
 
-fun NavGraphBuilder.detailsNavGraph(navController: NavHostController) {
+fun NavGraphBuilder.detailsNavGraph() {
 
     navigation(
         route = "${Graph.DETAILS_GRAPH}/{id}/{type}",
@@ -186,4 +190,3 @@ object Graph {
     const val DETAILS_GRAPH = "details_graph"
     const val DETAILS_SCREEN_ROUTE = "details/{id}/{type}"
 }
-
