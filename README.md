@@ -4,7 +4,7 @@ Features:
 1. List of Movies with pagination (Trending, Now Playing, Top Rated)
 2. List of TV Show Series with pagination (Trending, Airing Today, Top Rated)
 3. Movie and TV Show details page
-4. Search Movies and TV Show functionality (Not yet started)
+4. Search Movies and TV Show functionality
 5. Add Movie and TV Show to user watch list functionality
 6. Watch list page (Movie list and TV Show list)
 
