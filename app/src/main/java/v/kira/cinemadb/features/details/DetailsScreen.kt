@@ -163,7 +163,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
-                text = movie.tagline.ifBlank { movie.originalTitle },
+                text = movie.tagline.ifBlank { movie.title },
                 color = Color.White
             )
             Text(
@@ -364,7 +364,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
-                text = tvShow.tagline.ifBlank { tvShow.originalName },
+                text = tvShow.tagline.ifBlank { tvShow.name },
                 color = Color.White
             )
             Text(
