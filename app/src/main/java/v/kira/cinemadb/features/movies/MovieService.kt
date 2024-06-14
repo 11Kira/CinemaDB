@@ -12,21 +12,18 @@ interface MovieService {
     @GET("movie/now_playing")
     suspend fun getNowPlayingMovies(
         @Header("Authorization") header: String,
-        @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ListResponseObject<List<MovieResult>>>
 
     @GET("trending/movie/week")
     suspend fun getTrendingMovies(
         @Header("Authorization") header: String,
-        @Query("language") language: String,
         @Query("page") page: Int,
     ): Response<ListResponseObject<List<MovieResult>>>
 
     @GET("movie/top_rated")
     suspend fun getTopRatedMovies(
         @Header("Authorization") header: String,
-        @Query("language") language: String,
         @Query("page") page: Int
     ): Response<ListResponseObject<List<MovieResult>>>
 
@@ -34,7 +31,6 @@ interface MovieService {
     suspend fun getMovieDetails(
         @Header("Authorization") header: String,
         @Path("movie_id") movieId: Long,
-        @Query("language") language: String,
         @Query("append_to_response") appendToResponse: String = "account_states,credits"
     ): MovieResult
 }

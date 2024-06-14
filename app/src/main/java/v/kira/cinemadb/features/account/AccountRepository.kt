@@ -23,13 +23,13 @@ class AccountRepository @Inject constructor(
         return accountRemoteSource.addToWatchlist(token, accountId = accountId, body = body)
     }
 
-    fun getMovieWatchlist(token: String, accountId: Long, language: String): Flow<PagingData<MovieResult>> =
+    fun getMovieWatchlist(token: String, accountId: Long): Flow<PagingData<MovieResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
-            MovieWatchlistPagingSource(token, accountId, language, accountRemoteSource)
+            MovieWatchlistPagingSource(token, accountId, accountRemoteSource)
         }.flow
 
-    fun getTVShowWatchlist(token: String, accountId: Long, language: String): Flow<PagingData<TVShowResult>> =
+    fun getTVShowWatchlist(token: String, accountId: Long): Flow<PagingData<TVShowResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
-            TVShowWatchlistPagingSource(token, accountId, language, accountRemoteSource)
+            TVShowWatchlistPagingSource(token, accountId, accountRemoteSource)
         }.flow
 }

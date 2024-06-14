@@ -27,11 +27,11 @@ class AccountUseCase @Inject constructor(
         return accountRepository.addToWatchlist(token, accountId, body)
     }
 
-    fun getMovieWatchlist(token: String, accountId: Long, language: String): Flow<PagingData<MovieResult>> {
-        return accountRepository.getMovieWatchlist(token, accountId, language)
+    fun getMovieWatchlist(token: String, accountId: Long): Flow<PagingData<MovieResult>> {
+        return accountRepository.getMovieWatchlist(token, accountId)
     }
 
-    fun getTVShowWatchlist(token: String, accountId: Long, language: String): Flow<PagingData<TVShowResult>> {
-        return accountRepository.getTVShowWatchlist(token, accountId, language)
+    fun getTVShowWatchlist(token: String, accountId: Long): Flow<PagingData<TVShowResult>> {
+        return accountRepository.getTVShowWatchlist(token, accountId)
     }
 }

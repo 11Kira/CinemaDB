@@ -33,12 +33,10 @@ class AccountRemoteSource @Inject constructor(
     suspend fun getMovieWatchlist(
         token: String,
         accountId: Long,
-        language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
         accountService.getMovieWatchlist(
             header = token,
-            language = language,
             accountId = accountId,
             page = page
         )
@@ -47,12 +45,10 @@ class AccountRemoteSource @Inject constructor(
     suspend fun getTVShowWatchlist(
         token: String,
         accountId: Long,
-        language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
         accountService.getTVShowWatchlist(
             header = token,
-            language = language,
             accountId = accountId,
             page = page
         )

@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import v.kira.cinemadb.features.account.AccountService
 import v.kira.cinemadb.features.movies.MovieService
+import v.kira.cinemadb.features.search.SearchService
 import v.kira.cinemadb.features.tv.TVService
 import javax.inject.Singleton
 
@@ -28,4 +29,9 @@ class ServiceModule {
     @Provides
     fun provideAccountService(retrofit: Retrofit): AccountService =
         retrofit.create(AccountService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideSearchService(retrofit: Retrofit): SearchService =
+        retrofit.create(SearchService::class.java)
 }

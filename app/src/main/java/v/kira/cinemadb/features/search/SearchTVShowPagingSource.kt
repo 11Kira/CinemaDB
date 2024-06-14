@@ -1,18 +1,19 @@
-package v.kira.cinemadb.features.movies
+package v.kira.cinemadb.features.search
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import v.kira.cinemadb.model.MovieResult
+import v.kira.cinemadb.model.TVShowResult
 
-class NowPlayingMoviePagingSource(
+class SearchTVShowPagingSource (
     private val header: String,
-    private val remoteSource: MovieRemoteSource
-): PagingSource<Int, MovieResult>() {
+    private val query: String,
+    private val remoteSource: SearchRemoteSource
+): PagingSource<Int, TVShowResult>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieResult> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, TVShowResult> {
         return try {
             val currentPage = params.key ?: 1
-            val response = remoteSource.getNowPlayingMovies(header, page = currentPage)
+            val response = remoteSource.searchTVShow(header, query, page = currentPage)
             val movies = response.body()?.results.orEmpty()
 
             LoadResult.Page(
@@ -25,7 +26,7 @@ class NowPlayingMoviePagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, MovieResult>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, TVShowResult>): Int? {
         return null
     }
 }

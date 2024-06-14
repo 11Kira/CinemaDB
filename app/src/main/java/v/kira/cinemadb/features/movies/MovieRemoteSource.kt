@@ -10,49 +10,41 @@ class MovieRemoteSource @Inject constructor(
 
     suspend fun getNowPlayingMovies(
         token: String,
-        language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
         movieService.getNowPlayingMovies(
             header = token,
-            language = language,
             page = page
         )
     }
 
     suspend fun getTrendingMovies(
         token: String,
-        language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
         movieService.getTrendingMovies(
             header = token,
-            language = language,
             page = page,
         )
     }
 
     suspend fun getTopRatedMovies(
         token: String,
-        language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
         movieService.getTopRatedMovies(
             header = token,
-            language = language,
             page = page
         )
     }
 
     suspend fun getMovieDetails(
         token: String,
-        movieId: Long,
-        language: String
+        movieId: Long
     ) = withContext(Dispatchers.IO) {
         movieService.getMovieDetails(
             header = token,
-            movieId = movieId,
-            language = language
+            movieId = movieId
         )
     }
 }

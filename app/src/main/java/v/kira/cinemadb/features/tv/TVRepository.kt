@@ -11,20 +11,20 @@ import javax.inject.Inject
 class TVRepository @Inject constructor(
     private val remoteSource: TVRemoteSource
 ) {
-    fun getAiringTodayTVShows(token: String, language: String): Flow<PagingData<TVShowResult>> =
+    fun getAiringTodayTVShows(token: String): Flow<PagingData<TVShowResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
-            AiringTodayTVShowPagingSource(token, language, remoteSource)
+            AiringTodayTVShowPagingSource(token, remoteSource)
         }.flow
-    fun getTrendingTVShows(token: String, language: String): Flow<PagingData<TVShowResult>> =
+    fun getTrendingTVShows(token: String): Flow<PagingData<TVShowResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
-            TrendingTVShowPagingSource(token, language, remoteSource)
+            TrendingTVShowPagingSource(token, remoteSource)
         }.flow
-    fun getTopRatedTVShows(token: String, language: String): Flow<PagingData<TVShowResult>> =
+    fun getTopRatedTVShows(token: String): Flow<PagingData<TVShowResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
-            TopRatedTVShowPagingSource(token, language, remoteSource)
+            TopRatedTVShowPagingSource(token, remoteSource)
         }.flow
 
-    suspend fun getTVShowDetails(token: String, tvSeriesId: Long, language: String): TVShowResult {
-        return remoteSource.getTVShowDetails(token, tvSeriesId, language).mapTVShowDetailsToDomain()
+    suspend fun getTVShowDetails(token: String, tvSeriesId: Long): TVShowResult {
+        return remoteSource.getTVShowDetails(token, tvSeriesId).mapTVShowDetailsToDomain()
     }
 }

@@ -23,7 +23,6 @@ class DetailsViewModel @Inject constructor(
     private val accountUseCase: AccountUseCase
 ): ViewModel() {
 
-    val language = "en-US"
     var header: String
 
     private val mutableDetailsState: MutableSharedFlow<DetailsState> = MutableSharedFlow()
@@ -39,7 +38,7 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            val result = detailsUseCase.getMovieDetails(header, movieId, language)
+            val result = detailsUseCase.getMovieDetails(header, movieId)
             mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
     }
@@ -50,7 +49,7 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            val result = detailsUseCase.getTVShowDetails(header, tvSeriesId, language)
+            val result = detailsUseCase.getTVShowDetails(header, tvSeriesId)
             mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
         }
     }

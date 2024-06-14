@@ -8,6 +8,8 @@ import v.kira.cinemadb.features.account.AccountRemoteSource
 import v.kira.cinemadb.features.account.AccountService
 import v.kira.cinemadb.features.movies.MovieRemoteSource
 import v.kira.cinemadb.features.movies.MovieService
+import v.kira.cinemadb.features.search.SearchRemoteSource
+import v.kira.cinemadb.features.search.SearchService
 import v.kira.cinemadb.features.tv.TVRemoteSource
 import v.kira.cinemadb.features.tv.TVService
 import javax.inject.Singleton
@@ -33,4 +35,10 @@ class RemoteSourceModule {
     fun provideAccountRemoteSource(
         accountService: AccountService
     ) = AccountRemoteSource(accountService = accountService)
+
+    @Provides
+    @Singleton
+    fun provideSearchRemoteSource(
+        searchService: SearchService
+    ) = SearchRemoteSource(searchService = searchService)
 }

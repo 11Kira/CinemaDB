@@ -29,7 +29,6 @@ class TVViewModel @Inject constructor(
     private val useCase: TVUseCase,
 ): ViewModel() {
 
-    val language = "en-US"
     var header: String
 
     private val tvShowPagingState: MutableStateFlow<PagingData<TVShowResult>> = MutableStateFlow(
@@ -50,7 +49,7 @@ class TVViewModel @Inject constructor(
                 when (type) {
                     TRENDING -> {
                         useCase
-                            .getTrendingTVShows(header, language)
+                            .getTrendingTVShows(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
                                 tvShowPagingState.value = pagingData
@@ -58,7 +57,7 @@ class TVViewModel @Inject constructor(
                     }
                     NOW_PLAYING -> {
                         useCase
-                            .getAiringTodayTVShows(header, language)
+                            .getAiringTodayTVShows(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
                                 tvShowPagingState.value = pagingData
@@ -67,7 +66,7 @@ class TVViewModel @Inject constructor(
 
                     TOP_RATED -> {
                         useCase
-                            .getTopRatedTVShows(header, language)
+                            .getTopRatedTVShows(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
                                 tvShowPagingState.value = pagingData

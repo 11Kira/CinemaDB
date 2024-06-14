@@ -1,18 +1,19 @@
-package v.kira.cinemadb.features.movies
+package v.kira.cinemadb.features.search
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import v.kira.cinemadb.model.MovieResult
 
-class NowPlayingMoviePagingSource(
+class SearchMoviePagingSource (
     private val header: String,
-    private val remoteSource: MovieRemoteSource
+    private val query: String,
+    private val remoteSource: SearchRemoteSource
 ): PagingSource<Int, MovieResult>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieResult> {
         return try {
             val currentPage = params.key ?: 1
-            val response = remoteSource.getNowPlayingMovies(header, page = currentPage)
+            val response = remoteSource.searchMovie(header, query, page = currentPage)
             val movies = response.body()?.results.orEmpty()
 
             LoadResult.Page(

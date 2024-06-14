@@ -10,36 +10,30 @@ class TVRemoteSource @Inject constructor(
 
     suspend fun getAiringTodayTVShows(
         token: String,
-        language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
         tvService.getAiringTodayTVShows(
             header = token,
-            language = language,
             page = page
         )
     }
 
     suspend fun getTrendingTVShows(
         token: String,
-        language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
         tvService.getTrendingTVShows(
             header = token,
-            language = language,
             page = page,
         )
     }
 
     suspend fun getTopRatedTVShows(
         token: String,
-        language: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
         tvService.getTopRatedTVShows(
             header = token,
-            language = language,
             page = page
         )
     }
@@ -47,12 +41,10 @@ class TVRemoteSource @Inject constructor(
     suspend fun getTVShowDetails(
         token: String,
         tvSeriesId: Long,
-        language: String
     ) = withContext(Dispatchers.IO) {
         tvService.getTVShowDetails(
             header = token,
             seriesId = tvSeriesId,
-            language = language
         )
     }
 }

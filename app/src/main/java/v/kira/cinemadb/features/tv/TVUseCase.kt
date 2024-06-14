@@ -11,22 +11,19 @@ class TVUseCase @Inject constructor(
 
     fun getAiringTodayTVShows(
         token: String,
-        language: String,
     ): Flow<PagingData<TVShowResult>> {
-        return repository.getAiringTodayTVShows(token, language)
+        return repository.getAiringTodayTVShows(token)
     }
 
     fun getTopRatedTVShows(
         token: String,
-        language: String,
     ): Flow<PagingData<TVShowResult>> {
-        return repository.getTopRatedTVShows(token, language)
+        return repository.getTopRatedTVShows(token)
     }
 
     fun getTrendingTVShows(
         token: String,
-        language: String,
     ): Flow<PagingData<TVShowResult>> {
-        return repository.getTrendingTVShows(token, language)
+        return repository.getTrendingTVShows(token)
     }
 }

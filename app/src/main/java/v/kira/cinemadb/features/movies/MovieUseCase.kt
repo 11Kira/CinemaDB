@@ -8,15 +8,15 @@ import javax.inject.Inject
 class MovieUseCase @Inject constructor(
     private val repository: MovieRepository
 ) {
-    fun getNowPlayingMovies(token: String, language: String): Flow<PagingData<MovieResult>> {
-        return repository.getNowPlayingMovies(token, language)
+    fun getNowPlayingMovies(token: String): Flow<PagingData<MovieResult>> {
+        return repository.getNowPlayingMovies(token)
     }
 
-    fun getTopRatedMovies(token: String, language: String): Flow<PagingData<MovieResult>> {
-        return repository.getTopRatedMovies(token, language)
+    fun getTopRatedMovies(token: String): Flow<PagingData<MovieResult>> {
+        return repository.getTopRatedMovies(token)
     }
 
-    fun getTrendingMovies(token: String, language: String): Flow<PagingData<MovieResult>> {
-        return repository.getTrendingMovies(token, language)
+    fun getTrendingMovies(token: String): Flow<PagingData<MovieResult>> {
+        return repository.getTrendingMovies(token)
     }
 }

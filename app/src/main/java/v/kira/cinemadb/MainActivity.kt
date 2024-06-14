@@ -37,9 +37,9 @@ import v.kira.cinemadb.Graph.DETAILS_SCREEN_ROUTE
 import v.kira.cinemadb.features.account.watchlist.WatchlistScreen
 import v.kira.cinemadb.features.details.DetailsScreen
 import v.kira.cinemadb.features.movies.MovieListScreen
+import v.kira.cinemadb.features.search.SearchScreen
 import v.kira.cinemadb.features.tv.TVShowListScreen
 import v.kira.cinemadb.navigation.BottomMenuItem
-import v.kira.cinemadb.navigation.SearchScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -148,17 +148,21 @@ fun NavigationGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(BottomMenuItem.Search.screenRoute) { SearchScreen() }
+        composable(BottomMenuItem.Search.screenRoute) { SearchScreen(
+            onItemClick = { mediaId, type ->
+                navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
+            }
+        ) }
         composable(BottomMenuItem.Watchlist.screenRoute) { WatchlistScreen(
             onItemClick = { mediaId, type ->
                 navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
             }
         ) }
-        detailsNavGraph(navController = navController)
+        detailsNavGraph()
     }
 }
 
-fun NavGraphBuilder.detailsNavGraph(navController: NavHostController) {
+fun NavGraphBuilder.detailsNavGraph() {
 
     navigation(
         route = "${Graph.DETAILS_GRAPH}/{id}/{type}",
@@ -186,4 +190,3 @@ object Graph {
     const val DETAILS_GRAPH = "details_graph"
     const val DETAILS_SCREEN_ROUTE = "details/{id}/{type}"
 }
-

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -103,7 +102,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                 contentDescription = "Poster",
-                modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                modifier = Modifier.fillMaxWidth().height(690.dp)
             )
 
             Box(
@@ -146,24 +145,23 @@ fun SetupMovieDetails(movie: MovieResult) {
                     color = Color.White,
                     text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp
+                    fontSize = 20.sp
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(15.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .navigationBarsPadding()
-                .padding(top = 10.dp, start = 10.dp, bottom = 10.dp)
+                .padding(start = 10.dp, bottom = 10.dp, end = 10.dp)
         ) {
             Text(
                 textAlign = TextAlign.Center,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
-                text = movie.tagline,
+                text = movie.tagline.ifBlank { movie.title },
                 color = Color.White
             )
             Text(
@@ -306,7 +304,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                 contentDescription = "Poster",
-                modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                modifier = Modifier.fillMaxWidth().height(690.dp)
             )
 
             Box(
@@ -349,22 +347,21 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     color = Color.White,
                     text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp,                )
+                    fontSize = 20.sp,                )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(15.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .navigationBarsPadding()
-                .padding(top = 10.dp, start = 10.dp, bottom = 10.dp)
+                .padding(start = 10.dp, bottom = 10.dp, end = 10.dp)
         ) {
             Text(
                 textAlign = TextAlign.Center,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
-                text = tvShow.tagline.ifBlank { tvShow.originalName },
+                text = tvShow.tagline.ifBlank { tvShow.name },
                 color = Color.White
             )
             Text(

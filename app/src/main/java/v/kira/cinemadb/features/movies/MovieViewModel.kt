@@ -29,7 +29,6 @@ class MovieViewModel @Inject constructor(
     private val useCase: MovieUseCase,
 ): ViewModel() {
 
-    val language = "en-US"
     var header: String
 
     private val moviesPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(PagingData.empty())
@@ -49,7 +48,7 @@ class MovieViewModel @Inject constructor(
                 when (type) {
                     TRENDING -> {
                         useCase
-                            .getTrendingMovies(header, language)
+                            .getTrendingMovies(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
                             moviesPagingState.value = pagingData
@@ -57,7 +56,7 @@ class MovieViewModel @Inject constructor(
                     }
                     NOW_PLAYING -> {
                         useCase
-                            .getNowPlayingMovies(header, language)
+                            .getNowPlayingMovies(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
                                 moviesPagingState.value = pagingData
@@ -66,7 +65,7 @@ class MovieViewModel @Inject constructor(
 
                     TOP_RATED -> {
                         useCase
-                            .getTopRatedMovies(header, language)
+                            .getTopRatedMovies(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
                                 moviesPagingState.value = pagingData
