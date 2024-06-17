@@ -17,7 +17,5 @@ class MainViewModel @Inject constructor(
     private var _currentlySelectedTab = MutableStateFlow("Movies")
     val currentlySelectedTab: StateFlow<String> = _currentlySelectedTab.asStateFlow()
 
-    fun updateSelectedTab(selectedTab: String) {
-        _currentlySelectedTab.value = selectedTab
-    }
+    fun updateSelectedTab(selectedTab: String) { _currentlySelectedTab.value = selectedTab }
 }

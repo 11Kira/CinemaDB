@@ -25,6 +25,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -104,6 +105,8 @@ fun MovieSegmentedControl(
     onItemSelection: (selectedItemIndex: Int) -> Unit
 ) {
     val selectedIndex = remember { mutableStateOf(0) }
+    val selectedTab by remember { mutableStateOf(viewModel.selectedMovieTab) }
+
     Box(modifier = Modifier.background(Color.Black)) {
         Row(
             modifier = Modifier
@@ -130,8 +133,9 @@ fun MovieSegmentedControl(
                     onClick = {
                         selectedIndex.value = index
                         onItemSelection(selectedIndex.value)
+                        viewModel.updateSelectedMovieTab(item)
                     },
-                    colors = if (selectedIndex.value == index) {
+                    colors = if (selectedTab.collectAsState().value == item) {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray)
                     } else {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent)
@@ -164,7 +168,7 @@ fun MovieSegmentedControl(
                         text = item,
                         style = LocalTextStyle.current.copy(
                             fontSize = 12.sp,
-                            fontWeight = if (selectedIndex.value == index)
+                            fontWeight = if (selectedTab.collectAsState().value == item)
                                 LocalTextStyle.current.fontWeight
                             else
                                 FontWeight.Normal,

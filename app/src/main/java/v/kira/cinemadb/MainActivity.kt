@@ -43,16 +43,16 @@ import v.kira.cinemadb.features.search.SearchScreen
 import v.kira.cinemadb.features.tv.TVShowListScreen
 import v.kira.cinemadb.navigation.BottomMenuItem
 
-private lateinit var viewModelddd: MainViewModel
+private lateinit var viewModel: MainViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val injectedViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModelddd = viewModel
+        viewModel = injectedViewModel
         setContent {
             MainScreenView()
         }
@@ -91,7 +91,7 @@ fun currentRoute(navController: NavHostController): String? {
 @Composable
 fun BottomNavigation(navController: NavController) {
     var selectedItem by remember { mutableStateOf("movies") }
-    val selectedTab by remember { mutableStateOf(viewModelddd.currentlySelectedTab) }
+    val selectedTab by remember { mutableStateOf(viewModel.currentlySelectedTab) }
 
     val screens = listOf(
         BottomMenuItem.Movies,
@@ -106,10 +106,8 @@ fun BottomNavigation(navController: NavController) {
         backgroundColor = Color.DarkGray,
     ) {
         screens.forEach {
-
-
             BottomNavigationItem(
-                selected = (selectedItem == it.label || selectedItem == selectedTab.collectAsState().value),
+                selected = (selectedItem == selectedTab.collectAsState().value),
                 onClick = {
                     selectedItem = it.label
                     navController.navigate(it.screenRoute) {
@@ -121,7 +119,7 @@ fun BottomNavigation(navController: NavController) {
                         launchSingleTop = true
                         restoreState = true
                     }
-                    viewModelddd.updateSelectedTab(it.label)
+                    viewModel.updateSelectedTab(it.label)
                 },
                 label = {
                     Text(
