@@ -43,6 +43,7 @@ class WatchlistViewModel @Inject constructor(
         runBlocking {
             accountId = SettingsPrefs(context).getAccountId.first()
             header =  SettingsPrefs(context).getToken.first().toString()
+            getMovieWatchlist()
         }
     }
 

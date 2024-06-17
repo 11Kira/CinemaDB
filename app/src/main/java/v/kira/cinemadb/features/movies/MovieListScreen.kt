@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
@@ -45,6 +45,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import kotlinx.coroutines.flow.first
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
@@ -60,38 +61,37 @@ fun MovieListScreen(
     onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainScreen(onItemClick)
-    viewModel.getMovies(TRENDING)
+    viewModel.updateScrollToTopState(true)
+    MainMovieScreen(onItemClick)
 }
 
 @Composable
-fun MainScreen(onItemClick: (Long, Int) -> Unit) {
-    val movies by rememberUpdatedState(newValue = viewModel.uiState.collectAsLazyPagingItems())
+fun MainMovieScreen(onItemClick: (Long, Int) -> Unit) {
+    val movies by rememberUpdatedState(newValue = viewModel.moviesPagingState.collectAsLazyPagingItems())
     val categoryList = listOf("Trending", "Now Playing", "Top Rated")
-    var selectedTab = 0
     Column {
-        SegmentedControl(categoryList.toList()) { selectedItem ->
+        MovieSegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> {
-                    if (selectedTab != 0) viewModel.getMovies(TRENDING)
-                    selectedTab = 0
+                    viewModel.getMovies(TRENDING)
+                    viewModel.updateScrollToTopState(true)
                 }
                 1 -> {
-                    if (selectedTab != 1) viewModel.getMovies(NOW_PLAYING)
-                    selectedTab = 1
+                    viewModel.getMovies(NOW_PLAYING)
+                    viewModel.updateScrollToTopState(true)
                 }
                 2 -> {
-                    if (selectedTab != 2) viewModel.getMovies(TOP_RATED)
-                    selectedTab = 2
+                    viewModel.getMovies(TOP_RATED)
+                    viewModel.updateScrollToTopState(true)
                 }
             }
         }
-        PopulateGrid(movies, onItemClick)
+        PopulateMovieGrid(movies, onItemClick)
     }
 }
 
 @Composable
-fun SegmentedControl(
+fun MovieSegmentedControl(
     items: List<String>,
     onItemSelection: (selectedItemIndex: Int) -> Unit
 ) {
@@ -172,20 +172,27 @@ fun SegmentedControl(
 }
 
 @Composable
-fun PopulateGrid(
+fun PopulateMovieGrid(
     movies: LazyPagingItems<MovieResult>,
     onItemClick: (Long, Int) -> Unit
 ) {
+    val scrollToTop by rememberUpdatedState( viewModel.scrollToTopState)
+    val lazyRowState = rememberLazyStaggeredGridState()
+
+    LaunchedEffect(key1 = movies.itemCount) {
+        if (scrollToTop.first()) {
+            lazyRowState.scrollToItem(0)
+            viewModel.updateScrollToTopState(false)
+        }
+    }
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)
     ) {
-        val lazyRowState = rememberLazyListState()
 
-        LaunchedEffect(movies.itemCount) {
-            lazyRowState.animateScrollToItem(0)
-        }
         LazyVerticalStaggeredGrid(
+            state = lazyRowState,
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),

@@ -59,7 +59,6 @@ fun WatchlistScreen(
 ) {
     viewModel = hiltViewModel()
     MainWatchlistScreen(onItemClick)
-    viewModel.getMovieWatchlist()
 }
 
 @Composable

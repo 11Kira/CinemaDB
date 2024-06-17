@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
@@ -23,6 +24,7 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +45,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import kotlinx.coroutines.flow.first
 import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
@@ -57,38 +60,37 @@ fun TVShowListScreen(
     onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainScreen(onItemClick)
-    viewModel.getTVShowList(TRENDING)
+    viewModel.updateScrollToTopState(true)
+    MainTVShowScreen(onItemClick)
 }
 
 @Composable
-fun MainScreen(onItemClick: (Long, Int) -> Unit) {
-    val tvShows by rememberUpdatedState(newValue = viewModel.uiState.collectAsLazyPagingItems())
+fun MainTVShowScreen(onItemClick: (Long, Int) -> Unit) {
+    val tvShows by rememberUpdatedState(newValue = viewModel.tvShowPagingState.collectAsLazyPagingItems())
     val categoryList = listOf("Trending", "Airing Today", "Top Rated")
-    var selectedTab = 0
     Column {
-        SegmentedControl(categoryList.toList()) { selectedItem ->
+        TVShowSegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> {
-                    if (selectedTab != 0) viewModel.getTVShowList(TRENDING)
-                    selectedTab = 0
+                    viewModel.getTVShowList(TRENDING)
+                    viewModel.updateScrollToTopState(true)
                 }
                 1 -> {
-                    if (selectedTab != 1) viewModel.getTVShowList(NOW_PLAYING)
-                    selectedTab = 1
+                    viewModel.getTVShowList(NOW_PLAYING)
+                    viewModel.updateScrollToTopState(true)
                 }
                 2 -> {
-                    if (selectedTab != 2) viewModel.getTVShowList(TOP_RATED)
-                    selectedTab = 2
+                    viewModel.getTVShowList(TOP_RATED)
+                    viewModel.updateScrollToTopState(true)
                 }
             }
         }
-        PopulateGrid(tvShows, onItemClick)
+        PopulateTVShowGrid(tvShows, onItemClick)
     }
 }
 
 @Composable
-fun SegmentedControl(
+fun TVShowSegmentedControl(
     items: List<String>,
     onItemSelection: (selectedItemIndex: Int) -> Unit
 ) {
@@ -171,15 +173,27 @@ fun SegmentedControl(
 }
 
 @Composable
-fun PopulateGrid(
+fun PopulateTVShowGrid(
     tvShows: LazyPagingItems<TVShowResult>,
     onItemClick: (Long, Int) -> Unit
 ) {
+
+    val scrollToTop by rememberUpdatedState(newValue = viewModel.scrollToTopState)
+    val lazyRowState = rememberLazyStaggeredGridState()
+
+    LaunchedEffect(key1 = tvShows.itemCount) {
+        if (scrollToTop.first()) {
+            lazyRowState.scrollToItem(0)
+            viewModel.updateScrollToTopState(false)
+        }
+    }
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)
     ) {
         LazyVerticalStaggeredGrid(
+            state = lazyRowState,
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),

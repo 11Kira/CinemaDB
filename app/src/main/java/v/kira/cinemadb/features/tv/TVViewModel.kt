@@ -31,12 +31,22 @@ class TVViewModel @Inject constructor(
 
     var header: String
 
-    private val tvShowPagingState: MutableStateFlow<PagingData<TVShowResult>> = MutableStateFlow(
+    private val _tvShowPagingState: MutableStateFlow<PagingData<TVShowResult>> = MutableStateFlow(
         PagingData.empty())
-    val uiState: StateFlow<PagingData<TVShowResult>> = tvShowPagingState.asStateFlow()
+    val tvShowPagingState: StateFlow<PagingData<TVShowResult>> = _tvShowPagingState.asStateFlow()
+
+    private val _scrollToTopState = MutableStateFlow(false)
+    val scrollToTopState: StateFlow<Boolean> = _scrollToTopState.asStateFlow()
+
+    fun updateScrollToTopState(scrollToTop: Boolean) {
+        _scrollToTopState.value = scrollToTop
+    }
 
     init {
-        runBlocking { header =  SettingsPrefs(context).getToken.first().toString() }
+        runBlocking {
+            header =  SettingsPrefs(context).getToken.first().toString()
+            getTVShowList(TRENDING)
+        }
     }
 
     fun getTVShowList(type: Int) {
@@ -52,7 +62,7 @@ class TVViewModel @Inject constructor(
                             .getTrendingTVShows(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
-                                tvShowPagingState.value = pagingData
+                                _tvShowPagingState.value = pagingData
                             }
                     }
                     NOW_PLAYING -> {
@@ -60,7 +70,7 @@ class TVViewModel @Inject constructor(
                             .getAiringTodayTVShows(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
-                                tvShowPagingState.value = pagingData
+                                _tvShowPagingState.value = pagingData
                             }
                     }
 
@@ -69,7 +79,7 @@ class TVViewModel @Inject constructor(
                             .getTopRatedTVShows(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
-                                tvShowPagingState.value = pagingData
+                                _tvShowPagingState.value = pagingData
                             }
                     }
                 }
