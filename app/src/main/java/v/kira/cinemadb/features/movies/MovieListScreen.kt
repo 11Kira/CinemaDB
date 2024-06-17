@@ -169,7 +169,7 @@ fun MovieSegmentedControl(
                         style = LocalTextStyle.current.copy(
                             fontSize = 12.sp,
                             fontWeight = if (selectedTab.collectAsState().value == item)
-                                LocalTextStyle.current.fontWeight
+                                FontWeight.SemiBold
                             else
                                 FontWeight.Normal,
                             color = Color.White

@@ -25,6 +25,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -92,7 +93,6 @@ fun MainTVShowScreen(onItemClick: (Long, Int) -> Unit) {
                 }
             }
             viewModel.updateScrollToTopState(true)
-
         }
         PopulateTVShowGrid(tvShows, onItemClick)
     }
@@ -104,6 +104,8 @@ fun TVShowSegmentedControl(
     onItemSelection: (selectedItemIndex: Int) -> Unit
 ) {
     val selectedIndex = remember { mutableStateOf(0) }
+    val selectedTab by remember { mutableStateOf(viewModel.selectedTVShowTab) }
+
     Box(modifier = Modifier.background(Color.Black)) {
         Row(
             modifier = Modifier
@@ -130,8 +132,9 @@ fun TVShowSegmentedControl(
                     onClick = {
                         selectedIndex.value = index
                         onItemSelection(selectedIndex.value)
+                        viewModel.updateSelectedTVShowTab(item)
                     },
-                    colors = if (selectedIndex.value == index) {
+                    colors = if (selectedTab.collectAsState().value == item) {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray)
                     } else {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent)
@@ -158,16 +161,14 @@ fun TVShowSegmentedControl(
                             bottomEndPercent = 0
                         )
                     },
-                    border = BorderStroke(
-                        1.5.dp, Color.DarkGray
-                    ),
+                    border = BorderStroke(1.5.dp, Color.DarkGray),
                 ) {
                     Text(
                         text = item,
                         style = LocalTextStyle.current.copy(
                             fontSize = 12.sp,
-                            fontWeight = if (selectedIndex.value == index)
-                                LocalTextStyle.current.fontWeight
+                            fontWeight = if (selectedTab.collectAsState().value == item)
+                                FontWeight.SemiBold
                             else
                                 FontWeight.Normal,
                             color = Color.White
