@@ -55,14 +55,15 @@ import kotlin.math.roundToInt
 
 
 lateinit var viewModel: MovieViewModel
+private var currentlySelected = 0
 
 @Composable
 fun MovieListScreen(
     onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    viewModel.updateScrollToTopState(true)
     MainMovieScreen(onItemClick)
+    viewModel.updateScrollToTopState(true)
 }
 
 @Composable
@@ -73,18 +74,25 @@ fun MainMovieScreen(onItemClick: (Long, Int) -> Unit) {
         MovieSegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> {
-                    viewModel.getMovies(TRENDING)
-                    viewModel.updateScrollToTopState(true)
+                    if (currentlySelected != 0) {
+                        viewModel.getMovies(TRENDING)
+                        currentlySelected = 0
+                    }
                 }
                 1 -> {
-                    viewModel.getMovies(NOW_PLAYING)
-                    viewModel.updateScrollToTopState(true)
+                    if (currentlySelected != 1) {
+                        viewModel.getMovies(NOW_PLAYING)
+                        currentlySelected = 1
+                    }
                 }
                 2 -> {
-                    viewModel.getMovies(TOP_RATED)
-                    viewModel.updateScrollToTopState(true)
+                    if (currentlySelected != 2) {
+                        viewModel.getMovies(TOP_RATED)
+                        currentlySelected = 2
+                    }
                 }
             }
+            viewModel.updateScrollToTopState(true)
         }
         PopulateMovieGrid(movies, onItemClick)
     }

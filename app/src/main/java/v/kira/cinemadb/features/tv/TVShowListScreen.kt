@@ -54,14 +54,15 @@ import v.kira.cinemadb.util.AppUtil
 import kotlin.math.roundToInt
 
 lateinit var viewModel: TVViewModel
+private var currentlySelected = 0
 
 @Composable
 fun TVShowListScreen(
     onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    viewModel.updateScrollToTopState(true)
     MainTVShowScreen(onItemClick)
+    viewModel.updateScrollToTopState(true)
 }
 
 @Composable
@@ -72,18 +73,26 @@ fun MainTVShowScreen(onItemClick: (Long, Int) -> Unit) {
         TVShowSegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> {
-                    viewModel.getTVShowList(TRENDING)
-                    viewModel.updateScrollToTopState(true)
+                    if (currentlySelected != 1) {
+                        viewModel.getTVShowList(TRENDING)
+                        currentlySelected = 0
+                    }
                 }
                 1 -> {
-                    viewModel.getTVShowList(NOW_PLAYING)
-                    viewModel.updateScrollToTopState(true)
+                    if (currentlySelected != 1) {
+                        viewModel.getTVShowList(NOW_PLAYING)
+                        currentlySelected = 1
+                    }
                 }
                 2 -> {
-                    viewModel.getTVShowList(TOP_RATED)
-                    viewModel.updateScrollToTopState(true)
+                    if (currentlySelected != 2) {
+                        viewModel.getTVShowList(TOP_RATED)
+                        currentlySelected = 2
+                    }
                 }
             }
+            viewModel.updateScrollToTopState(true)
+
         }
         PopulateTVShowGrid(tvShows, onItemClick)
     }

@@ -52,6 +52,7 @@ import v.kira.cinemadb.util.AppUtil
 import kotlin.math.roundToInt
 
 lateinit var viewModel: WatchlistViewModel
+private var currentlySelected = 0
 
 @Composable
 fun WatchlistScreen(
@@ -67,22 +68,23 @@ fun MainWatchlistScreen(onItemClick: (Long, Int) -> Unit) {
     val tvShowWatchlist by rememberUpdatedState(newValue = viewModel.tvShowWatchlistState.collectAsLazyPagingItems())
     var typeSelected  by remember { mutableStateOf(0) }
     val typeList = listOf("Movies", "TV Shows")
-    var selectedTab = 0
     Column {
         SegmentedControlWatchlist(typeList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> {
-                    if (selectedTab != 0) viewModel.getMovieWatchlist()
-                    selectedTab = 0
-                    typeSelected = selectedItem
+                    if (currentlySelected != 0) {
+                        viewModel.getMovieWatchlist()
+                        currentlySelected = 0
+                    }
                 }
                 1 -> {
-                    if (selectedTab != 1) viewModel.getTVShowWatchlist()
-                    selectedTab = 1
-                    typeSelected = selectedItem
-
+                    if (currentlySelected != 1) {
+                        viewModel.getTVShowWatchlist()
+                        currentlySelected = 1
+                    }
                 }
             }
+            typeSelected = selectedItem
         }
 
         if (typeSelected == 0) {
