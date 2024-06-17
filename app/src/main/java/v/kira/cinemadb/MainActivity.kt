@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -41,12 +42,15 @@ import v.kira.cinemadb.features.search.SearchScreen
 import v.kira.cinemadb.features.tv.TVShowListScreen
 import v.kira.cinemadb.navigation.BottomMenuItem
 
+private lateinit var viewModel: MainViewModel
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             MainScreenView()
         }
@@ -140,6 +144,7 @@ fun NavigationGraph(navController: NavHostController) {
                     navController.navigate("${Graph.DETAILS_GRAPH}/${movieId}/${type}")
                 }
             )
+            viewModel.updateSelectedTab(1)
         }
         composable(BottomMenuItem.TV.screenRoute) {
             TVShowListScreen(
@@ -147,17 +152,24 @@ fun NavigationGraph(navController: NavHostController) {
                     navController.navigate("${Graph.DETAILS_GRAPH}/${tvShowId}/${type}")
                 }
             )
+            viewModel.updateSelectedTab(2)
         }
-        composable(BottomMenuItem.Search.screenRoute) { SearchScreen(
-            onItemClick = { mediaId, type ->
-                navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
-            }
-        ) }
-        composable(BottomMenuItem.Watchlist.screenRoute) { WatchlistScreen(
-            onItemClick = { mediaId, type ->
-                navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
-            }
-        ) }
+        composable(BottomMenuItem.Search.screenRoute) {
+            SearchScreen(
+                onItemClick = { mediaId, type ->
+                    navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
+                }
+            )
+            viewModel.updateSelectedTab(2)
+        }
+        composable(BottomMenuItem.Watchlist.screenRoute) {
+            WatchlistScreen(
+                onItemClick = { mediaId, type ->
+                    navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
+                }
+            )
+            viewModel.updateSelectedTab(3)
+        }
         detailsNavGraph()
     }
 }
