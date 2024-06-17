@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
@@ -46,6 +46,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import kotlinx.coroutines.flow.first
 import v.kira.cinemadb.model.MovieResult
 import v.kira.cinemadb.model.TVShowResult
 import v.kira.cinemadb.util.AppUtil
@@ -60,6 +61,7 @@ fun WatchlistScreen(
 ) {
     viewModel = hiltViewModel()
     MainWatchlistScreen(onItemClick)
+    viewModel.updateScrollToTopState(true)
 }
 
 @Composable
@@ -85,6 +87,7 @@ fun MainWatchlistScreen(onItemClick: (Long, Int) -> Unit) {
                 }
             }
             typeSelected = selectedItem
+            viewModel.updateScrollToTopState(true)
         }
 
         if (typeSelected == 0) {
@@ -184,11 +187,16 @@ fun PopulateMovieWatchlistGrid(
         .fillMaxSize()
         .background(Color.Black)
     ) {
-        val lazyRowState = rememberLazyListState()
+        val scrollToTop by rememberUpdatedState(viewModel.scrollToTopState)
+        val lazyRowState = rememberLazyStaggeredGridState()
 
-        LaunchedEffect(movies.itemCount) {
-            lazyRowState.animateScrollToItem(0)
+        LaunchedEffect(key1 = movies.itemCount) {
+            if (scrollToTop.first()) {
+                lazyRowState.scrollToItem(0)
+                viewModel.updateScrollToTopState(false)
+            }
         }
+
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
@@ -243,11 +251,16 @@ fun PopulateTVShowWatchlistGrid(
         .fillMaxSize()
         .background(Color.Black)
     ) {
-        val lazyRowState = rememberLazyListState()
+        val scrollToTop by rememberUpdatedState(viewModel.scrollToTopState)
+        val lazyRowState = rememberLazyStaggeredGridState()
 
-        LaunchedEffect(tvShows.itemCount) {
-            lazyRowState.animateScrollToItem(0)
+        LaunchedEffect(key1 = tvShows.itemCount) {
+            if (scrollToTop.first()) {
+                lazyRowState.scrollToItem(0)
+                viewModel.updateScrollToTopState(false)
+            }
         }
+
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,

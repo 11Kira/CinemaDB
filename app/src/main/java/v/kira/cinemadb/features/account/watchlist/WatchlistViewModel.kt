@@ -36,6 +36,13 @@ class WatchlistViewModel @Inject constructor(
         PagingData.empty())
     val tvShowWatchlistState: StateFlow<PagingData<TVShowResult>> = tvShowWatchlistPagingState.asStateFlow()
 
+    private var _scrollToTopState = MutableStateFlow(false)
+    val scrollToTopState: StateFlow<Boolean>  = _scrollToTopState.asStateFlow()
+
+    fun updateScrollToTopState(scrollToTop: Boolean) {
+        _scrollToTopState.value = scrollToTop
+    }
+
     var header: String
     var accountId: Long
 

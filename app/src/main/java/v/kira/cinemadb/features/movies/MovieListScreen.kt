@@ -184,7 +184,7 @@ fun PopulateMovieGrid(
     movies: LazyPagingItems<MovieResult>,
     onItemClick: (Long, Int) -> Unit
 ) {
-    val scrollToTop by rememberUpdatedState( viewModel.scrollToTopState)
+    val scrollToTop by rememberUpdatedState(viewModel.scrollToTopState)
     val lazyRowState = rememberLazyStaggeredGridState()
 
     LaunchedEffect(key1 = movies.itemCount) {
