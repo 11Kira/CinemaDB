@@ -14,6 +14,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +43,7 @@ import v.kira.cinemadb.features.search.SearchScreen
 import v.kira.cinemadb.features.tv.TVShowListScreen
 import v.kira.cinemadb.navigation.BottomMenuItem
 
-private lateinit var viewModel: MainViewModel
+private lateinit var viewModelddd: MainViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModelddd = viewModel
         setContent {
             MainScreenView()
         }
@@ -88,20 +90,26 @@ fun currentRoute(navController: NavHostController): String? {
 
 @Composable
 fun BottomNavigation(navController: NavController) {
-    var selectedItem by remember { mutableStateOf("Movies") }
+    var selectedItem by remember { mutableStateOf("movies") }
+    val selectedTab by remember { mutableStateOf(viewModelddd.currentlySelectedTab) }
+
     val screens = listOf(
         BottomMenuItem.Movies,
         BottomMenuItem.TV,
         BottomMenuItem.Search,
         BottomMenuItem.Watchlist
     )
+
+
     BottomNavigation(
         modifier = Modifier.fillMaxWidth(),
         backgroundColor = Color.DarkGray,
     ) {
         screens.forEach {
+
+
             BottomNavigationItem(
-                selected = (selectedItem == it.label),
+                selected = (selectedItem == it.label || selectedItem == selectedTab.collectAsState().value),
                 onClick = {
                     selectedItem = it.label
                     navController.navigate(it.screenRoute) {
@@ -113,18 +121,19 @@ fun BottomNavigation(navController: NavController) {
                         launchSingleTop = true
                         restoreState = true
                     }
+                    viewModelddd.updateSelectedTab(it.label)
                 },
                 label = {
                     Text(
                         text = it.label,
-                        color = if (selectedItem == it.label) Color.White else Color.Gray,
+                        color = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray,
                         fontSize = 10.sp
                     ) },
                 icon = {
                     Icon(
                         imageVector  = ImageVector.vectorResource(it.icon),
                         contentDescription = it.label,
-                        tint = if (selectedItem == it.label) Color.White else Color.Gray
+                        tint = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray
                     )
                 }
             )
@@ -144,7 +153,6 @@ fun NavigationGraph(navController: NavHostController) {
                     navController.navigate("${Graph.DETAILS_GRAPH}/${movieId}/${type}")
                 }
             )
-            viewModel.updateSelectedTab(1)
         }
         composable(BottomMenuItem.TV.screenRoute) {
             TVShowListScreen(
@@ -152,7 +160,6 @@ fun NavigationGraph(navController: NavHostController) {
                     navController.navigate("${Graph.DETAILS_GRAPH}/${tvShowId}/${type}")
                 }
             )
-            viewModel.updateSelectedTab(2)
         }
         composable(BottomMenuItem.Search.screenRoute) {
             SearchScreen(
@@ -160,7 +167,6 @@ fun NavigationGraph(navController: NavHostController) {
                     navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
                 }
             )
-            viewModel.updateSelectedTab(2)
         }
         composable(BottomMenuItem.Watchlist.screenRoute) {
             WatchlistScreen(
@@ -168,7 +174,6 @@ fun NavigationGraph(navController: NavHostController) {
                     navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
                 }
             )
-            viewModel.updateSelectedTab(3)
         }
         detailsNavGraph()
     }

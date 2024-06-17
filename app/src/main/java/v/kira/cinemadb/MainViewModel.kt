@@ -1,5 +1,6 @@
 package v.kira.cinemadb
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -10,13 +11,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    @ApplicationContext val context: ApplicationContext
+    @ApplicationContext val context: Context
 ): ViewModel() {
 
-    private var _currentlySelectedTab = MutableStateFlow(0)
-    val currentlySelectedTab: StateFlow<Int> = _currentlySelectedTab.asStateFlow()
+    private var _currentlySelectedTab = MutableStateFlow("Movies")
+    val currentlySelectedTab: StateFlow<String> = _currentlySelectedTab.asStateFlow()
 
-    fun updateSelectedTab(selectedTab: Int) {
+    fun updateSelectedTab(selectedTab: String) {
         _currentlySelectedTab.value = selectedTab
     }
 }
