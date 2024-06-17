@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
@@ -102,7 +104,8 @@ fun SetupMovieDetails(movie: MovieResult) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                 contentDescription = "Poster",
-                modifier = Modifier.fillMaxWidth().height(690.dp)
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                contentScale = ContentScale.Crop
             )
 
             Box(
@@ -304,7 +307,8 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                 contentDescription = "Poster",
-                modifier = Modifier.fillMaxWidth().height(690.dp)
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                contentScale = ContentScale.Crop
             )
 
             Box(
