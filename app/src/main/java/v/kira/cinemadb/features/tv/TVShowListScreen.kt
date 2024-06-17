@@ -73,7 +73,7 @@ fun MainTVShowScreen(onItemClick: (Long, Int) -> Unit) {
         TVShowSegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> {
-                    if (currentlySelected != 1) {
+                    if (currentlySelected != 0) {
                         viewModel.getTVShowList(TRENDING)
                         currentlySelected = 0
                     }
