@@ -172,7 +172,6 @@ fun SegmentedControlSearch(
                     )
                 }
             }
-
         }
     }
 }

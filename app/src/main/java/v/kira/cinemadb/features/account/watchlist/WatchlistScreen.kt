@@ -25,11 +25,11 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,7 +68,7 @@ fun WatchlistScreen(
 fun MainWatchlistScreen(onItemClick: (Long, Int) -> Unit) {
     val movieWatchlist by rememberUpdatedState(newValue = viewModel.movieWatchlistState.collectAsLazyPagingItems())
     val tvShowWatchlist by rememberUpdatedState(newValue = viewModel.tvShowWatchlistState.collectAsLazyPagingItems())
-    var typeSelected  by remember { mutableStateOf(0) }
+    val typeSelected  by remember { mutableStateOf(viewModel.selectedWatchlistTab) }
     val typeList = listOf("Movies", "TV Shows")
     Column {
         SegmentedControlWatchlist(typeList.toList()) { selectedItem ->
@@ -86,11 +86,10 @@ fun MainWatchlistScreen(onItemClick: (Long, Int) -> Unit) {
                     }
                 }
             }
-            typeSelected = selectedItem
             viewModel.updateScrollToTopState(true)
         }
 
-        if (typeSelected == 0) {
+        if (typeSelected.collectAsState().value == "Movies") {
             PopulateMovieWatchlistGrid(movieWatchlist, onItemClick)
         } else {
             PopulateTVShowWatchlistGrid(tvShowWatchlist, onItemClick)
@@ -104,6 +103,8 @@ fun SegmentedControlWatchlist(
     onItemSelection: (selectedItemIndex: Int) -> Unit
 ) {
     val selectedIndex = remember { mutableStateOf(0) }
+    val selectedTab by remember { mutableStateOf(viewModel.selectedWatchlistTab) }
+
     Box(modifier = Modifier.background(Color.Black)) {
         Row(
             modifier = Modifier
@@ -130,8 +131,9 @@ fun SegmentedControlWatchlist(
                     onClick = {
                         selectedIndex.value = index
                         onItemSelection(selectedIndex.value)
+                        viewModel.updateSelectedWatchlistTab(item)
                     },
-                    colors = if (selectedIndex.value == index) {
+                    colors = if (selectedTab.collectAsState().value == item) {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray)
                     } else {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent)
@@ -164,7 +166,7 @@ fun SegmentedControlWatchlist(
                         text = item,
                         style = LocalTextStyle.current.copy(
                             fontSize = 12.sp,
-                            fontWeight = if (selectedIndex.value == index)
+                            fontWeight = if (selectedTab.collectAsState().value == item)
                                 LocalTextStyle.current.fontWeight
                             else
                                 FontWeight.Normal,
