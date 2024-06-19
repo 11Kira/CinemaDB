@@ -8,10 +8,6 @@ import javax.inject.Inject
 class MovieUseCase @Inject constructor(
     private val repository: MovieRepository
 ) {
-    fun getNowPlayingMovies(token: String): Flow<PagingData<MovieResult>> {
-        return repository.getNowPlayingMovies(token)
-    }
-
     fun getTopRatedMovies(token: String): Flow<PagingData<MovieResult>> {
         return repository.getTopRatedMovies(token)
     }

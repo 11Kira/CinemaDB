@@ -49,6 +49,11 @@ class SearchViewModel @Inject constructor(
         searchMovie(text)
     }
 
+    fun clearSearch() {
+        searchMovie("")
+        searchTVShow("")
+    }
+
     fun searchMovie(query: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,12 +43,16 @@ import v.kira.cinemadb.features.search.SearchScreen
 import v.kira.cinemadb.features.tv.TVShowListScreen
 import v.kira.cinemadb.navigation.BottomMenuItem
 
+private lateinit var viewModel: MainViewModel
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    private val injectedViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        viewModel = injectedViewModel
         setContent {
             MainScreenView()
         }
@@ -54,8 +60,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val TRENDING = 1
-        const val NOW_PLAYING = 2
-        const val TOP_RATED = 3
+        const val TOP_RATED = 2
     }
 }
 
@@ -84,20 +89,24 @@ fun currentRoute(navController: NavHostController): String? {
 
 @Composable
 fun BottomNavigation(navController: NavController) {
-    var selectedItem by remember { mutableStateOf("Movies") }
+    var selectedItem by remember { mutableStateOf("movies") }
+    val selectedTab by remember { mutableStateOf(viewModel.currentlySelectedTab) }
+
     val screens = listOf(
         BottomMenuItem.Movies,
         BottomMenuItem.TV,
         BottomMenuItem.Search,
         BottomMenuItem.Watchlist
     )
+
+
     BottomNavigation(
         modifier = Modifier.fillMaxWidth(),
         backgroundColor = Color.DarkGray,
     ) {
         screens.forEach {
             BottomNavigationItem(
-                selected = (selectedItem == it.label),
+                selected = (selectedItem == selectedTab.collectAsState().value),
                 onClick = {
                     selectedItem = it.label
                     navController.navigate(it.screenRoute) {
@@ -109,18 +118,19 @@ fun BottomNavigation(navController: NavController) {
                         launchSingleTop = true
                         restoreState = true
                     }
+                    viewModel.updateSelectedTab(it.label)
                 },
                 label = {
                     Text(
                         text = it.label,
-                        color = if (selectedItem == it.label) Color.White else Color.Gray,
+                        color = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray,
                         fontSize = 10.sp
                     ) },
                 icon = {
                     Icon(
                         imageVector  = ImageVector.vectorResource(it.icon),
                         contentDescription = it.label,
-                        tint = if (selectedItem == it.label) Color.White else Color.Gray
+                        tint = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray
                     )
                 }
             )
@@ -148,16 +158,20 @@ fun NavigationGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(BottomMenuItem.Search.screenRoute) { SearchScreen(
-            onItemClick = { mediaId, type ->
-                navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
-            }
-        ) }
-        composable(BottomMenuItem.Watchlist.screenRoute) { WatchlistScreen(
-            onItemClick = { mediaId, type ->
-                navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
-            }
-        ) }
+        composable(BottomMenuItem.Search.screenRoute) {
+            SearchScreen(
+                onItemClick = { mediaId, type ->
+                    navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
+                }
+            )
+        }
+        composable(BottomMenuItem.Watchlist.screenRoute) {
+            WatchlistScreen(
+                onItemClick = { mediaId, type ->
+                    navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
+                }
+            )
+        }
         detailsNavGraph()
     }
 }

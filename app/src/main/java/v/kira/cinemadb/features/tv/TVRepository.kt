@@ -11,10 +11,6 @@ import javax.inject.Inject
 class TVRepository @Inject constructor(
     private val remoteSource: TVRemoteSource
 ) {
-    fun getAiringTodayTVShows(token: String): Flow<PagingData<TVShowResult>> =
-        Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
-            AiringTodayTVShowPagingSource(token, remoteSource)
-        }.flow
     fun getTrendingTVShows(token: String): Flow<PagingData<TVShowResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
             TrendingTVShowPagingSource(token, remoteSource)

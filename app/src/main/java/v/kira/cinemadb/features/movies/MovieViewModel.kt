@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
 import v.kira.cinemadb.model.MovieResult
@@ -31,11 +30,26 @@ class MovieViewModel @Inject constructor(
 
     var header: String
 
-    private val moviesPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(PagingData.empty())
-    val uiState: StateFlow<PagingData<MovieResult>> = moviesPagingState.asStateFlow()
+    private val _moviesPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(PagingData.empty())
+    val moviesPagingState: StateFlow<PagingData<MovieResult>> = _moviesPagingState.asStateFlow()
+
+    private val _selectedMovieTab = MutableStateFlow("Trending")
+    val selectedMovieTab: StateFlow<String> = _selectedMovieTab.asStateFlow()
+
+    fun updateSelectedMovieTab(selectedTab: String) { _selectedMovieTab.value = selectedTab }
+
+    private var _scrollToTopState = MutableStateFlow(false)
+    val scrollToTopState: StateFlow<Boolean>  = _scrollToTopState.asStateFlow()
+
+    fun updateScrollToTopState(scrollToTop: Boolean) {
+        _scrollToTopState.value = scrollToTop
+    }
 
     init {
-        runBlocking { header =  SettingsPrefs(context).getToken.first().toString() }
+        runBlocking {
+            header =  SettingsPrefs(context).getToken.first().toString()
+            getMovies(TRENDING)
+        }
     }
 
     fun getMovies(type: Int) {
@@ -51,15 +65,7 @@ class MovieViewModel @Inject constructor(
                             .getTrendingMovies(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
-                            moviesPagingState.value = pagingData
-                            }
-                    }
-                    NOW_PLAYING -> {
-                        useCase
-                            .getNowPlayingMovies(header)
-                            .cachedIn(viewModelScope)
-                            .collectLatest { pagingData ->
-                                moviesPagingState.value = pagingData
+                                _moviesPagingState.value = pagingData
                             }
                     }
 
@@ -68,7 +74,7 @@ class MovieViewModel @Inject constructor(
                             .getTopRatedMovies(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
-                                moviesPagingState.value = pagingData
+                                _moviesPagingState.value = pagingData
                             }
                     }
                 }

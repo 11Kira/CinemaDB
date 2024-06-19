@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
@@ -23,6 +24,8 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,7 +46,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
+import kotlinx.coroutines.flow.first
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
 import v.kira.cinemadb.model.TVShowResult
@@ -51,48 +54,50 @@ import v.kira.cinemadb.util.AppUtil
 import kotlin.math.roundToInt
 
 lateinit var viewModel: TVViewModel
+private var currentlySelected = 0
 
 @Composable
 fun TVShowListScreen(
     onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainScreen(onItemClick)
-    viewModel.getTVShowList(TRENDING)
+    MainTVShowScreen(onItemClick)
 }
 
 @Composable
-fun MainScreen(onItemClick: (Long, Int) -> Unit) {
-    val tvShows by rememberUpdatedState(newValue = viewModel.uiState.collectAsLazyPagingItems())
-    val categoryList = listOf("Trending", "Airing Today", "Top Rated")
-    var selectedTab = 0
+fun MainTVShowScreen(onItemClick: (Long, Int) -> Unit) {
+    val tvShows by rememberUpdatedState(newValue = viewModel.tvShowPagingState.collectAsLazyPagingItems())
+    val categoryList = listOf("Trending", "Top Rated")
     Column {
-        SegmentedControl(categoryList.toList()) { selectedItem ->
+        TVShowSegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> {
-                    if (selectedTab != 0) viewModel.getTVShowList(TRENDING)
-                    selectedTab = 0
+                    if (currentlySelected != 0) {
+                        viewModel.getTVShowList(TRENDING)
+                        currentlySelected = 0
+                    }
                 }
                 1 -> {
-                    if (selectedTab != 1) viewModel.getTVShowList(NOW_PLAYING)
-                    selectedTab = 1
-                }
-                2 -> {
-                    if (selectedTab != 2) viewModel.getTVShowList(TOP_RATED)
-                    selectedTab = 2
+                    if (currentlySelected != 1) {
+                        viewModel.getTVShowList(TOP_RATED)
+                        currentlySelected = 1
+                    }
                 }
             }
+            viewModel.updateScrollToTopState(true)
         }
-        PopulateGrid(tvShows, onItemClick)
+        PopulateTVShowGrid(tvShows, onItemClick)
     }
 }
 
 @Composable
-fun SegmentedControl(
+fun TVShowSegmentedControl(
     items: List<String>,
     onItemSelection: (selectedItemIndex: Int) -> Unit
 ) {
     val selectedIndex = remember { mutableStateOf(0) }
+    val selectedTab by remember { mutableStateOf(viewModel.selectedTVShowTab) }
+
     Box(modifier = Modifier.background(Color.Black)) {
         Row(
             modifier = Modifier
@@ -119,8 +124,9 @@ fun SegmentedControl(
                     onClick = {
                         selectedIndex.value = index
                         onItemSelection(selectedIndex.value)
+                        viewModel.updateSelectedTVShowTab(item)
                     },
-                    colors = if (selectedIndex.value == index) {
+                    colors = if (selectedTab.collectAsState().value == item) {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray)
                     } else {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent)
@@ -133,30 +139,21 @@ fun SegmentedControl(
                             bottomEndPercent = 0
                         )
 
-                        items.size - 1 -> RoundedCornerShape(
+                        else -> RoundedCornerShape(
                             topStartPercent = 0,
                             topEndPercent = 24,
                             bottomStartPercent = 0,
                             bottomEndPercent = 24
                         )
-
-                        else -> RoundedCornerShape(
-                            topStartPercent = 0,
-                            topEndPercent = 0,
-                            bottomStartPercent = 0,
-                            bottomEndPercent = 0
-                        )
                     },
-                    border = BorderStroke(
-                        1.5.dp, Color.DarkGray
-                    ),
+                    border = BorderStroke(1.5.dp, Color.DarkGray),
                 ) {
                     Text(
                         text = item,
                         style = LocalTextStyle.current.copy(
                             fontSize = 12.sp,
-                            fontWeight = if (selectedIndex.value == index)
-                                LocalTextStyle.current.fontWeight
+                            fontWeight = if (selectedTab.collectAsState().value == item)
+                                FontWeight.SemiBold
                             else
                                 FontWeight.Normal,
                             color = Color.White
@@ -171,15 +168,27 @@ fun SegmentedControl(
 }
 
 @Composable
-fun PopulateGrid(
+fun PopulateTVShowGrid(
     tvShows: LazyPagingItems<TVShowResult>,
     onItemClick: (Long, Int) -> Unit
 ) {
+
+    val scrollToTop by rememberUpdatedState(newValue = viewModel.scrollToTopState)
+    val lazyRowState = rememberLazyStaggeredGridState()
+
+    LaunchedEffect(key1 = tvShows.itemCount) {
+        if (scrollToTop.first()) {
+            lazyRowState.scrollToItem(0)
+            viewModel.updateScrollToTopState(false)
+        }
+    }
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)
     ) {
         LazyVerticalStaggeredGrid(
+            state = lazyRowState,
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),

@@ -36,6 +36,18 @@ class WatchlistViewModel @Inject constructor(
         PagingData.empty())
     val tvShowWatchlistState: StateFlow<PagingData<TVShowResult>> = tvShowWatchlistPagingState.asStateFlow()
 
+    private val _selectedWatchlistTab = MutableStateFlow("Movies")
+    val selectedWatchlistTab: StateFlow<String> = _selectedWatchlistTab.asStateFlow()
+
+    fun updateSelectedWatchlistTab(selectedTab: String) { _selectedWatchlistTab.value = selectedTab }
+
+    private var _scrollToTopState = MutableStateFlow(false)
+    val scrollToTopState: StateFlow<Boolean>  = _scrollToTopState.asStateFlow()
+
+    fun updateScrollToTopState(scrollToTop: Boolean) {
+        _scrollToTopState.value = scrollToTop
+    }
+
     var header: String
     var accountId: Long
 
@@ -43,6 +55,7 @@ class WatchlistViewModel @Inject constructor(
         runBlocking {
             accountId = SettingsPrefs(context).getAccountId.first()
             header =  SettingsPrefs(context).getToken.first().toString()
+            getMovieWatchlist()
         }
     }
 
