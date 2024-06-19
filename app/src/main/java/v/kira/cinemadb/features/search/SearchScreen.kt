@@ -63,6 +63,8 @@ fun SearchScreen(
 ) {
     viewModel = hiltViewModel()
     MainSearchScreen(onItemClick)
+    viewModel.onSearchMovieTextChange("")
+    viewModel.onSearchTVShowTextChange("")
 }
 
 @Composable
@@ -128,6 +130,13 @@ fun SegmentedControlSearch(
                     onClick = {
                         selectedIndex.value = index
                         onItemSelection(selectedIndex.value)
+                        if (viewModel.searchText.value.isNotEmpty()) {
+                            if (index == 0) {
+                                viewModel.onSearchMovieTextChange(viewModel.searchText.value)
+                            } else {
+                                viewModel.onSearchTVShowTextChange(viewModel.searchText.value)
+                            }
+                        }
                     },
                     colors = if (selectedIndex.value == index) {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray)
