@@ -218,8 +218,8 @@ fun SearchField(typeSelected: Int) {
                     style = TextStyle(
                         fontSize = 14.sp,
                         color = Color.White,
-                        fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                        ),
+                        fontFamily = Font(R.font.roboto_medium).toFontFamily()
+                    ),
                 )
             },
         )
@@ -275,7 +275,7 @@ fun PopulateMovieSearchGrid(
                                 modifier = Modifier.wrapContentHeight(),
                                 color = Color.White,
                                 text = (selectedMovie?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0)).toString(),
-                                fontWeight = FontWeight.Bold,
+                                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                                 fontSize = 15.sp
                             )
                         }
@@ -334,7 +334,7 @@ fun PopulateTVShowSearchGrid(
                                 modifier = Modifier.wrapContentHeight(),
                                 color = Color.White,
                                 text = (selectedTVShow?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0)).toString(),
-                                fontWeight = FontWeight.Bold,
+                                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                                 fontSize = 15.sp
                             )
                         }

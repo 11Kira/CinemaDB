@@ -37,7 +37,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -234,7 +233,7 @@ fun PopulateMovieWatchlistGrid(
                                 modifier = Modifier.wrapContentHeight(),
                                 color = Color.White,
                                 text = (selectedMovie?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0)).toString(),
-                                fontWeight = FontWeight.Bold,
+                                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                                 fontSize = 15.sp
                             )
                         }
