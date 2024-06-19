@@ -64,7 +64,6 @@ fun MovieListScreen(
 ) {
     viewModel = hiltViewModel()
     MainMovieScreen(onItemClick)
-    viewModel.updateScrollToTopState(true)
 }
 
 @Composable

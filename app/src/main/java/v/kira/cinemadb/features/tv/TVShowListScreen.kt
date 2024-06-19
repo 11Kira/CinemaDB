@@ -63,7 +63,6 @@ fun TVShowListScreen(
 ) {
     viewModel = hiltViewModel()
     MainTVShowScreen(onItemClick)
-    viewModel.updateScrollToTopState(true)
 }
 
 @Composable
