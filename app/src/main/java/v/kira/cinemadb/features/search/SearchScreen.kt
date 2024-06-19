@@ -132,8 +132,10 @@ fun SegmentedControlSearch(
                         onItemSelection(selectedIndex.value)
                         if (viewModel.searchText.value.isNotEmpty()) {
                             if (index == 0) {
+                                viewModel.clearSearch()
                                 viewModel.onSearchMovieTextChange(viewModel.searchText.value)
                             } else {
+                                viewModel.clearSearch()
                                 viewModel.onSearchTVShowTextChange(viewModel.searchText.value)
                             }
                         }
