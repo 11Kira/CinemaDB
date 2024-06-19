@@ -1,8 +1,8 @@
 Android application that features modern architecture integration.
 
 Features:
-1. List of Movies with pagination (Trending, Now Playing, Top Rated)
-2. List of TV Show Series with pagination (Trending, Airing Today, Top Rated)
+1. List of Movies with pagination (Trending, Top Rated)
+2. List of TV Show Series with pagination (Trending, Top Rated)
 3. Movie and TV Show details page
 4. Search Movies and TV Show functionality
 5. Add Movie and TV Show to user watch list functionality
