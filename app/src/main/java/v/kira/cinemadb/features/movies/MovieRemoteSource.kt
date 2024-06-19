@@ -7,17 +7,6 @@ import javax.inject.Inject
 class MovieRemoteSource @Inject constructor(
     private val movieService: MovieService
 ) {
-
-    suspend fun getNowPlayingMovies(
-        token: String,
-        page: Int
-    ) = withContext(Dispatchers.IO) {
-        movieService.getNowPlayingMovies(
-            header = token,
-            page = page
-        )
-    }
-
     suspend fun getTrendingMovies(
         token: String,
         page: Int

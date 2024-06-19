@@ -60,8 +60,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val TRENDING = 1
-        const val NOW_PLAYING = 2
-        const val TOP_RATED = 3
+        const val TOP_RATED = 2
     }
 }
 

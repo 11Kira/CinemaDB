@@ -9,12 +9,6 @@ import v.kira.cinemadb.model.ListResponseObject
 import v.kira.cinemadb.model.MovieResult
 
 interface MovieService {
-    @GET("movie/now_playing")
-    suspend fun getNowPlayingMovies(
-        @Header("Authorization") header: String,
-        @Query("page") page: Int
-    ): Response<ListResponseObject<List<MovieResult>>>
-
     @GET("trending/movie/week")
     suspend fun getTrendingMovies(
         @Header("Authorization") header: String,

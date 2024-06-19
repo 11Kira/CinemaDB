@@ -8,13 +8,6 @@ import javax.inject.Inject
 class TVUseCase @Inject constructor(
     private val repository: TVRepository
 ) {
-
-    fun getAiringTodayTVShows(
-        token: String,
-    ): Flow<PagingData<TVShowResult>> {
-        return repository.getAiringTodayTVShows(token)
-    }
-
     fun getTopRatedTVShows(
         token: String,
     ): Flow<PagingData<TVShowResult>> {

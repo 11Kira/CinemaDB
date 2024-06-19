@@ -47,7 +47,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.flow.first
-import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
 import v.kira.cinemadb.model.TVShowResult
@@ -68,7 +67,7 @@ fun TVShowListScreen(
 @Composable
 fun MainTVShowScreen(onItemClick: (Long, Int) -> Unit) {
     val tvShows by rememberUpdatedState(newValue = viewModel.tvShowPagingState.collectAsLazyPagingItems())
-    val categoryList = listOf("Trending", "Airing Today", "Top Rated")
+    val categoryList = listOf("Trending", "Top Rated")
     Column {
         TVShowSegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
@@ -80,14 +79,8 @@ fun MainTVShowScreen(onItemClick: (Long, Int) -> Unit) {
                 }
                 1 -> {
                     if (currentlySelected != 1) {
-                        viewModel.getTVShowList(NOW_PLAYING)
-                        currentlySelected = 1
-                    }
-                }
-                2 -> {
-                    if (currentlySelected != 2) {
                         viewModel.getTVShowList(TOP_RATED)
-                        currentlySelected = 2
+                        currentlySelected = 1
                     }
                 }
             }
@@ -146,18 +139,11 @@ fun TVShowSegmentedControl(
                             bottomEndPercent = 0
                         )
 
-                        items.size - 1 -> RoundedCornerShape(
+                        else -> RoundedCornerShape(
                             topStartPercent = 0,
                             topEndPercent = 24,
                             bottomStartPercent = 0,
                             bottomEndPercent = 24
-                        )
-
-                        else -> RoundedCornerShape(
-                            topStartPercent = 0,
-                            topEndPercent = 0,
-                            bottomStartPercent = 0,
-                            bottomEndPercent = 0
                         )
                     },
                     border = BorderStroke(1.5.dp, Color.DarkGray),

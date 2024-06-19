@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import v.kira.cinemadb.MainActivity.Companion.NOW_PLAYING
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
 import v.kira.cinemadb.model.MovieResult
@@ -64,14 +63,6 @@ class MovieViewModel @Inject constructor(
                     TRENDING -> {
                         useCase
                             .getTrendingMovies(header)
-                            .cachedIn(viewModelScope)
-                            .collectLatest { pagingData ->
-                                _moviesPagingState.value = pagingData
-                            }
-                    }
-                    NOW_PLAYING -> {
-                        useCase
-                            .getNowPlayingMovies(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
                                 _moviesPagingState.value = pagingData
