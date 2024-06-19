@@ -182,7 +182,7 @@ fun SegmentedControlSearch(
                                 FontWeight.Normal,
                             color = Color.White,
                             fontFamily = if (selectedIndex.value == index) Font(
-                                R.font.roboto_bold).toFontFamily() else Font(R.font.roboto_regular).toFontFamily(),
+                                R.font.roboto_bold).toFontFamily() else Font(R.font.roboto_medium).toFontFamily(),
                         ),
                         textAlign = TextAlign.Center
                     )
