@@ -149,18 +149,11 @@ fun SegmentedControlWatchlist(
                             bottomEndPercent = 0
                         )
 
-                        items.size - 1 -> RoundedCornerShape(
+                        else -> RoundedCornerShape(
                             topStartPercent = 0,
                             topEndPercent = 24,
                             bottomStartPercent = 0,
                             bottomEndPercent = 24
-                        )
-
-                        else -> RoundedCornerShape(
-                            topStartPercent = 0,
-                            topEndPercent = 0,
-                            bottomStartPercent = 0,
-                            bottomEndPercent = 0
                         )
                     },
                     border = BorderStroke(1.5.dp, Color.DarkGray),
