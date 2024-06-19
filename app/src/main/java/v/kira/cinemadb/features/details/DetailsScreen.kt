@@ -32,7 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +43,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.flow.SharedFlow
+import v.kira.cinemadb.R
 import v.kira.cinemadb.model.MovieResult
 import v.kira.cinemadb.model.TVShowResult
 import v.kira.cinemadb.util.AppUtil
@@ -129,8 +131,8 @@ fun SetupMovieDetails(movie: MovieResult) {
                         },
                     color = Color.White,
                     text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    fontSize = 15.sp
                 )
             }
 
@@ -138,7 +140,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 modifier = Modifier
                     .padding(10.dp)
                     .align(Alignment.TopEnd)
-                    .size(50.dp)
+                    .size(40.dp)
                     .clip(CircleShape)
                     .background(color = Color.DarkGray),
                 contentAlignment = Alignment.Center
@@ -147,8 +149,8 @@ fun SetupMovieDetails(movie: MovieResult) {
                     modifier = Modifier.wrapContentHeight(),
                     color = Color.White,
                     text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
+                    fontSize = 15.sp
                 )
             }
         }
@@ -162,7 +164,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Center,
                 fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
+                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = movie.tagline.ifBlank { movie.title },
                 color = Color.White
@@ -170,7 +172,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
                 text = movie.overview,
                 color = Color.White
@@ -179,7 +181,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Cast:",
                 color = Color.White
@@ -192,7 +194,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",casts),
                 color = Color.White
@@ -201,7 +203,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Origin Country:",
                 color = Color.White
@@ -210,7 +212,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",movie.originCountry),
                 color = Color.White
@@ -219,7 +221,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Genres:",
                 color = Color.White
@@ -231,7 +233,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",genres),
                 color = Color.White
@@ -240,7 +242,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Status:",
                 color = Color.White
@@ -249,7 +251,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = movie.status,
                 color = Color.White
@@ -258,7 +260,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Release date:",
                 color = Color.White
@@ -267,7 +269,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = movie.releaseDate,
                 color = Color.White
@@ -276,7 +278,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Runtime:",
                 color = Color.White
@@ -285,7 +287,7 @@ fun SetupMovieDetails(movie: MovieResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = movie.runtime.toString(),
                 color = Color.White
@@ -332,7 +334,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                         },
                     color = Color.White,
                     text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
-                    fontWeight = FontWeight.Medium,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                     fontSize = 20.sp
                 )
             }
@@ -350,7 +352,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     modifier = Modifier.wrapContentHeight(),
                     color = Color.White,
                     text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
-                    fontWeight = FontWeight.Bold,
+                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                     fontSize = 20.sp,                )
             }
         }
@@ -363,7 +365,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Center,
                 fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
+                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = tvShow.tagline.ifBlank { tvShow.name },
                 color = Color.White
@@ -371,7 +373,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 text = tvShow.overview,
                 color = Color.White
@@ -380,7 +382,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Cast:",
                 color = Color.White
@@ -394,7 +396,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",casts),
                 color = Color.White
@@ -403,7 +405,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Origin Country:",
                 color = Color.White
@@ -412,7 +414,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",tvShow.originCountry),
                 color = Color.White
@@ -421,7 +423,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Genres:",
                 color = Color.White
@@ -433,7 +435,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = TextUtils.join(", ",genres),
                 color = Color.White
@@ -442,7 +444,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Status:",
                 color = Color.White
@@ -451,7 +453,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = tvShow.status,
                 color = Color.White
@@ -460,7 +462,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Number of Seasons:",
                 color = Color.White
@@ -469,7 +471,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = tvShow.numberOfSeasons.toString(),
                 color = Color.White
@@ -478,7 +480,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Number of Episodes:",
                 color = Color.White
@@ -487,7 +489,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = tvShow.numberOfEpisodes.toString(),
                 color = Color.White
@@ -496,7 +498,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "First Air Date:",
                 color = Color.White
@@ -505,7 +507,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = tvShow.firstAirDate,
                 color = Color.White
@@ -514,7 +516,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                 modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
                 text = "Last Air Date:",
                 color = Color.White
@@ -523,7 +525,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             Text(
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
                 text = tvShow.lastAirDate,
                 color = Color.White

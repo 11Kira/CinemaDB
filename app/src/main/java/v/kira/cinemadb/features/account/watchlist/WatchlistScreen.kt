@@ -36,7 +36,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +48,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.flow.first
+import v.kira.cinemadb.R
 import v.kira.cinemadb.model.MovieResult
 import v.kira.cinemadb.model.TVShowResult
 import v.kira.cinemadb.util.AppUtil
@@ -166,11 +168,9 @@ fun SegmentedControlWatchlist(
                         text = item,
                         style = LocalTextStyle.current.copy(
                             fontSize = 12.sp,
-                            fontWeight = if (selectedTab.collectAsState().value == item)
-                                LocalTextStyle.current.fontWeight
-                            else
-                                FontWeight.Normal,
-                            color = Color.White
+                            color = Color.White,
+                            fontFamily = if (selectedTab.collectAsState().value == item) Font(
+                                R.font.roboto_bold).toFontFamily() else Font(R.font.roboto_medium).toFontFamily(),
                         ),
                         textAlign = TextAlign.Center
                     )
@@ -233,7 +233,7 @@ fun PopulateMovieWatchlistGrid(
                                 modifier = Modifier.wrapContentHeight(),
                                 color = Color.White,
                                 text = (selectedMovie?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0)).toString(),
-                                fontWeight = FontWeight.Bold,
+                                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                                 fontSize = 15.sp
                             )
                         }
@@ -297,8 +297,8 @@ fun PopulateTVShowWatchlistGrid(
                                 modifier = Modifier.wrapContentHeight(),
                                 color = Color.White,
                                 text = (selectedTVShow?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0)).toString(),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp
+                                fontSize = 15.sp,
+                                fontFamily = Font(R.font.roboto_bold).toFontFamily()
                             )
                         }
                     }

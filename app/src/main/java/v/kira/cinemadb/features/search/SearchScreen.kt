@@ -40,7 +40,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +52,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import v.kira.cinemadb.R
 import v.kira.cinemadb.model.MovieResult
 import v.kira.cinemadb.model.TVShowResult
 import v.kira.cinemadb.util.AppUtil
@@ -177,7 +180,9 @@ fun SegmentedControlSearch(
                                 LocalTextStyle.current.fontWeight
                             else
                                 FontWeight.Normal,
-                            color = Color.White
+                            color = Color.White,
+                            fontFamily = if (selectedIndex.value == index) Font(
+                                R.font.roboto_bold).toFontFamily() else Font(R.font.roboto_regular).toFontFamily(),
                         ),
                         textAlign = TextAlign.Center
                     )
@@ -212,7 +217,8 @@ fun SearchField(typeSelected: Int) {
                     text = if (typeSelected == 0) "Search Movie" else "Search TV Show",
                     style = TextStyle(
                         fontSize = 14.sp,
-                        color = Color.White
+                        color = Color.White,
+                        fontFamily = Font(R.font.roboto_medium).toFontFamily()
                     ),
                 )
             },
@@ -269,7 +275,7 @@ fun PopulateMovieSearchGrid(
                                 modifier = Modifier.wrapContentHeight(),
                                 color = Color.White,
                                 text = (selectedMovie?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0)).toString(),
-                                fontWeight = FontWeight.Bold,
+                                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                                 fontSize = 15.sp
                             )
                         }
@@ -328,7 +334,7 @@ fun PopulateTVShowSearchGrid(
                                 modifier = Modifier.wrapContentHeight(),
                                 color = Color.White,
                                 text = (selectedTVShow?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0)).toString(),
-                                fontWeight = FontWeight.Bold,
+                                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                                 fontSize = 15.sp
                             )
                         }
