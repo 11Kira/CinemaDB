@@ -80,15 +80,16 @@ fun MainWatchlistScreen(onItemClick: (Long, Int) -> Unit) {
                         viewModel.getMovieWatchlist()
                         currentlySelected = 0
                     }
+                    viewModel.updateScrollToTopState(true)
                 }
                 1 -> {
                     if (currentlySelected != 1) {
                         viewModel.getTVShowWatchlist()
                         currentlySelected = 1
                     }
+                    viewModel.updateScrollToTopState(true)
                 }
             }
-            viewModel.updateScrollToTopState(true)
         }
 
         if (typeSelected.collectAsState().value == "Movies") {
@@ -189,11 +190,10 @@ fun PopulateMovieWatchlistGrid(
         .fillMaxSize()
         .background(Color.Black)
     ) {
-        val scrollToTop by rememberUpdatedState(viewModel.scrollToTopState)
         val lazyRowState = rememberLazyStaggeredGridState()
 
-        LaunchedEffect(key1 = movies.itemCount) {
-            if (scrollToTop.first()) {
+        if (viewModel.scrollToTopState.collectAsState().value) {
+            LaunchedEffect(key1 = true) {
                 lazyRowState.scrollToItem(0)
                 viewModel.updateScrollToTopState(false)
             }
