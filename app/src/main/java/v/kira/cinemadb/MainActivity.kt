@@ -23,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -124,7 +126,8 @@ fun BottomNavigation(navController: NavController) {
                     Text(
                         text = it.label,
                         color = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray,
-                        fontSize = 10.sp
+                        fontSize = 10.sp,
+                        fontFamily = if (selectedItem == selectedTab.collectAsState().value) Font(R.font.roboto_bold).toFontFamily() else Font(R.font.roboto_medium).toFontFamily(),
                     ) },
                 icon = {
                     Icon(
