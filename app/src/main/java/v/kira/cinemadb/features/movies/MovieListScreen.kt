@@ -47,7 +47,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import kotlinx.coroutines.flow.first
 import v.kira.cinemadb.MainActivity.Companion.TOP_RATED
 import v.kira.cinemadb.MainActivity.Companion.TRENDING
 import v.kira.cinemadb.R
@@ -79,15 +78,16 @@ fun MainMovieScreen(onItemClick: (Long, Int) -> Unit) {
                         viewModel.getMovies(TRENDING)
                         currentlySelected = 0
                     }
+                    viewModel.updateScrollToTopState(true)
                 }
                 1 -> {
                     if (currentlySelected != 1) {
                         viewModel.getMovies(TOP_RATED)
                         currentlySelected = 1
                     }
+                    viewModel.updateScrollToTopState(true)
                 }
             }
-            viewModel.updateScrollToTopState(true)
         }
         PopulateMovieGrid(movies, onItemClick)
     }
@@ -173,11 +173,10 @@ fun PopulateMovieGrid(
     movies: LazyPagingItems<MovieResult>,
     onItemClick: (Long, Int) -> Unit
 ) {
-    val scrollToTop by rememberUpdatedState(viewModel.scrollToTopState)
     val lazyRowState = rememberLazyStaggeredGridState()
 
-    LaunchedEffect(key1 = movies.itemCount) {
-        if (scrollToTop.first()) {
+    if (viewModel.scrollToTopState.collectAsState().value) {
+        LaunchedEffect(key1 = true) {
             lazyRowState.scrollToItem(0)
             viewModel.updateScrollToTopState(false)
         }
@@ -187,7 +186,6 @@ fun PopulateMovieGrid(
         .fillMaxSize()
         .background(Color.Black)
     ) {
-
         LazyVerticalStaggeredGrid(
             state = lazyRowState,
             columns = StaggeredGridCells.Fixed(2),
