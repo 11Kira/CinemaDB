@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.CircleShape
@@ -26,13 +25,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +38,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -59,6 +55,7 @@ import v.kira.cinemadb.util.AppUtil
 import kotlin.math.roundToInt
 
 lateinit var viewModel: SearchViewModel
+private var currentlySelected = 0
 
 @Composable
 fun SearchScreen(
@@ -66,34 +63,31 @@ fun SearchScreen(
 ) {
     viewModel = hiltViewModel()
     MainSearchScreen(onItemClick)
-    viewModel.onSearchMovieTextChange("")
-    viewModel.onSearchTVShowTextChange("")
 }
 
 @Composable
 fun MainSearchScreen(onItemClick: (Long, Int) -> Unit) {
     val movies by rememberUpdatedState(newValue = viewModel.movieSearchState.collectAsLazyPagingItems())
     val tvShows by rememberUpdatedState(newValue = viewModel.tvShowSearchState.collectAsLazyPagingItems())
-    var typeSelected by remember { mutableStateOf(0) }
+    val typeSelected by remember { mutableStateOf(viewModel.selectedSearchTab) }
     val typeList = listOf("Movies", "TV Shows")
-    var selectedTab = 0
     Column {
         SegmentedControlSearch(typeList.toList()) { selectedItem ->
             when(selectedItem) {
                 0 -> {
-                    if (selectedTab != 0)
-                    selectedTab = 0
-                    typeSelected = selectedItem
+                    if (currentlySelected != 0) {
+                        currentlySelected = 0
+                    }
                 }
                 1 -> {
-                    if (selectedTab != 1)
-                    selectedTab = 1
-                    typeSelected = selectedItem
+                    if (currentlySelected != 1) {
+                        currentlySelected = 1
+                    }
                 }
             }
         }
-        SearchField(typeSelected)
-        if (typeSelected == 0) {
+        SearchField(currentlySelected)
+        if (typeSelected.collectAsState().value == "Movies") {
             PopulateMovieSearchGrid(movies, onItemClick)
         } else {
             PopulateTVShowSearchGrid(tvShows, onItemClick)
@@ -107,6 +101,8 @@ fun SegmentedControlSearch(
     onItemSelection: (selectedItemIndex: Int) -> Unit
 ) {
     val selectedIndex = remember { mutableStateOf(0) }
+    val selectedTab by remember { mutableStateOf(viewModel.selectedSearchTab) }
+
     Box(modifier = Modifier.background(Color.Black)) {
         Row (
             modifier = Modifier
@@ -142,8 +138,9 @@ fun SegmentedControlSearch(
                                 viewModel.onSearchTVShowTextChange(viewModel.searchText.value)
                             }
                         }
+                        viewModel.updateSelectedSearchTab(item)
                     },
-                    colors = if (selectedIndex.value == index) {
+                    colors = if (selectedTab.collectAsState().value == item) {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray)
                     } else {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent)
@@ -156,18 +153,11 @@ fun SegmentedControlSearch(
                             bottomEndPercent = 0
                         )
 
-                        items.size - 1 -> RoundedCornerShape(
+                        else -> RoundedCornerShape(
                             topStartPercent = 0,
                             topEndPercent = 24,
                             bottomStartPercent = 0,
                             bottomEndPercent = 24
-                        )
-
-                        else -> RoundedCornerShape(
-                            topStartPercent = 0,
-                            topEndPercent = 0,
-                            bottomStartPercent = 0,
-                            bottomEndPercent = 0
                         )
                     },
                     border = BorderStroke(1.5.dp, Color.DarkGray),
@@ -176,12 +166,8 @@ fun SegmentedControlSearch(
                         text = item,
                         style = LocalTextStyle.current.copy(
                             fontSize = 12.sp,
-                            fontWeight = if (selectedIndex.value == index)
-                                LocalTextStyle.current.fontWeight
-                            else
-                                FontWeight.Normal,
                             color = Color.White,
-                            fontFamily = if (selectedIndex.value == index) Font(
+                            fontFamily = if (selectedTab.collectAsState().value == item) Font(
                                 R.font.roboto_bold).toFontFamily() else Font(R.font.roboto_medium).toFontFamily(),
                         ),
                         textAlign = TextAlign.Center
@@ -236,11 +222,6 @@ fun PopulateMovieSearchGrid(
         .fillMaxSize()
         .background(Color.Black)
     ) {
-        val lazyRowState = rememberLazyListState()
-
-        LaunchedEffect(movies.itemCount) {
-            lazyRowState.animateScrollToItem(0)
-        }
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
@@ -295,11 +276,6 @@ fun PopulateTVShowSearchGrid(
         .fillMaxSize()
         .background(Color.Black)
     ) {
-        val lazyRowState = rememberLazyListState()
-
-        LaunchedEffect(tvShows.itemCount) {
-            lazyRowState.animateScrollToItem(0)
-        }
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
