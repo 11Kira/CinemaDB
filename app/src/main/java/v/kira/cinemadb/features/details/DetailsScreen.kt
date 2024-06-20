@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -107,7 +108,9 @@ fun SetupMovieDetails(movie: MovieResult) {
                 model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                 contentDescription = "Poster",
                 modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.ic_video),
+                error = painterResource(id = R.drawable.ic_video)
             )
 
             Box(
@@ -310,7 +313,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                 contentDescription = "Poster",
                 modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.ic_video),
+                error = painterResource(id = R.drawable.ic_video)
             )
 
             Box(

@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -211,6 +212,8 @@ fun PopulateMovieWatchlistGrid(
                             model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                             contentDescription = "Description",
                             contentScale = ContentScale.Crop,
+                            placeholder = painterResource(id = R.drawable.ic_video),
+                            error = painterResource(id = R.drawable.ic_video)
                         )
 
                         Box(
@@ -275,6 +278,8 @@ fun PopulateTVShowWatchlistGrid(
                             model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                             contentDescription = "Description",
                             contentScale = ContentScale.Crop,
+                            placeholder = painterResource(id = R.drawable.ic_video),
+                            error = painterResource(id = R.drawable.ic_video)
                         )
 
                         Box(
