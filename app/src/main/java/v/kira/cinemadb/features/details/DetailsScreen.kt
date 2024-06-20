@@ -313,7 +313,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                 contentDescription = "Poster",
                 modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.ic_video),
+                error = painterResource(id = R.drawable.ic_video)
             )
 
             Box(
