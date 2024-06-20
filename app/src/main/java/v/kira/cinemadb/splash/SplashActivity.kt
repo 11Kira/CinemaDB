@@ -39,7 +39,7 @@ class LoadingActivity: ComponentActivity() {
         lifecycleScope.launch {
             SettingsPrefs(this@LoadingActivity).setAccountId(accountId.toLong())
             SettingsPrefs(this@LoadingActivity).setToken(header)
-            delay(3000)
+            delay(2000)
             val intent = Intent(this@LoadingActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
