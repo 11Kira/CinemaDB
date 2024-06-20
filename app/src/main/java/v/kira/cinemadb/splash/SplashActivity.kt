@@ -14,11 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import v.kira.cinemadb.MainActivity
 import v.kira.cinemadb.R
@@ -32,14 +32,15 @@ class LoadingActivity: ComponentActivity() {
     val accountId = 7749280
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
             LoadingScreenView()
         }
         lifecycleScope.launch {
+            splashScreen.setKeepOnScreenCondition { true }
             SettingsPrefs(this@LoadingActivity).setAccountId(accountId.toLong())
             SettingsPrefs(this@LoadingActivity).setToken(header)
-            delay(3000)
             val intent = Intent(this@LoadingActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
