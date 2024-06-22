@@ -7,12 +7,14 @@ import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import v.kira.cinemadb.features.account.AccountUseCase
 import v.kira.cinemadb.util.SettingsPrefs
 import javax.inject.Inject
@@ -35,7 +37,9 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            async { header = SettingsPrefs(context).getToken.first().toString() }.await()
+            withContext(Dispatchers.IO) {
+                async { header = SettingsPrefs(context).getToken.first().toString() }.await()
+            }
             val result = detailsUseCase.getMovieDetails(header, movieId)
             mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
@@ -47,7 +51,9 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            async { header = SettingsPrefs(context).getToken.first().toString() }.await()
+            withContext(Dispatchers.IO) {
+                async { header = SettingsPrefs(context).getToken.first().toString() }.await()
+            }
             val result = detailsUseCase.getTVShowDetails(header, tvSeriesId)
             mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
         }

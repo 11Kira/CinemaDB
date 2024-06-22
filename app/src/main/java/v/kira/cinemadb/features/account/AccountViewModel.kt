@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
@@ -28,7 +29,7 @@ class AccountViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            header =  SettingsPrefs(context).getToken.first().toString()
+            async { header =  SettingsPrefs(context).getToken.first().toString() }.await()
         }
     }
 
