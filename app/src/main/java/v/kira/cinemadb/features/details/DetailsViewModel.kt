@@ -7,6 +7,7 @@ import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
@@ -23,16 +24,10 @@ class DetailsViewModel @Inject constructor(
     private val accountUseCase: AccountUseCase
 ): ViewModel() {
 
-    var header: String
+    lateinit var header: String
 
     private val mutableDetailsState: MutableSharedFlow<DetailsState> = MutableSharedFlow()
     val movieState = mutableDetailsState.asSharedFlow()
-
-    init {
-        runBlocking {
-            header =  SettingsPrefs(context).getToken.first().toString()
-        }
-    }
 
     fun getMovieDetails(movieId: Long) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
@@ -40,6 +35,7 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
+            async { header = SettingsPrefs(context).getToken.first().toString() }.await()
             val result = detailsUseCase.getMovieDetails(header, movieId)
             mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
@@ -51,6 +47,7 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
+            async { header = SettingsPrefs(context).getToken.first().toString() }.await()
             val result = detailsUseCase.getTVShowDetails(header, tvSeriesId)
             mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
         }
