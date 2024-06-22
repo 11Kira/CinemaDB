@@ -9,6 +9,7 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +29,7 @@ class TVViewModel @Inject constructor(
     private val useCase: TVUseCase,
 ): ViewModel() {
 
-    var header: String
+    lateinit var header: String
 
     private val _tvShowPagingState: MutableStateFlow<PagingData<TVShowResult>> = MutableStateFlow(PagingData.empty())
     val tvShowPagingState: StateFlow<PagingData<TVShowResult>> = _tvShowPagingState.asStateFlow()
@@ -44,7 +45,7 @@ class TVViewModel @Inject constructor(
     fun updateScrollToTopState(scrollToTop: Boolean) { _scrollToTopState.value = scrollToTop }
 
     init {
-        runBlocking {
+        viewModelScope.launch(Dispatchers.IO) {
             header =  SettingsPrefs(context).getToken.first().toString()
             getTVShowList(TRENDING)
         }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
@@ -23,10 +24,12 @@ class AccountViewModel @Inject constructor(
     private val mutableAccountState: MutableSharedFlow<AccountState> = MutableSharedFlow()
     val accountState = mutableAccountState.asSharedFlow()
 
-    var header: String
+    lateinit var header: String
 
     init {
-        runBlocking { header =  SettingsPrefs(context).getToken.first().toString() }
+        viewModelScope.launch(Dispatchers.IO) {
+            header =  SettingsPrefs(context).getToken.first().toString()
+        }
     }
 
     fun getAccountDetails(accountId: Long) {

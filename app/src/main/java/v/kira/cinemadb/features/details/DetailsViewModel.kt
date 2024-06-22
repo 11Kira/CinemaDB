@@ -7,6 +7,7 @@ import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
@@ -23,13 +24,15 @@ class DetailsViewModel @Inject constructor(
     private val accountUseCase: AccountUseCase
 ): ViewModel() {
 
-    var header: String
+    lateinit var header: String
 
     private val mutableDetailsState: MutableSharedFlow<DetailsState> = MutableSharedFlow()
     val movieState = mutableDetailsState.asSharedFlow()
 
     init {
-        runBlocking { header =  SettingsPrefs(context).getToken.first().toString() }
+        viewModelScope.launch(Dispatchers.IO) {
+            header =  SettingsPrefs(context).getToken.first().toString()
+        }
     }
 
     fun getMovieDetails(movieId: Long) {

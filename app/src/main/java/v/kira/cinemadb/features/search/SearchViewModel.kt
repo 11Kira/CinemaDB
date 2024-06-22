@@ -9,6 +9,7 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +27,7 @@ class SearchViewModel @Inject constructor(
     @ApplicationContext val context : Context,
     private val searchUseCase: SearchUseCase
 ): ViewModel() {
-    var header: String
+    lateinit var header: String
 
     private val movieSearchPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(
         PagingData.empty())
@@ -45,7 +46,9 @@ class SearchViewModel @Inject constructor(
     val searchText = mutableSearchText.asStateFlow()
 
     init {
-        runBlocking { header =  SettingsPrefs(context).getToken.first().toString() }
+        viewModelScope.launch(Dispatchers.IO) {
+            header =  SettingsPrefs(context).getToken.first().toString()
+        }
     }
 
     fun onSearchMovieTextChange(text: String) {
