@@ -9,6 +9,7 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,11 +49,11 @@ class WatchlistViewModel @Inject constructor(
         _scrollToTopState.value = scrollToTop
     }
 
-    var header: String
-    var accountId: Long
+    lateinit var header: String
+    var accountId: Long = 0
 
     init {
-        runBlocking {
+        viewModelScope.launch(Dispatchers.IO) {
             accountId = SettingsPrefs(context).getAccountId.first()
             header =  SettingsPrefs(context).getToken.first().toString()
             getMovieWatchlist()
