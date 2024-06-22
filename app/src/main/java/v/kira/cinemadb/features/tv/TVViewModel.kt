@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,7 +47,7 @@ class TVViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            header =  SettingsPrefs(context).getToken.first().toString()
+            async { header =  SettingsPrefs(context).getToken.first().toString() }.await()
             getTVShowList(TRENDING)
         }
     }

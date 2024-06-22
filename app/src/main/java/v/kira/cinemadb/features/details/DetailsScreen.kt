@@ -340,7 +340,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     color = Color.White,
                     text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    fontSize = 20.sp
+                    fontSize = 15.sp
                 )
             }
 
@@ -358,7 +358,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     color = Color.White,
                     text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
                     fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                    fontSize = 20.sp,                )
+                    fontSize = 15.sp,                )
             }
         }
         Spacer(modifier = Modifier.height(15.dp))
