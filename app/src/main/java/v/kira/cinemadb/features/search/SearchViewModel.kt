@@ -58,7 +58,7 @@ class SearchViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            async { header =  SettingsPrefs(context).getToken.first().toString() }.await()
+            header =  async { SettingsPrefs(context).getToken.first().toString() }.await()
         }
     }
 
