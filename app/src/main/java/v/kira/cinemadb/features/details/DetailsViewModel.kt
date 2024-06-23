@@ -1,6 +1,7 @@
 package v.kira.cinemadb.features.details
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
@@ -8,7 +9,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
@@ -33,16 +33,18 @@ class DetailsViewModel @Inject constructor(
         get() = mutableDetailsState.asSharedFlow()
 
     fun getMovieDetails(movieId: Long) {
+        Log.e("testTriggeredttttt", "true")
+
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
             withContext(Dispatchers.IO) {
-                async { header = SettingsPrefs(context).getToken.first().toString() }.await()
+                header = SettingsPrefs(context).getToken.first()
+                val result = detailsUseCase.getMovieDetails(header, movieId)
+                mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
             }
-            val result = detailsUseCase.getMovieDetails(header, movieId)
-            mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
     }
 
@@ -53,10 +55,10 @@ class DetailsViewModel @Inject constructor(
             }
         }) {
             withContext(Dispatchers.IO) {
-                async { header = SettingsPrefs(context).getToken.first().toString() }.await()
+                header = SettingsPrefs(context).getToken.first()
+                val result = detailsUseCase.getTVShowDetails(header, tvSeriesId)
+                mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
             }
-            val result = detailsUseCase.getTVShowDetails(header, tvSeriesId)
-            mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
         }
     }
 
