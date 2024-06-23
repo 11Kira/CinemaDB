@@ -29,7 +29,8 @@ class DetailsViewModel @Inject constructor(
     lateinit var header: String
 
     private val mutableDetailsState: MutableSharedFlow<DetailsState> = MutableSharedFlow()
-    val movieState = mutableDetailsState.asSharedFlow()
+    val movieState
+        get() = mutableDetailsState.asSharedFlow()
 
     fun getMovieDetails(movieId: Long) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->

@@ -33,15 +33,18 @@ class MovieViewModel @Inject constructor(
     lateinit var header: String
 
     private val _moviesPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(PagingData.empty())
-    val moviesPagingState: StateFlow<PagingData<MovieResult>> = _moviesPagingState.asStateFlow()
+    val moviesPagingState: StateFlow<PagingData<MovieResult>>
+        get() = _moviesPagingState.asStateFlow()
 
     private val _selectedMovieTab = MutableStateFlow("Trending")
-    val selectedMovieTab: StateFlow<String> = _selectedMovieTab.asStateFlow()
+    val selectedMovieTab: StateFlow<String>
+        get() = _selectedMovieTab.asStateFlow()
 
     fun updateSelectedMovieTab(selectedTab: String) { _selectedMovieTab.value = selectedTab }
 
     private var _scrollToTopState = MutableStateFlow(false)
-    val scrollToTopState: StateFlow<Boolean>  = _scrollToTopState.asStateFlow()
+    val scrollToTopState: StateFlow<Boolean>
+        get() = _scrollToTopState.asStateFlow()
 
     fun updateScrollToTopState(scrollToTop: Boolean) {
         _scrollToTopState.value = scrollToTop

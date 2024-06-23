@@ -33,15 +33,18 @@ class TVViewModel @Inject constructor(
     lateinit var header: String
 
     private val _tvShowPagingState: MutableStateFlow<PagingData<TVShowResult>> = MutableStateFlow(PagingData.empty())
-    val tvShowPagingState: StateFlow<PagingData<TVShowResult>> = _tvShowPagingState.asStateFlow()
+    val tvShowPagingState: StateFlow<PagingData<TVShowResult>>
+        get() = _tvShowPagingState.asStateFlow()
 
     private val _selectedTVShowTab = MutableStateFlow("Trending")
-    val selectedTVShowTab: StateFlow<String> = _selectedTVShowTab.asStateFlow()
+    val selectedTVShowTab: StateFlow<String>
+        get() = _selectedTVShowTab.asStateFlow()
 
     fun updateSelectedTVShowTab(selectedTab: String) { _selectedTVShowTab.value = selectedTab }
 
     private val _scrollToTopState = MutableStateFlow(false)
-    val scrollToTopState: StateFlow<Boolean> = _scrollToTopState.asStateFlow()
+    val scrollToTopState: StateFlow<Boolean>
+        get() = _scrollToTopState.asStateFlow()
 
     fun updateScrollToTopState(scrollToTop: Boolean) { _scrollToTopState.value = scrollToTop }
 
