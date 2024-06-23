@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
@@ -28,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -82,11 +84,13 @@ fun MainSearchScreen(onItemClick: (Long, Int) -> Unit) {
                     if (currentlySelected != 0) {
                         currentlySelected = 0
                     }
+                    viewModel.updateScrollToTopState(true)
                 }
                 1 -> {
                     if (currentlySelected != 1) {
                         currentlySelected = 1
                     }
+                    viewModel.updateScrollToTopState(true)
                 }
             }
         }
@@ -204,6 +208,7 @@ fun SearchField(typeSelected: Int) {
                     modifier = Modifier.clickable {
                         onSearchTextChange("")
                         viewModel.clearSearch()
+                        viewModel.updateScrollToTopState(true)
                     })
             },
             colors = OutlinedTextFieldDefaults.colors(
@@ -233,11 +238,21 @@ fun PopulateMovieSearchGrid(
     movies: LazyPagingItems<MovieResult>,
     onItemClick: (Long, Int) -> Unit
 ) {
+    val lazyRowState = rememberLazyStaggeredGridState()
+
+    if (viewModel.scrollToTopState.collectAsState().value) {
+        LaunchedEffect(key1 = true) {
+            lazyRowState.scrollToItem(0)
+            viewModel.updateScrollToTopState(false)
+        }
+    }
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)
     ) {
         LazyVerticalStaggeredGrid(
+            state = lazyRowState,
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),

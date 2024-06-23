@@ -50,6 +50,12 @@ class SearchViewModel @Inject constructor(
     val searchText
         get() = mutableSearchText.asStateFlow()
 
+    private val _scrollToTopState = MutableStateFlow(false)
+    val scrollToTopState: StateFlow<Boolean>
+        get() = _scrollToTopState.asStateFlow()
+
+    fun updateScrollToTopState(scrollToTop: Boolean) { _scrollToTopState.value = scrollToTop }
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             async { header =  SettingsPrefs(context).getToken.first().toString() }.await()
