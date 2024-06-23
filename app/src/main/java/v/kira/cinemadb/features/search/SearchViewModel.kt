@@ -32,19 +32,23 @@ class SearchViewModel @Inject constructor(
 
     private val movieSearchPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(
         PagingData.empty())
-    val movieSearchState: StateFlow<PagingData<MovieResult>> = movieSearchPagingState.asStateFlow()
+    val movieSearchState: StateFlow<PagingData<MovieResult>>
+        get() = movieSearchPagingState.asStateFlow()
 
     private val _selectedSearchTab = MutableStateFlow("Movies")
-    val selectedSearchTab: StateFlow<String> = _selectedSearchTab.asStateFlow()
+    val selectedSearchTab: StateFlow<String>
+        get() = _selectedSearchTab.asStateFlow()
 
     fun updateSelectedSearchTab(selectedTab: String) { _selectedSearchTab.value = selectedTab }
 
     private val tvShowSearchPagingState: MutableStateFlow<PagingData<TVShowResult>> = MutableStateFlow(
         PagingData.empty())
-    val tvShowSearchState: StateFlow<PagingData<TVShowResult>> = tvShowSearchPagingState.asStateFlow()
+    val tvShowSearchState: StateFlow<PagingData<TVShowResult>>
+        get() = tvShowSearchPagingState.asStateFlow()
 
     private val mutableSearchText = MutableStateFlow("")
-    val searchText = mutableSearchText.asStateFlow()
+    val searchText
+        get() = mutableSearchText.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {

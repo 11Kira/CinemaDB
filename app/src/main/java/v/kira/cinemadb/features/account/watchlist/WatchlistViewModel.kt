@@ -32,19 +32,23 @@ class WatchlistViewModel @Inject constructor(
 
     private val movieWatchlistPagingState: MutableStateFlow<PagingData<MovieResult>> = MutableStateFlow(
         PagingData.empty())
-    val movieWatchlistState: StateFlow<PagingData<MovieResult>> = movieWatchlistPagingState.asStateFlow()
+    val movieWatchlistState: StateFlow<PagingData<MovieResult>>
+        get() = movieWatchlistPagingState.asStateFlow()
 
     private val tvShowWatchlistPagingState: MutableStateFlow<PagingData<TVShowResult>> = MutableStateFlow(
         PagingData.empty())
-    val tvShowWatchlistState: StateFlow<PagingData<TVShowResult>> = tvShowWatchlistPagingState.asStateFlow()
+    val tvShowWatchlistState: StateFlow<PagingData<TVShowResult>>
+        get() = tvShowWatchlistPagingState.asStateFlow()
 
     private val _selectedWatchlistTab = MutableStateFlow("Movies")
-    val selectedWatchlistTab: StateFlow<String> = _selectedWatchlistTab.asStateFlow()
+    val selectedWatchlistTab: StateFlow<String>
+        get() = _selectedWatchlistTab.asStateFlow()
 
     fun updateSelectedWatchlistTab(selectedTab: String) { _selectedWatchlistTab.value = selectedTab }
 
     private var _scrollToTopState = MutableStateFlow(false)
-    val scrollToTopState: StateFlow<Boolean>  = _scrollToTopState.asStateFlow()
+    val scrollToTopState: StateFlow<Boolean>
+        get() = _scrollToTopState.asStateFlow()
 
     fun updateScrollToTopState(scrollToTop: Boolean) {
         _scrollToTopState.value = scrollToTop

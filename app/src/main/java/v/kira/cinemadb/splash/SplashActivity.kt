@@ -18,8 +18,8 @@ import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import v.kira.cinemadb.MainActivity
 import v.kira.cinemadb.R
 import v.kira.cinemadb.util.SettingsPrefs
@@ -37,12 +37,13 @@ class LoadingActivity: ComponentActivity() {
             LoadingScreenView()
         }
         lifecycleScope.launch {
-            SettingsPrefs(this@LoadingActivity).setAccountId(accountId.toLong())
-            SettingsPrefs(this@LoadingActivity).setToken(header)
-            delay(3000)
-            val intent = Intent(this@LoadingActivity, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+            withTimeout(5000) {
+                val intent = Intent(this@LoadingActivity, MainActivity::class.java)
+                SettingsPrefs(this@LoadingActivity).setAccountId(accountId.toLong())
+                SettingsPrefs(this@LoadingActivity).setToken(header)
+                startActivity(intent)
+                finish()
+            }
         }
     }
 }

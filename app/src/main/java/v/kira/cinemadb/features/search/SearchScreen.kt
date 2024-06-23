@@ -20,6 +20,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -184,14 +187,25 @@ fun SearchField(typeSelected: Int) {
     val searchText by viewModel.searchText.collectAsState()
     val onSearchTextChange = if (typeSelected == 0) viewModel::onSearchMovieTextChange else viewModel::onSearchTVShowTextChange
     Box(modifier = Modifier
-        .fillMaxWidth().background(Color.Black)
+        .fillMaxWidth()
+        .background(Color.Black)
     ) {
         OutlinedTextField(
             value = searchText,
             onValueChange = onSearchTextChange,
-            modifier = Modifier.fillMaxWidth().padding(top = 5.dp, bottom = 10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp, bottom = 10.dp),
             shape = RoundedCornerShape(24),
             singleLine = true,
+            trailingIcon = {
+                Icon(Icons.Default.Clear,
+                    contentDescription = "clear text",
+                    modifier = Modifier.clickable {
+                        onSearchTextChange("")
+                        viewModel.clearSearch()
+                    })
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 cursorColor = Color.White,
                 focusedBorderColor = Color.White,
