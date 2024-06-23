@@ -1,7 +1,6 @@
 package v.kira.cinemadb.features.details
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
@@ -33,8 +32,6 @@ class DetailsViewModel @Inject constructor(
         get() = mutableDetailsState.asSharedFlow()
 
     fun getMovieDetails(movieId: Long) {
-        Log.e("testTriggeredttttt", "true")
-
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {
                 mutableDetailsState.emit(DetailsState.ShowError(error))
