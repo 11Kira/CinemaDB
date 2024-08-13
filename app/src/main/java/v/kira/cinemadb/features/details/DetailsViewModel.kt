@@ -7,13 +7,11 @@ import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import v.kira.cinemadb.features.account.AccountUseCase
 import v.kira.cinemadb.util.SettingsPrefs
 import javax.inject.Inject
@@ -26,10 +24,18 @@ class DetailsViewModel @Inject constructor(
 ): ViewModel() {
 
     lateinit var header: String
+    var accountId = 0L
 
     private val mutableDetailsState: MutableSharedFlow<DetailsState> = MutableSharedFlow()
     val movieState
         get() = mutableDetailsState.asSharedFlow()
+
+    fun getToken() {
+        runBlocking {
+            header =  SettingsPrefs(context).getToken.first().toString()
+            accountId = SettingsPrefs(context).getAccountId.first()
+        }
+    }
 
     fun getMovieDetails(movieId: Long) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
@@ -37,11 +43,8 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            withContext(Dispatchers.IO) {
-                header = SettingsPrefs(context).getToken.first()
-                val result = detailsUseCase.getMovieDetails(header, movieId)
-                mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
-            }
+            val result = detailsUseCase.getMovieDetails(header, movieId)
+            mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
     }
 
@@ -51,11 +54,8 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            withContext(Dispatchers.IO) {
-                header = SettingsPrefs(context).getToken.first()
-                val result = detailsUseCase.getTVShowDetails(header, tvSeriesId)
-                mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
-            }
+            val result = detailsUseCase.getTVShowDetails(header, tvSeriesId)
+            mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
         }
     }
 
@@ -74,7 +74,7 @@ class DetailsViewModel @Inject constructor(
                 mutableDetailsState.emit(DetailsState.ShowError(error))
             }
         }) {
-            val invoke = accountUseCase.addToWatchlist(header, 7749280, jsonObject)
+            val invoke = accountUseCase.addToWatchlist(header, accountId, jsonObject)
             if (mediaType == 1 && invoke.success) {
                 getMovieDetails(mediaId)
             } else {
