@@ -58,6 +58,7 @@ fun DetailsScreen (
     type: Int
 ) {
     viewModel = hiltViewModel()
+    viewModel.getToken()
     MainScreen(viewModel.movieState)
     when(type) {
         1 -> { viewModel.getMovieDetails(id) }
