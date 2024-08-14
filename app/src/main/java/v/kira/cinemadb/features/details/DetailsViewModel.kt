@@ -23,14 +23,14 @@ class DetailsViewModel @Inject constructor(
     private val accountUseCase: AccountUseCase
 ): ViewModel() {
 
-    lateinit var header: String
+    var header: String
     var accountId = 0L
 
     private val mutableDetailsState: MutableSharedFlow<DetailsState> = MutableSharedFlow()
     val movieState
         get() = mutableDetailsState.asSharedFlow()
 
-    fun getToken() {
+    init {
         runBlocking {
             header =  SettingsPrefs(context).getToken.first().toString()
             accountId = SettingsPrefs(context).getAccountId.first()
