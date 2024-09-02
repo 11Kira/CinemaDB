@@ -35,4 +35,5 @@ data class TVShowResult (
     val lastAirDate: String,
     @SerializedName("credits")
     val credits: Credits?,
-)
+    var accountStates: AccountStates?,
+    )

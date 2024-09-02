@@ -7,6 +7,7 @@ import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
@@ -44,7 +45,9 @@ class DetailsViewModel @Inject constructor(
             }
         }) {
             val result = detailsUseCase.getMovieDetails(header, movieId)
-            getMovieWatchlistDetails(movieId)
+            val watchListResult = async { detailsUseCase.getMovieWatchlistDetails(header, movieId) }
+            result.accountStates = watchListResult.await()
+
             mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
     }
@@ -56,30 +59,10 @@ class DetailsViewModel @Inject constructor(
             }
         }) {
             val result = detailsUseCase.getTVShowDetails(header, tvSeriesId)
-            getTVShowWatchlistDetails(tvSeriesId)
+            val watchListResult = async { detailsUseCase.getTVShowWatchlistDetails(header, tvSeriesId) }
+            result.accountStates = watchListResult.await()
+
             mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
-        }
-    }
-
-    fun getMovieWatchlistDetails(movieId: Long) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
-            runBlocking {
-                mutableDetailsState.emit(DetailsState.ShowError(error))
-            }
-        }) {
-            val result = detailsUseCase.getMovieWatchlistDetails(header, movieId)
-            mutableDetailsState.emit(DetailsState.SetMovieWatchlistDetails(result))
-        }
-    }
-
-    fun getTVShowWatchlistDetails(tvSeriesId: Long) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
-            runBlocking {
-                mutableDetailsState.emit(DetailsState.ShowError(error))
-            }
-        }) {
-            val result = detailsUseCase.getTVShowWatchlistDetails(header, tvSeriesId)
-            mutableDetailsState.emit(DetailsState.SetTvShowWatchlistDetails(result))
         }
     }
 

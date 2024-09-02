@@ -70,7 +70,6 @@ fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var selectedMovie by remember { mutableStateOf<MovieResult?>(null) }
     var selectedTVShow by remember { mutableStateOf<TVShowResult?>(null) }
-    var isFromWatchlist by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -84,13 +83,6 @@ fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
                         selectedTVShow = state.tvShowDetails
                     }
 
-                    is DetailsState.SetMovieWatchlistDetails -> {
-                        isFromWatchlist = state.movieAccountStates.watchlist
-                    }
-
-                    is DetailsState.SetTvShowWatchlistDetails -> {
-                        isFromWatchlist = state.tvShowAccountStates.watchlist
-                    }
                     is DetailsState.ShowError -> {
                         Log.e("Error: ", state.error.toString())
                     }
@@ -99,12 +91,12 @@ fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
         }
     }
 
-    selectedMovie?.let { SetupMovieDetails(movie = it, isFromWatchlist = isFromWatchlist) }
-    selectedTVShow?.let { SetupTVShowDetails(tvShow = it, isFromWatchlist = isFromWatchlist) }
+    selectedMovie?.let { SetupMovieDetails(movie = it) }
+    selectedTVShow?.let { SetupTVShowDetails(tvShow = it) }
 }
 
 @Composable
-fun SetupMovieDetails(movie: MovieResult, isFromWatchlist: Boolean) {
+fun SetupMovieDetails(movie: MovieResult) {
     Column(
     modifier = Modifier
         .fillMaxSize()
@@ -140,14 +132,14 @@ fun SetupMovieDetails(movie: MovieResult, isFromWatchlist: Boolean) {
                         .wrapContentHeight()
                         .padding(10.dp)
                         .clickable {
-                            if (isFromWatchlist) {
+                            if (movie.accountStates?.watchlist == true) {
                                 viewModel.addToWatchlist(1, movie.id, false)
                             } else {
                                 viewModel.addToWatchlist(1, movie.id, true)
                             }
                         },
                     color = Color.White,
-                    text = if (isFromWatchlist) "Remove from Watchlist" else "Add to Watchlist",
+                    text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                     fontSize = 15.sp
                 )
@@ -328,7 +320,7 @@ fun SetupMovieDetails(movie: MovieResult, isFromWatchlist: Boolean) {
 }
 
 @Composable
-fun SetupTVShowDetails(tvShow: TVShowResult, isFromWatchlist: Boolean) {
+fun SetupTVShowDetails(tvShow: TVShowResult) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -364,14 +356,14 @@ fun SetupTVShowDetails(tvShow: TVShowResult, isFromWatchlist: Boolean) {
                         .wrapContentHeight()
                         .padding(10.dp)
                         .clickable {
-                            if (isFromWatchlist) {
+                            if (tvShow.accountStates?.watchlist == true) {
                                 viewModel.addToWatchlist(2, tvShow.id, false)
                             } else {
                                 viewModel.addToWatchlist(2, tvShow.id, true)
                             }
                         },
                     color = Color.White,
-                    text = if (isFromWatchlist) "Remove from Watchlist" else "Add to Watchlist",
+                    text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                     fontSize = 15.sp
                 )
