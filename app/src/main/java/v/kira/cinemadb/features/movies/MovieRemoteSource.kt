@@ -36,4 +36,14 @@ class MovieRemoteSource @Inject constructor(
             movieId = movieId
         )
     }
+
+    suspend fun getMovieWatchlistDetails(
+        token: String,
+        movieId: Long
+    ) = withContext(Dispatchers.IO) {
+        movieService.getMovieWatchlistDetails(
+            header = token,
+            movieId = movieId
+        )
+    }
 }

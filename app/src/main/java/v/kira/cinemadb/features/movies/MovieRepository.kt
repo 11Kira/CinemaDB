@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import v.kira.cinemadb.domain.mapMovieDetailsToDomain
+import v.kira.cinemadb.model.AccountStates
 import v.kira.cinemadb.model.MovieResult
 import javax.inject.Inject
 
@@ -23,5 +24,9 @@ class MovieRepository @Inject constructor(
 
     suspend fun getMovieDetails(token: String, movieId: Long): MovieResult {
         return remoteSource.getMovieDetails(token, movieId).mapMovieDetailsToDomain()
+    }
+
+    suspend fun getMovieWatchlistDetails(token: String, movieId: Long): AccountStates {
+        return remoteSource.getMovieWatchlistDetails(token, movieId)
     }
 }

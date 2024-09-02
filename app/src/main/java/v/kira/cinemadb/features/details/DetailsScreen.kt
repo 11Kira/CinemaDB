@@ -70,6 +70,7 @@ fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var selectedMovie by remember { mutableStateOf<MovieResult?>(null) }
     var selectedTVShow by remember { mutableStateOf<TVShowResult?>(null) }
+    var isFromWatchlist by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -82,6 +83,14 @@ fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
                     is DetailsState.SetTvShowDetails -> {
                         selectedTVShow = state.tvShowDetails
                     }
+
+                    is DetailsState.SetMovieWatchlistDetails -> {
+                        isFromWatchlist = state.movieAccountStates.watchlist
+                    }
+
+                    is DetailsState.SetTvShowWatchlistDetails -> {
+                        isFromWatchlist = state.tvShowAccountStates.watchlist
+                    }
                     is DetailsState.ShowError -> {
                         Log.e("Error: ", state.error.toString())
                     }
@@ -90,12 +99,12 @@ fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
         }
     }
 
-    selectedMovie?.let { SetupMovieDetails(movie = it) }
-    selectedTVShow?.let { SetupTVShowDetails(tvShow = it) }
+    selectedMovie?.let { SetupMovieDetails(movie = it, isFromWatchlist = isFromWatchlist) }
+    selectedTVShow?.let { SetupTVShowDetails(tvShow = it, isFromWatchlist = isFromWatchlist) }
 }
 
 @Composable
-fun SetupMovieDetails(movie: MovieResult) {
+fun SetupMovieDetails(movie: MovieResult, isFromWatchlist: Boolean) {
     Column(
     modifier = Modifier
         .fillMaxSize()
@@ -103,18 +112,23 @@ fun SetupMovieDetails(movie: MovieResult) {
         .verticalScroll(rememberScrollState())
     ) {
         val posterPath = AppUtil.retrievePosterImageUrl(movie.posterPath)
-        Box(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                 contentDescription = "Poster",
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(id = R.drawable.ic_video),
                 error = painterResource(id = R.drawable.ic_video)
             )
 
             Box(
-                modifier = Modifier.wrapContentWidth()
+                modifier = Modifier
+                    .wrapContentWidth()
                     .padding(10.dp)
                     .align(Alignment.TopStart)
                     .clip(CircleShape)
@@ -126,14 +140,14 @@ fun SetupMovieDetails(movie: MovieResult) {
                         .wrapContentHeight()
                         .padding(10.dp)
                         .clickable {
-                            if (movie.accountStates?.watchlist == true) {
+                            if (isFromWatchlist) {
                                 viewModel.addToWatchlist(1, movie.id, false)
                             } else {
                                 viewModel.addToWatchlist(1, movie.id, true)
                             }
                         },
                     color = Color.White,
-                    text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
+                    text = if (isFromWatchlist) "Remove from Watchlist" else "Add to Watchlist",
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                     fontSize = 15.sp
                 )
@@ -176,7 +190,9 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp),
                 text = movie.overview,
                 color = Color.White
             )
@@ -185,7 +201,9 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Cast:",
                 color = Color.White
             )
@@ -207,7 +225,9 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Origin Country:",
                 color = Color.White
             )
@@ -225,7 +245,9 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Genres:",
                 color = Color.White
             )
@@ -246,7 +268,9 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Status:",
                 color = Color.White
             )
@@ -264,7 +288,9 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Release date:",
                 color = Color.White
             )
@@ -282,7 +308,9 @@ fun SetupMovieDetails(movie: MovieResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Runtime:",
                 color = Color.White
             )
@@ -300,7 +328,7 @@ fun SetupMovieDetails(movie: MovieResult) {
 }
 
 @Composable
-fun SetupTVShowDetails(tvShow: TVShowResult) {
+fun SetupTVShowDetails(tvShow: TVShowResult, isFromWatchlist: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -308,18 +336,23 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             .verticalScroll(rememberScrollState())
     ) {
         val posterPath = AppUtil.retrievePosterImageUrl(tvShow.posterPath)
-        Box(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
                 contentDescription = "Poster",
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(id = R.drawable.ic_video),
                 error = painterResource(id = R.drawable.ic_video)
             )
 
             Box(
-                modifier = Modifier.wrapContentWidth()
+                modifier = Modifier
+                    .wrapContentWidth()
                     .padding(10.dp)
                     .align(Alignment.TopStart)
                     .clip(CircleShape)
@@ -331,14 +364,14 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                         .wrapContentHeight()
                         .padding(10.dp)
                         .clickable {
-                            if (tvShow.accountStates?.watchlist == true) {
+                            if (isFromWatchlist) {
                                 viewModel.addToWatchlist(2, tvShow.id, false)
                             } else {
                                 viewModel.addToWatchlist(2, tvShow.id, true)
                             }
                         },
                     color = Color.White,
-                    text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
+                    text = if (isFromWatchlist) "Remove from Watchlist" else "Add to Watchlist",
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                     fontSize = 15.sp
                 )
@@ -379,7 +412,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
                 text = tvShow.overview,
                 color = Color.White
             )
@@ -388,7 +423,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Cast:",
                 color = Color.White
             )
@@ -411,7 +448,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Origin Country:",
                 color = Color.White
             )
@@ -429,7 +468,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Genres:",
                 color = Color.White
             )
@@ -450,7 +491,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Status:",
                 color = Color.White
             )
@@ -468,7 +511,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Number of Seasons:",
                 color = Color.White
             )
@@ -486,7 +531,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Number of Episodes:",
                 color = Color.White
             )
@@ -504,7 +551,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "First Air Date:",
                 color = Color.White
             )
@@ -522,7 +571,9 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 textAlign = TextAlign.Start,
                 fontSize = 17.sp,
                 fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.wrapContentWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Last Air Date:",
                 color = Color.White
             )

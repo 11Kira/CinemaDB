@@ -31,6 +31,4 @@ data class MovieResult (
     val originCountry: List<String>,
     @SerializedName("credits")
     val credits: Credits?,
-    @SerializedName("account_states")
-    val accountStates: AccountStates?,
 )

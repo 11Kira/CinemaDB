@@ -44,6 +44,7 @@ class DetailsViewModel @Inject constructor(
             }
         }) {
             val result = detailsUseCase.getMovieDetails(header, movieId)
+            getMovieWatchlistDetails(movieId)
             mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
     }
@@ -55,7 +56,30 @@ class DetailsViewModel @Inject constructor(
             }
         }) {
             val result = detailsUseCase.getTVShowDetails(header, tvSeriesId)
+            getTVShowWatchlistDetails(tvSeriesId)
             mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
+        }
+    }
+
+    fun getMovieWatchlistDetails(movieId: Long) {
+        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
+            runBlocking {
+                mutableDetailsState.emit(DetailsState.ShowError(error))
+            }
+        }) {
+            val result = detailsUseCase.getMovieWatchlistDetails(header, movieId)
+            mutableDetailsState.emit(DetailsState.SetMovieWatchlistDetails(result))
+        }
+    }
+
+    fun getTVShowWatchlistDetails(tvSeriesId: Long) {
+        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
+            runBlocking {
+                mutableDetailsState.emit(DetailsState.ShowError(error))
+            }
+        }) {
+            val result = detailsUseCase.getTVShowWatchlistDetails(header, tvSeriesId)
+            mutableDetailsState.emit(DetailsState.SetTvShowWatchlistDetails(result))
         }
     }
 
