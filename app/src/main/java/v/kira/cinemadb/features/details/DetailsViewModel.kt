@@ -7,6 +7,7 @@ import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
@@ -44,6 +45,9 @@ class DetailsViewModel @Inject constructor(
             }
         }) {
             val result = detailsUseCase.getMovieDetails(header, movieId)
+            val watchListResult = async { detailsUseCase.getMovieWatchlistDetails(header, movieId) }
+            result.accountStates = watchListResult.await()
+
             mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
     }
@@ -55,6 +59,9 @@ class DetailsViewModel @Inject constructor(
             }
         }) {
             val result = detailsUseCase.getTVShowDetails(header, tvSeriesId)
+            val watchListResult = async { detailsUseCase.getTVShowWatchlistDetails(header, tvSeriesId) }
+            result.accountStates = watchListResult.await()
+
             mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
         }
     }

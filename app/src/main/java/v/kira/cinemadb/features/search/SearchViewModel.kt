@@ -9,7 +9,6 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,8 +55,8 @@ class SearchViewModel @Inject constructor(
     fun updateScrollToTopState(scrollToTop: Boolean) { _scrollToTopState.value = scrollToTop }
 
     init {
-        viewModelScope.launch {
-            header =  async { SettingsPrefs(context).getToken.first().toString() }.await()
+        runBlocking {
+            header =  SettingsPrefs(context).getToken.first().toString()
         }
     }
 
@@ -71,7 +70,7 @@ class SearchViewModel @Inject constructor(
         searchTVShow("")
     }
 
-    fun searchMovie(query: String) {
+    private fun searchMovie(query: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {
                 Log.e("ERROR", error.message.toString())

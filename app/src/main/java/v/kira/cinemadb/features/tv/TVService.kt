@@ -5,6 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
+import v.kira.cinemadb.model.AccountStates
 import v.kira.cinemadb.model.ListResponseObject
 import v.kira.cinemadb.model.TVShowResult
 
@@ -27,4 +28,10 @@ interface TVService {
         @Path("series_id") seriesId: Long,
         @Query("append_to_response") appendToResponse: String = "account_states,credits"
     ): TVShowResult
+
+    @GET("tv/{series_id}/account_states")
+    suspend fun getTVShowWatchlistDetails(
+        @Header("Authorization") header: String,
+        @Path("series_id") seriesId: Long,
+    ): AccountStates
 }

@@ -32,5 +32,5 @@ data class MovieResult (
     @SerializedName("credits")
     val credits: Credits?,
     @SerializedName("account_states")
-    val accountStates: AccountStates?,
+    var accountStates: AccountStates?,
 )
