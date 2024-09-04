@@ -73,6 +73,13 @@ fun MainWatchlistScreen(onItemClick: (Long, Int) -> Unit) {
     val tvShowWatchlist by rememberUpdatedState(newValue = viewModel.tvShowWatchlistState.collectAsLazyPagingItems())
     val typeSelected  by remember { mutableStateOf(viewModel.selectedWatchlistTab) }
     val typeList = listOf("Movies", "TV Shows")
+    LaunchedEffect(Unit) {
+        if (currentlySelected == 0) {
+            viewModel.getMovieWatchlist()
+        } else {
+            viewModel.getTVShowWatchlist()
+        }
+    }
     Column {
         SegmentedControlWatchlist(typeList.toList()) { selectedItem ->
             when (selectedItem) {
