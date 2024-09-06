@@ -48,7 +48,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import kotlinx.coroutines.flow.first
 import v.kira.cinemadb.R
 import v.kira.cinemadb.model.MovieResult
 import v.kira.cinemadb.model.TVShowResult
@@ -64,7 +63,6 @@ fun WatchlistScreen(
 ) {
     viewModel = hiltViewModel()
     MainWatchlistScreen(onItemClick)
-    viewModel.updateScrollToTopState(true)
 }
 
 @Composable
@@ -256,11 +254,10 @@ fun PopulateTVShowWatchlistGrid(
         .fillMaxSize()
         .background(Color.Black)
     ) {
-        val scrollToTop by rememberUpdatedState(viewModel.scrollToTopState)
         val lazyRowState = rememberLazyStaggeredGridState()
 
-        LaunchedEffect(key1 = tvShows.itemCount) {
-            if (scrollToTop.first()) {
+        if (viewModel.scrollToTopState.collectAsState().value) {
+            LaunchedEffect(key1 = true) {
                 lazyRowState.scrollToItem(0)
                 viewModel.updateScrollToTopState(false)
             }

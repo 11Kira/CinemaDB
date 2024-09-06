@@ -101,7 +101,6 @@ fun BottomNavigation(navController: NavController) {
         BottomMenuItem.Watchlist
     )
 
-
     BottomNavigation(
         modifier = Modifier.fillMaxWidth(),
         backgroundColor = Color.DarkGray,
