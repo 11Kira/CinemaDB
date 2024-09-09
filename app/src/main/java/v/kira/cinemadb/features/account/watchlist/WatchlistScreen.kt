@@ -202,26 +202,23 @@ fun PopulateMovieWatchlistGrid(
             isRefreshing = false
         }
     }
+    val lazyRowState = rememberLazyStaggeredGridState()
+    if (viewModel.scrollToTopState.collectAsState().value) {
+        LaunchedEffect(key1 = true) {
+            lazyRowState.scrollToItem(0)
+            viewModel.updateScrollToTopState(false)
+        }
+    }
 
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)
     ) {
-        val lazyRowState = rememberLazyStaggeredGridState()
-
-        if (viewModel.scrollToTopState.collectAsState().value) {
-            LaunchedEffect(key1 = true) {
-                lazyRowState.scrollToItem(0)
-                viewModel.updateScrollToTopState(false)
-            }
-        }
-
         PullToRefreshBox(
             modifier = Modifier.align(Alignment.TopCenter),
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
         ) {
-
             LazyVerticalStaggeredGrid(
                 state = lazyRowState,
                 columns = StaggeredGridCells.Fixed(2),
@@ -287,20 +284,18 @@ fun PopulateTVShowWatchlistGrid(
             isRefreshing = false
         }
     }
+    val lazyRowState = rememberLazyStaggeredGridState()
+    if (viewModel.scrollToTopState.collectAsState().value) {
+        LaunchedEffect(key1 = true) {
+            lazyRowState.scrollToItem(0)
+            viewModel.updateScrollToTopState(false)
+        }
+    }
 
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)
     ) {
-        val lazyRowState = rememberLazyStaggeredGridState()
-
-        if (viewModel.scrollToTopState.collectAsState().value) {
-            LaunchedEffect(key1 = true) {
-                lazyRowState.scrollToItem(0)
-                viewModel.updateScrollToTopState(false)
-            }
-        }
-
         PullToRefreshBox(
             modifier = Modifier.align(Alignment.TopCenter),
             isRefreshing = isRefreshing,
