@@ -52,6 +52,14 @@ class WatchlistViewModel @Inject constructor(
         _scrollToTopState.value = scrollToTop
     }
 
+    private var _loadingState = MutableStateFlow(false)
+    val loadingState: StateFlow<Boolean>
+        get() = _loadingState.asStateFlow()
+
+    fun updateLoadingState(isLoading: Boolean) {
+        _loadingState.value = isLoading
+    }
+
     lateinit var header: String
     var accountId: Long = 0
 
@@ -67,6 +75,7 @@ class WatchlistViewModel @Inject constructor(
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {
                 Log.e("ERROR", error.message.toString())
+                updateLoadingState(false)
             }
         }) {
             try {
@@ -76,8 +85,10 @@ class WatchlistViewModel @Inject constructor(
                     .collectLatest { pagingData ->
                         movieWatchlistPagingState.value = pagingData
                     }
+                updateLoadingState(false)
             } catch (e: Exception) {
                 Log.d("Exception:", e.toString())
+                updateLoadingState(false)
             }
         }
     }
@@ -86,6 +97,7 @@ class WatchlistViewModel @Inject constructor(
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {
                 Log.e("ERROR", error.message.toString())
+                updateLoadingState(false)
             }
         }) {
             try {
@@ -95,8 +107,10 @@ class WatchlistViewModel @Inject constructor(
                     .collectLatest { pagingData ->
                         tvShowWatchlistPagingState.value = pagingData
                     }
+                updateLoadingState(false)
             } catch (e: Exception) {
                 Log.d("Exception:", e.toString())
+                updateLoadingState(false)
             }
         }
     }
