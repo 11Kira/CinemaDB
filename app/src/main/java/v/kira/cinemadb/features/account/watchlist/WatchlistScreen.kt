@@ -264,6 +264,7 @@ fun PopulateTVShowWatchlistGrid(
         }
 
         LazyVerticalStaggeredGrid(
+            state = lazyRowState,
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),
