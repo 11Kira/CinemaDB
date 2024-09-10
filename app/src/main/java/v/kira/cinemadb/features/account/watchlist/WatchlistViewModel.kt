@@ -75,7 +75,6 @@ class WatchlistViewModel @Inject constructor(
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {
                 Log.e("ERROR", error.message.toString())
-                updateLoadingState(false)
             }
         }) {
             try {
@@ -85,10 +84,8 @@ class WatchlistViewModel @Inject constructor(
                     .collectLatest { pagingData ->
                         movieWatchlistPagingState.value = pagingData
                     }
-                updateLoadingState(false)
             } catch (e: Exception) {
                 Log.d("Exception:", e.toString())
-                updateLoadingState(false)
             }
         }
     }
@@ -97,7 +94,6 @@ class WatchlistViewModel @Inject constructor(
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking {
                 Log.e("ERROR", error.message.toString())
-                updateLoadingState(false)
             }
         }) {
             try {
@@ -107,10 +103,8 @@ class WatchlistViewModel @Inject constructor(
                     .collectLatest { pagingData ->
                         tvShowWatchlistPagingState.value = pagingData
                     }
-                updateLoadingState(false)
             } catch (e: Exception) {
                 Log.d("Exception:", e.toString())
-                updateLoadingState(false)
             }
         }
     }
