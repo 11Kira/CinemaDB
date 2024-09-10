@@ -52,6 +52,14 @@ class WatchlistViewModel @Inject constructor(
         _scrollToTopState.value = scrollToTop
     }
 
+    private var _loadingState = MutableStateFlow(false)
+    val loadingState: StateFlow<Boolean>
+        get() = _loadingState.asStateFlow()
+
+    fun updateLoadingState(isLoading: Boolean) {
+        _loadingState.value = isLoading
+    }
+
     lateinit var header: String
     var accountId: Long = 0
 
