@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "v.kira.cinemadb"
+    namespace = "com.kira.android.cinemadb"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "v.kira.cinemadb"
+        applicationId = "com.kira.android.cinemadb"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
