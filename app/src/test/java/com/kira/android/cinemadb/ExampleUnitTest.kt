@@ -1,4 +1,4 @@
-package com.kira.cinemadb
+package com.kira.android.cinemadb
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
