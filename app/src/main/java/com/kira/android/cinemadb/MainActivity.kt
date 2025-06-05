@@ -4,10 +4,18 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -53,6 +61,7 @@ class MainActivity : ComponentActivity() {
     private val injectedViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         viewModel = injectedViewModel
         setContent {
@@ -71,13 +80,22 @@ class MainActivity : ComponentActivity() {
 fun MainScreenView(){
     val navController = rememberNavController()
     Scaffold(
+        modifier = Modifier.imePadding(),
+
         bottomBar = {
             if (currentRoute(navController) != DETAILS_SCREEN_ROUTE) {
                 BottomNavigation(navController = navController)
             }
-        }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+
     ) { contentPadding ->
-        Box(modifier = Modifier.padding(contentPadding)) {
+        Box(modifier = Modifier
+            .padding(contentPadding)
+            .fillMaxSize()
+            .consumeWindowInsets(contentPadding)
+            .systemBarsPadding()
+        ) {
             NavigationGraph(navController = navController)
         }
     }
