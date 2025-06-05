@@ -80,8 +80,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreenView(){
     val navController = rememberNavController()
     Scaffold(
-        modifier = Modifier.imePadding(),
-
+        modifier = Modifier.safeDrawingPadding(),
         bottomBar = {
             if (currentRoute(navController) != DETAILS_SCREEN_ROUTE) {
                 BottomNavigation(navController = navController)
