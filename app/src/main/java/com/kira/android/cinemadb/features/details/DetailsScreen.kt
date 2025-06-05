@@ -195,6 +195,27 @@ fun SetupMovieDetails(movie: MovieResult) {
                 modifier = Modifier
                     .wrapContentWidth()
                     .padding(top = 20.dp),
+                text = "Title:",
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                modifier = Modifier
+                    .wrapContentWidth(),
+                text = movie.title,
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
                 text = "Cast:",
                 color = Color.White
             )
@@ -407,6 +428,27 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     .fillMaxWidth()
                     .padding(top = 10.dp),
                 text = tvShow.overview,
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 17.sp,
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(top = 20.dp),
+                text = "Title:",
+                color = Color.White
+            )
+
+            Text(
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                modifier = Modifier
+                    .wrapContentWidth(),
+                text = tvShow.name,
                 color = Color.White
             )
 
