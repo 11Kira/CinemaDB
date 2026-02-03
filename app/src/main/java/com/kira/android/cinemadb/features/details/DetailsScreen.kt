@@ -52,15 +52,20 @@ import kotlin.math.roundToInt
 lateinit var viewModel: DetailsViewModel
 
 @Composable
-fun DetailsScreen (
+fun DetailsScreen(
     id: Long,
     type: Int
 ) {
     viewModel = hiltViewModel()
     MainScreen(viewModel.movieState)
-    when(type) {
-        1 -> { viewModel.getMovieDetails(id) }
-        2 -> { viewModel.getTVShowDetails(id) }
+    when (type) {
+        1 -> {
+            viewModel.getMovieDetails(id)
+        }
+
+        2 -> {
+            viewModel.getTVShowDetails(id)
+        }
     }
 }
 
@@ -96,247 +101,263 @@ fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
 
 @Composable
 fun SetupMovieDetails(movie: MovieResult) {
-    Column(
-    modifier = Modifier
-        .fillMaxSize()
-        .background(Color.Black)
-        .verticalScroll(rememberScrollState())
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        val posterPath = AppUtil.retrievePosterImageUrl(movie.posterPath)
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
-                contentDescription = "Poster",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = R.drawable.ic_video),
-                error = painterResource(id = R.drawable.ic_video)
-            )
-
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+                .verticalScroll(rememberScrollState())
+        ) {
+            val posterPath = AppUtil.retrievePosterImageUrl(movie.posterPath)
             Box(
                 modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(10.dp)
-                    .align(Alignment.TopStart)
-                    .clip(CircleShape)
-                    .background(color = Color.DarkGray),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .wrapContentHeight()
             ) {
-                Text(
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current).data(posterPath)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Poster",
                     modifier = Modifier
-                        .wrapContentHeight()
-                        .padding(10.dp)
-                        .clickable {
-                            if (movie.accountStates?.watchlist == true) {
-                                viewModel.addToWatchlist(1, movie.id, false)
-                            } else {
-                                viewModel.addToWatchlist(1, movie.id, true)
-                            }
-                        },
-                    color = Color.White,
-                    text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    fontSize = 15.sp
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.ic_video),
+                    error = painterResource(id = R.drawable.ic_video)
                 )
             }
 
-            Box(
+            Spacer(modifier = Modifier.height(15.dp))
+            Column(
                 modifier = Modifier
-                    .padding(10.dp)
-                    .align(Alignment.TopEnd)
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(color = Color.DarkGray),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, bottom = 10.dp, end = 10.dp)
             ) {
                 Text(
-                    modifier = Modifier.wrapContentHeight(),
-                    color = Color.White,
-                    text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 25.sp,
                     fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                    fontSize = 15.sp
+                    modifier = Modifier.fillMaxWidth(),
+                    text = movie.tagline.ifBlank { movie.title },
+                    color = Color.White
+                )
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    text = movie.overview,
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Title:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth(),
+                    text = movie.title,
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Cast:",
+                    color = Color.White
+                )
+
+                val casts = ArrayList<String>()
+                movie.credits?.cast?.forEach { cast ->
+                    if (casts.size < 4) casts.add(cast.name)
+                }
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = TextUtils.join(", ", casts),
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Origin Country:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = TextUtils.join(", ", movie.originCountry),
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Genres:",
+                    color = Color.White
+                )
+
+                val genres = ArrayList<String>()
+                movie.genres.forEach { genre -> genres.add(genre.name) }
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = TextUtils.join(", ", genres),
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Status:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = movie.status,
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Release date:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = movie.releaseDate,
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Runtime:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = movie.runtime.toString(),
+                    color = Color.White
                 )
             }
         }
+    }
 
-        Spacer(modifier = Modifier.height(15.dp))
-        Column(
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, bottom = 10.dp, end = 10.dp)
+                .align(Alignment.TopStart)
+                .wrapContentWidth()
+                .padding(10.dp)
+                .clip(CircleShape)
+                .background(color = Color.DarkGray),
+            contentAlignment = Alignment.Center
         ) {
             Text(
-                textAlign = TextAlign.Center,
-                fontSize = 25.sp,
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .padding(10.dp)
+                    .clickable {
+                        if (movie.accountStates?.watchlist == true) {
+                            viewModel.addToWatchlist(1, movie.id, false)
+                        } else {
+                            viewModel.addToWatchlist(1, movie.id, true)
+                        }
+                    },
+                color = Color.White,
+                text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                fontSize = 15.sp
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(10.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(color = Color.DarkGray),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                modifier = Modifier.wrapContentHeight(),
+                color = Color.White,
+                text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
                 fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = movie.tagline.ifBlank { movie.title },
-                color = Color.White
-            )
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp),
-                text = movie.overview,
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Title:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth(),
-                text = movie.title,
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Cast:",
-                color = Color.White
-            )
-
-            val casts = ArrayList<String>()
-            movie.credits?.cast?.forEach { cast ->
-                if (casts.size < 4) casts.add(cast.name)
-            }
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = TextUtils.join(", ",casts),
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Origin Country:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = TextUtils.join(", ",movie.originCountry),
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Genres:",
-                color = Color.White
-            )
-
-            val genres = ArrayList<String>()
-            movie.genres.forEach { genre -> genres.add(genre.name) }
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = TextUtils.join(", ",genres),
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Status:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = movie.status,
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Release date:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = movie.releaseDate,
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Runtime:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = movie.runtime.toString(),
-                color = Color.White
+                fontSize = 15.sp
             )
         }
     }
+
+
 }
 
 @Composable
@@ -348,11 +369,14 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
             .verticalScroll(rememberScrollState())
     ) {
         val posterPath = AppUtil.retrievePosterImageUrl(tvShow.posterPath)
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true)
+                    .build(),
                 contentDescription = "Poster",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -403,7 +427,8 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     color = Color.White,
                     text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
                     fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                    fontSize = 15.sp,                )
+                    fontSize = 15.sp,
+                )
             }
         }
         Spacer(modifier = Modifier.height(15.dp))
@@ -473,7 +498,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 fontSize = 14.sp,
                 fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
-                text = TextUtils.join(", ",casts),
+                text = TextUtils.join(", ", casts),
                 color = Color.White
             )
 
@@ -493,7 +518,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 fontSize = 14.sp,
                 fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
-                text = TextUtils.join(", ",tvShow.originCountry),
+                text = TextUtils.join(", ", tvShow.originCountry),
                 color = Color.White
             )
 
@@ -516,7 +541,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 fontSize = 14.sp,
                 fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                 modifier = Modifier.fillMaxWidth(),
-                text = TextUtils.join(", ",genres),
+                text = TextUtils.join(", ", genres),
                 color = Color.White
             )
 
