@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -145,6 +146,7 @@ fun MovieSegmentedControl(
                         selectedIndex.value = index
                         onItemSelection(selectedIndex.value)
                         viewModel.updateSelectedMovieTab(item)
+                        viewModel.clearSearch()
                     },
                     colors = if (selectedTab.collectAsState().value == item) {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray)
@@ -166,7 +168,11 @@ fun MovieSegmentedControl(
                             bottomEndPercent = 24
                         )
                     },
-                    border = BorderStroke(1.5.dp, Color.DarkGray),
+                    border = if (selectedTab.collectAsState().value == item) {
+                        BorderStroke(1.5.dp, Color.White)
+                    } else {
+                        BorderStroke(1.5.dp, Color.DarkGray)
+                    }
                 ) {
                     Text(
                         text = item,
@@ -191,6 +197,7 @@ fun SearchField(
     val focusManager = LocalFocusManager.current
     val searchText by viewModel.searchText.collectAsState()
     val onSearchTextChange = viewModel::onSearchMovieTextChange
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Box(
         modifier = Modifier
@@ -216,7 +223,7 @@ fun SearchField(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    onClearFocus()
+                    keyboardController?.hide()
                     viewModel.onSearchMovieTextChange(searchText)
                 }
             ),

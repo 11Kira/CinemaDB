@@ -115,15 +115,13 @@ class MovieViewModel @Inject constructor(
                 Log.e("ERROR", error.message.toString())
             }
         }) {
-            try {
+            if (query.isNotBlank()) {
                 searchUseCase
                     .searchMovie(header, query)
                     .cachedIn(viewModelScope)
                     .collectLatest { pagingData ->
                         _moviesPagingState.value = pagingData
                     }
-            } catch (e: Exception) {
-                Log.d("Exception:", e.toString())
             }
         }
     }
