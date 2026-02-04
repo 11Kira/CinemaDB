@@ -3,6 +3,7 @@ package com.kira.android.cinemadb.features.movies
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,9 +20,16 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,9 +44,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,7 +67,6 @@ import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.util.AppUtil
 import kotlin.math.roundToInt
 
-
 lateinit var viewModel: MovieViewModel
 private var currentlySelected = 0
 
@@ -71,6 +82,7 @@ fun MovieListScreen(
 fun MainMovieScreen(onItemClick: (Long, Int) -> Unit) {
     val movies by rememberUpdatedState(newValue = viewModel.moviesPagingState.collectAsLazyPagingItems())
     val categoryList = listOf("Trending", "Top Rated")
+    val focusManager = LocalFocusManager.current
     Column {
         MovieSegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
@@ -80,6 +92,7 @@ fun MainMovieScreen(onItemClick: (Long, Int) -> Unit) {
                         currentlySelected = 0
                     }
                     viewModel.updateScrollToTopState(true)
+                    focusManager.clearFocus()
                 }
                 1 -> {
                     if (currentlySelected != 1) {
@@ -87,9 +100,13 @@ fun MainMovieScreen(onItemClick: (Long, Int) -> Unit) {
                         currentlySelected = 1
                     }
                     viewModel.updateScrollToTopState(true)
+                    focusManager.clearFocus()
                 }
             }
         }
+        SearchField(
+            onClearFocus = { focusManager.clearFocus() }
+        )
         PopulateMovieGrid(movies, onItemClick)
     }
 }
@@ -129,6 +146,7 @@ fun MovieSegmentedControl(
                         selectedIndex.value = index
                         onItemSelection(selectedIndex.value)
                         viewModel.updateSelectedMovieTab(item)
+                        viewModel.clearSearch()
                     },
                     colors = if (selectedTab.collectAsState().value == item) {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray)
@@ -150,7 +168,11 @@ fun MovieSegmentedControl(
                             bottomEndPercent = 24
                         )
                     },
-                    border = BorderStroke(1.5.dp, Color.DarkGray),
+                    border = if (selectedTab.collectAsState().value == item) {
+                        BorderStroke(1.5.dp, Color.White)
+                    } else {
+                        BorderStroke(1.5.dp, Color.DarkGray)
+                    }
                 ) {
                     Text(
                         text = item,
@@ -166,7 +188,78 @@ fun MovieSegmentedControl(
             }
         }
     }
+}
 
+@Composable
+fun SearchField(
+    onClearFocus: () -> Unit
+) {
+    val focusManager = LocalFocusManager.current
+    val searchText by viewModel.searchText.collectAsState()
+    val onSearchTextChange = viewModel::onSearchMovieTextChange
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Black)
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                focusManager.clearFocus()
+            }
+    ) {
+        OutlinedTextField(
+            value = searchText,
+            onValueChange = onSearchTextChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp, bottom = 10.dp),
+            shape = RoundedCornerShape(24),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    viewModel.onSearchMovieTextChange(searchText)
+                }
+            ),
+            trailingIcon = {
+                if (searchText.isNotEmpty()) {
+                    Icon(
+                        Icons.Default.Clear,
+                        contentDescription = "clear text",
+                        modifier = Modifier.clickable {
+                            onSearchTextChange("")
+                            viewModel.clearSearch()
+                            viewModel.updateScrollToTopState(true)
+                            onClearFocus()
+                        }
+                    )
+                }
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                cursorColor = Color.White,
+                focusedBorderColor = Color.White,
+                unfocusedBorderColor = Color.DarkGray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+            ),
+            placeholder = {
+                Text(
+                    text = "Search Movie",
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        color = Color.White,
+                        fontFamily = Font(R.font.roboto_medium).toFontFamily()
+                    ),
+                )
+            },
+        )
+    }
 }
 
 @Composable

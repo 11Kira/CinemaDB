@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kira.android.cinemadb.MainActivity.Companion.TOP_RATED
 import com.kira.android.cinemadb.MainActivity.Companion.TRENDING
+import com.kira.android.cinemadb.features.search.SearchUseCase
 import com.kira.android.cinemadb.model.TVShowResult
 import com.kira.android.cinemadb.util.SettingsPrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class TVViewModel @Inject constructor(
     @ApplicationContext val context : Context,
     private val useCase: TVUseCase,
+    private val searchUseCase: SearchUseCase
 ): ViewModel() {
 
     lateinit var header: String
@@ -48,7 +50,7 @@ class TVViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            header =  SettingsPrefs(context).getToken.first().toString()
+            header = SettingsPrefs(context).getToken.first()
             getTVShowList(TRENDING)
         }
     }
@@ -82,6 +84,40 @@ class TVViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 Log.d("Exception:", e.toString())
+            }
+        }
+    }
+
+    private val mutableSearchText = MutableStateFlow("")
+    val searchText
+        get() = mutableSearchText.asStateFlow()
+
+    fun onSearchTVShowTextChange(text: String) {
+        mutableSearchText.value = text
+        searchTVShow(text)
+    }
+
+    fun clearSearch() {
+        if (selectedTVShowTab.value == "Trending") {
+            getTVShowList(TRENDING)
+        } else {
+            getTVShowList(TOP_RATED)
+        }
+    }
+
+    private fun searchTVShow(query: String) {
+        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
+            runBlocking {
+                Log.e("ERROR", error.message.toString())
+            }
+        }) {
+            if (query.isNotBlank()) {
+                searchUseCase
+                    .searchTVShow(header, query)
+                    .cachedIn(viewModelScope)
+                    .collectLatest { pagingData ->
+                        _tvShowPagingState.value = pagingData
+                    }
             }
         }
     }

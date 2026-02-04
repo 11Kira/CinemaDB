@@ -356,293 +356,302 @@ fun SetupMovieDetails(movie: MovieResult) {
             )
         }
     }
-
-
 }
 
 @Composable
 fun SetupTVShowDetails(tvShow: TVShowResult) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .verticalScroll(rememberScrollState())
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        val posterPath = AppUtil.retrievePosterImageUrl(tvShow.posterPath)
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
+                .fillMaxSize()
+                .background(Color.Black)
+                .verticalScroll(rememberScrollState())
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true)
-                    .build(),
-                contentDescription = "Poster",
+            val posterPath = AppUtil.retrievePosterImageUrl(tvShow.posterPath)
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(),
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = R.drawable.ic_video),
-                error = painterResource(id = R.drawable.ic_video)
-            )
-
-            Box(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(10.dp)
-                    .align(Alignment.TopStart)
-                    .clip(CircleShape)
-                    .background(color = Color.DarkGray),
-                contentAlignment = Alignment.Center
+                    .wrapContentHeight()
             ) {
-                Text(
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current).data(posterPath)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Poster",
                     modifier = Modifier
-                        .wrapContentHeight()
-                        .padding(10.dp)
-                        .clickable {
-                            if (tvShow.accountStates?.watchlist == true) {
-                                viewModel.addToWatchlist(2, tvShow.id, false)
-                            } else {
-                                viewModel.addToWatchlist(2, tvShow.id, true)
-                            }
-                        },
-                    color = Color.White,
-                    text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    fontSize = 15.sp
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.ic_video),
+                    error = painterResource(id = R.drawable.ic_video)
                 )
             }
-
-            Box(
+            Spacer(modifier = Modifier.height(15.dp))
+            Column(
                 modifier = Modifier
-                    .padding(10.dp)
-                    .align(Alignment.TopEnd)
-                    .size(50.dp)
-                    .clip(CircleShape)
-                    .background(color = Color.DarkGray),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, bottom = 10.dp, end = 10.dp)
             ) {
                 Text(
-                    modifier = Modifier.wrapContentHeight(),
-                    color = Color.White,
-                    text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 25.sp,
                     fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                    fontSize = 15.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    text = tvShow.tagline.ifBlank { tvShow.name },
+                    color = Color.White
+                )
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    text = tvShow.overview,
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Title:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth(),
+                    text = tvShow.name,
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Cast:",
+                    color = Color.White
+                )
+
+                val casts = ArrayList<String>()
+                tvShow.credits?.cast?.forEach { cast ->
+                    if (casts.size < 4) casts.add(cast.name)
+                }
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = TextUtils.join(", ", casts),
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Origin Country:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = TextUtils.join(", ", tvShow.originCountry),
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Genres:",
+                    color = Color.White
+                )
+
+                val genres = ArrayList<String>()
+                tvShow.genres.forEach { genre -> genres.add(genre.name) }
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = TextUtils.join(", ", genres),
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Status:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = tvShow.status,
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Number of Seasons:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = tvShow.numberOfSeasons.toString(),
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Number of Episodes:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = tvShow.numberOfEpisodes.toString(),
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "First Air Date:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = tvShow.firstAirDate,
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Last Air Date:",
+                    color = Color.White
+                )
+
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = tvShow.lastAirDate,
+                    color = Color.White
                 )
             }
         }
-        Spacer(modifier = Modifier.height(15.dp))
-        Column(
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, bottom = 10.dp, end = 10.dp)
+                .align(Alignment.TopStart)
+                .wrapContentWidth()
+                .padding(10.dp)
+                .clip(CircleShape)
+                .background(color = Color.DarkGray),
+            contentAlignment = Alignment.Center
         ) {
             Text(
-                textAlign = TextAlign.Center,
-                fontSize = 25.sp,
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .padding(10.dp)
+                    .clickable {
+                        if (tvShow.accountStates?.watchlist == true) {
+                            viewModel.addToWatchlist(1, tvShow.id, false)
+                        } else {
+                            viewModel.addToWatchlist(1, tvShow.id, true)
+                        }
+                    },
+                color = Color.White,
+                text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
+                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                fontSize = 15.sp
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(10.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(color = Color.DarkGray),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                modifier = Modifier.wrapContentHeight(),
+                color = Color.White,
+                text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
                 fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = tvShow.tagline.ifBlank { tvShow.name },
-                color = Color.White
-            )
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                text = tvShow.overview,
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Title:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth(),
-                text = tvShow.name,
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Cast:",
-                color = Color.White
-            )
-
-            val casts = ArrayList<String>()
-            tvShow.credits?.cast?.forEach { cast ->
-                if (casts.size < 4) casts.add(cast.name)
-            }
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = TextUtils.join(", ", casts),
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Origin Country:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = TextUtils.join(", ", tvShow.originCountry),
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Genres:",
-                color = Color.White
-            )
-
-            val genres = ArrayList<String>()
-            tvShow.genres.forEach { genre -> genres.add(genre.name) }
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = TextUtils.join(", ", genres),
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Status:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = tvShow.status,
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Number of Seasons:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = tvShow.numberOfSeasons.toString(),
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Number of Episodes:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = tvShow.numberOfEpisodes.toString(),
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "First Air Date:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = tvShow.firstAirDate,
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 17.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Last Air Date:",
-                color = Color.White
-            )
-
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = tvShow.lastAirDate,
-                color = Color.White
+                fontSize = 15.sp
             )
         }
     }

@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kira.android.cinemadb.MainActivity.Companion.TOP_RATED
 import com.kira.android.cinemadb.MainActivity.Companion.TRENDING
+import com.kira.android.cinemadb.features.search.SearchUseCase
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.util.SettingsPrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +26,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MovieViewModel @Inject constructor(
     @ApplicationContext val context : Context,
-    private val useCase: MovieUseCase,
+    private val movieUseCase: MovieUseCase,
+    private val searchUseCase: SearchUseCase
 ): ViewModel() {
 
     lateinit var header: String
@@ -38,9 +40,12 @@ class MovieViewModel @Inject constructor(
     val selectedMovieTab: StateFlow<String>
         get() = _selectedMovieTab.asStateFlow()
 
-    fun updateSelectedMovieTab(selectedTab: String) { _selectedMovieTab.value = selectedTab }
+    fun updateSelectedMovieTab(selectedTab: String) {
+        _selectedMovieTab.value = selectedTab
+    }
 
     private var _scrollToTopState = MutableStateFlow(false)
+
     val scrollToTopState: StateFlow<Boolean>
         get() = _scrollToTopState.asStateFlow()
 
@@ -50,7 +55,7 @@ class MovieViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            header =  SettingsPrefs(context).getToken.first().toString()
+            header = SettingsPrefs(context).getToken.first()
             getMovies(TRENDING)
         }
     }
@@ -64,7 +69,7 @@ class MovieViewModel @Inject constructor(
             try {
                 when (type) {
                     TRENDING -> {
-                        useCase
+                        movieUseCase
                             .getTrendingMovies(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
@@ -73,7 +78,7 @@ class MovieViewModel @Inject constructor(
                     }
 
                     TOP_RATED -> {
-                        useCase
+                        movieUseCase
                             .getTopRatedMovies(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
@@ -83,6 +88,40 @@ class MovieViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.d("Exception:", e.toString())
+            }
+        }
+    }
+
+    private val mutableSearchText = MutableStateFlow("")
+    val searchText
+        get() = mutableSearchText.asStateFlow()
+
+    fun onSearchMovieTextChange(text: String) {
+        mutableSearchText.value = text
+        searchMovie(text)
+    }
+
+    fun clearSearch() {
+        if (selectedMovieTab.value == "Trending") {
+            getMovies(TRENDING)
+        } else {
+            getMovies(TOP_RATED)
+        }
+    }
+
+    private fun searchMovie(query: String) {
+        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
+            runBlocking {
+                Log.e("ERROR", error.message.toString())
+            }
+        }) {
+            if (query.isNotBlank()) {
+                searchUseCase
+                    .searchMovie(header, query)
+                    .cachedIn(viewModelScope)
+                    .collectLatest { pagingData ->
+                        _moviesPagingState.value = pagingData
+                    }
             }
         }
     }
