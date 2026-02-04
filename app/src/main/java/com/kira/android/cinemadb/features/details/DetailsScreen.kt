@@ -356,8 +356,6 @@ fun SetupMovieDetails(movie: MovieResult) {
             )
         }
     }
-
-
 }
 
 @Composable
