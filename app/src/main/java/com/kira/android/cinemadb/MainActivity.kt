@@ -47,7 +47,6 @@ import com.kira.android.cinemadb.Graph.DETAILS_SCREEN_ROUTE
 import com.kira.android.cinemadb.features.account.watchlist.WatchlistScreen
 import com.kira.android.cinemadb.features.details.DetailsScreen
 import com.kira.android.cinemadb.features.movies.MovieListScreen
-import com.kira.android.cinemadb.features.search.SearchScreen
 import com.kira.android.cinemadb.features.tv.TVShowListScreen
 import com.kira.android.cinemadb.navigation.BottomMenuItem
 import dagger.hilt.android.AndroidEntryPoint
@@ -114,7 +113,6 @@ fun BottomNavigation(navController: NavController) {
     val screens = listOf(
         BottomMenuItem.Movies,
         BottomMenuItem.TV,
-        BottomMenuItem.Search,
         BottomMenuItem.Watchlist
     )
 
@@ -174,13 +172,6 @@ fun NavigationGraph(navController: NavHostController) {
             TVShowListScreen(
                 onItemClick = { tvShowId, type ->
                     navController.navigate("${Graph.DETAILS_GRAPH}/${tvShowId}/${type}")
-                }
-            )
-        }
-        composable(BottomMenuItem.Search.screenRoute) {
-            SearchScreen(
-                onItemClick = { mediaId, type ->
-                    navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
                 }
             )
         }
