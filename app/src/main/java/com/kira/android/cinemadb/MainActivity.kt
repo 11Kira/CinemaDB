@@ -36,22 +36,19 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.kira.android.cinemadb.Graph.DETAILS_SCREEN_ROUTE
+import androidx.navigation.toRoute
 import com.kira.android.cinemadb.features.account.watchlist.WatchlistScreen
 import com.kira.android.cinemadb.features.details.DetailsScreen
 import com.kira.android.cinemadb.features.movies.MovieListScreen
 import com.kira.android.cinemadb.features.tv.TVShowListScreen
 import com.kira.android.cinemadb.navigation.BottomMenuItem
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.Serializable
 
 private lateinit var viewModel: MainViewModel
 
@@ -83,10 +80,14 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreenView(){
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val isDetailsScreen =
+        navBackStackEntry?.destination?.route
+            ?.startsWith(DetailsScreenNavigation::class.qualifiedName ?: "") == true
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
         bottomBar = {
-            if (currentRoute(navController) != DETAILS_SCREEN_ROUTE) {
+            if (!isDetailsScreen) {
                 BottomNavigation(navController = navController)
             }
         },
@@ -103,12 +104,6 @@ fun MainScreenView(){
             NavigationGraph(navController = navController)
         }
     }
-}
-
-@Composable
-fun currentRoute(navController: NavHostController): String? {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route
 }
 
 @Composable
@@ -170,53 +165,33 @@ fun NavigationGraph(navController: NavHostController) {
         composable(BottomMenuItem.Movies.screenRoute) {
             MovieListScreen(
                 onItemClick = { movieId, type ->
-                    navController.navigate("${Graph.DETAILS_GRAPH}/${movieId}/${type}")
+                    navController.navigate(DetailsScreenNavigation(movieId, type))
                 }
             )
         }
         composable(BottomMenuItem.TV.screenRoute) {
             TVShowListScreen(
                 onItemClick = { tvShowId, type ->
-                    navController.navigate("${Graph.DETAILS_GRAPH}/${tvShowId}/${type}")
+                    navController.navigate(DetailsScreenNavigation(tvShowId, type))
                 }
             )
         }
         composable(BottomMenuItem.Watchlist.screenRoute) {
             WatchlistScreen(
                 onItemClick = { mediaId, type ->
-                    navController.navigate("${Graph.DETAILS_GRAPH}/${mediaId}/${type}")
+                    navController.navigate(DetailsScreenNavigation(mediaId, type))
                 }
             )
         }
-        detailsNavGraph()
-    }
-}
-
-fun NavGraphBuilder.detailsNavGraph() {
-
-    navigation(
-        route = "${Graph.DETAILS_GRAPH}/{id}/{type}",
-        startDestination = DETAILS_SCREEN_ROUTE,
-    ) {
-        composable(
-            route = DETAILS_SCREEN_ROUTE,
-            arguments = listOf(
-                navArgument("id") {
-                    type = NavType.StringType
-                },
-                navArgument("type") {
-                    type = NavType.StringType
-                },
-            )
-        ) {
-            val id = it.arguments?.getString("id")?.toLong() ?: 0L
-            val type = it.arguments?.getString("type")?.toInt() ?: 0
-            DetailsScreen(id, type)
+        composable<DetailsScreenNavigation> {
+            val args = it.toRoute<DetailsScreenNavigation>()
+            DetailsScreen(args.id, args.type)
         }
     }
 }
 
-object Graph {
-    const val DETAILS_GRAPH = "details_graph"
-    const val DETAILS_SCREEN_ROUTE = "details/{id}/{type}"
-}
+@Serializable
+data class DetailsScreenNavigation(
+    val id: Long,
+    val type: Int
+)
