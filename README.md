@@ -19,5 +19,5 @@ Technologies Used:
 8. DataStore for saving local preference data
 9. Jetpack Compose for UI components
 10. Compose Paging for list pagination
-11. Compose Navigation for bottom navigation
+11. Compose Type-safe Navigation
 12. Compose Coil for image loading and display
