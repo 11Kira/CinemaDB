@@ -6,7 +6,7 @@ Features:
 3. Add/Remove Movie and TV show to user watchlist functionality
 4. Watchlist page (Movie and TV show)
 5. Movie and TV show details page
-6. Review page for selected Movie and TV Show
+6. User reviews page for selected Movie and TV Show
 
 Technologies Used:
 1. Kotlin as main language
