@@ -395,7 +395,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
 
                 val casts = ArrayList<String>()
                 tvShow.credits?.cast?.forEach { cast ->
-                    if (casts.size < 4) casts.add(cast.name)
+                    if (casts.size < 6) casts.add(cast.name)
                 }
 
                 Text(
