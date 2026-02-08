@@ -1,11 +1,12 @@
 Android application that features modern architecture integration.
 
 Features:
-1. Paginated list of Movies with search (Trending, Top Rated)
-2. Paginated list of TV Shows with search (Trending, Top Rated)
-3. Watch list page (Movie list and TV Show list)
-4. Movie and TV Show details page
-5. Add/Remove Movie and TV Show to user watch list functionality
+1. Paginated list of Movies with search (Popular, Top Rated)
+2. Paginated list of TV shows with search (Popular, Top Rated)
+3. Add/Remove Movie and TV show to user watchlist functionality
+4. Watchlist page (Movie and TV show)
+5. Movie and TV show details page
+6. Review page for selected Movie and TV Show
 
 Technologies Used:
 1. Kotlin as main language
