@@ -562,7 +562,7 @@ fun ReviewSection(
                     DynamicStarRating(rating = rating)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "$rating/10",
+                        text = "${rating.times(10.0).roundToInt() / 10.0}/10",
                         fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                     )
                 }
