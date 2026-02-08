@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.kira.android.cinemadb.model.MovieResult
 
-class TrendingMoviePagingSource(
+class PopularMoviePagingSource(
     private val header: String,
     private val remoteSource: MovieRemoteSource
 ): PagingSource<Int, MovieResult>() {
@@ -12,7 +12,7 @@ class TrendingMoviePagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieResult> {
         return try {
             val currentPage = params.key ?: 1
-            val response = remoteSource.getTrendingMovies(header, page = currentPage)
+            val response = remoteSource.getPopularMovies(header, page = currentPage)
             val movies = response.body()?.results.orEmpty()
 
             LoadResult.Page(

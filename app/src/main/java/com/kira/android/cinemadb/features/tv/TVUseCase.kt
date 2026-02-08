@@ -14,9 +14,9 @@ class TVUseCase @Inject constructor(
         return repository.getTopRatedTVShows(token)
     }
 
-    fun getTrendingTVShows(
+    fun getPopularTVShows(
         token: String,
     ): Flow<PagingData<TVShowResult>> {
-        return repository.getTrendingTVShows(token)
+        return repository.getPopularTVShows(token)
     }
 }

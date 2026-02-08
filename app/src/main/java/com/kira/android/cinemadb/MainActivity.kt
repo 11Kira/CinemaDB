@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
     }
 
     companion object {
-        const val TRENDING = 1
+        const val POPULAR = 1
         const val TOP_RATED = 2
     }
 }

@@ -60,8 +60,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.kira.android.cinemadb.MainActivity.Companion.POPULAR
 import com.kira.android.cinemadb.MainActivity.Companion.TOP_RATED
-import com.kira.android.cinemadb.MainActivity.Companion.TRENDING
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.util.AppUtil
@@ -81,14 +81,14 @@ fun MovieListScreen(
 @Composable
 fun MainMovieScreen(onItemClick: (Long, Int) -> Unit) {
     val movies by rememberUpdatedState(newValue = viewModel.moviesPagingState.collectAsLazyPagingItems())
-    val categoryList = listOf("Trending", "Top Rated")
+    val categoryList = listOf("Popular", "Top Rated")
     val focusManager = LocalFocusManager.current
     Column {
         MovieSegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> {
                     if (currentlySelected != 0) {
-                        viewModel.getMovies(TRENDING)
+                        viewModel.getMovies(POPULAR)
                         currentlySelected = 0
                     }
                     viewModel.updateScrollToTopState(true)

@@ -10,8 +10,8 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TVService {
-    @GET("trending/tv/week")
-    suspend fun getTrendingTVShows(
+    @GET("tv/popular")
+    suspend fun getPopularTVShows(
         @Header("Authorization") header: String,
         @Query("page") page: Int
     ): Response<ListResponseObject<List<TVShowResult>>>

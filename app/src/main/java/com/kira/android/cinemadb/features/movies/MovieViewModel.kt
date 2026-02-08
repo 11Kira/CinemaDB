@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.kira.android.cinemadb.MainActivity.Companion.POPULAR
 import com.kira.android.cinemadb.MainActivity.Companion.TOP_RATED
-import com.kira.android.cinemadb.MainActivity.Companion.TRENDING
 import com.kira.android.cinemadb.features.search.SearchUseCase
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.util.SettingsPrefs
@@ -36,7 +36,7 @@ class MovieViewModel @Inject constructor(
     val moviesPagingState: StateFlow<PagingData<MovieResult>>
         get() = _moviesPagingState.asStateFlow()
 
-    private val _selectedMovieTab = MutableStateFlow("Trending")
+    private val _selectedMovieTab = MutableStateFlow("Popular")
     val selectedMovieTab: StateFlow<String>
         get() = _selectedMovieTab.asStateFlow()
 
@@ -56,7 +56,7 @@ class MovieViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             header = SettingsPrefs(context).getToken.first()
-            getMovies(TRENDING)
+            getMovies(POPULAR)
         }
     }
 
@@ -68,9 +68,9 @@ class MovieViewModel @Inject constructor(
         }) {
             try {
                 when (type) {
-                    TRENDING -> {
+                    POPULAR -> {
                         movieUseCase
-                            .getTrendingMovies(header)
+                            .getPopularMovies(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
                                 _moviesPagingState.value = pagingData
@@ -102,8 +102,8 @@ class MovieViewModel @Inject constructor(
     }
 
     fun clearSearch() {
-        if (selectedMovieTab.value == "Trending") {
-            getMovies(TRENDING)
+        if (selectedMovieTab.value == "Popular") {
+            getMovies(POPULAR)
         } else {
             getMovies(TOP_RATED)
         }

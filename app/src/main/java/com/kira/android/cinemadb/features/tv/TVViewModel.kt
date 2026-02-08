@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.kira.android.cinemadb.MainActivity.Companion.POPULAR
 import com.kira.android.cinemadb.MainActivity.Companion.TOP_RATED
-import com.kira.android.cinemadb.MainActivity.Companion.TRENDING
 import com.kira.android.cinemadb.features.search.SearchUseCase
 import com.kira.android.cinemadb.model.TVShowResult
 import com.kira.android.cinemadb.util.SettingsPrefs
@@ -36,7 +36,7 @@ class TVViewModel @Inject constructor(
     val tvShowPagingState: StateFlow<PagingData<TVShowResult>>
         get() = _tvShowPagingState.asStateFlow()
 
-    private val _selectedTVShowTab = MutableStateFlow("Trending")
+    private val _selectedTVShowTab = MutableStateFlow("Popular")
     val selectedTVShowTab: StateFlow<String>
         get() = _selectedTVShowTab.asStateFlow()
 
@@ -51,7 +51,7 @@ class TVViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             header = SettingsPrefs(context).getToken.first()
-            getTVShowList(TRENDING)
+            getTVShowList(POPULAR)
         }
     }
 
@@ -63,9 +63,9 @@ class TVViewModel @Inject constructor(
         }) {
             try {
                 when (type) {
-                    TRENDING -> {
+                    POPULAR -> {
                         useCase
-                            .getTrendingTVShows(header)
+                            .getPopularTVShows(header)
                             .cachedIn(viewModelScope)
                             .collectLatest { pagingData ->
                                 _tvShowPagingState.value = pagingData
@@ -98,8 +98,8 @@ class TVViewModel @Inject constructor(
     }
 
     fun clearSearch() {
-        if (selectedTVShowTab.value == "Trending") {
-            getTVShowList(TRENDING)
+        if (selectedTVShowTab.value == "Popular") {
+            getTVShowList(POPULAR)
         } else {
             getTVShowList(TOP_RATED)
         }

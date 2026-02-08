@@ -12,9 +12,9 @@ import javax.inject.Inject
 class TVRepository @Inject constructor(
     private val remoteSource: TVRemoteSource
 ) {
-    fun getTrendingTVShows(token: String): Flow<PagingData<TVShowResult>> =
+    fun getPopularTVShows(token: String): Flow<PagingData<TVShowResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
-            TrendingTVShowPagingSource(token, remoteSource)
+            PopularTVShowPagingSource(token, remoteSource)
         }.flow
     fun getTopRatedTVShows(token: String): Flow<PagingData<TVShowResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {

@@ -7,11 +7,11 @@ import javax.inject.Inject
 class TVRemoteSource @Inject constructor(
     private val tvService: TVService
 ) {
-    suspend fun getTrendingTVShows(
+    suspend fun getPopularTVShows(
         token: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        tvService.getTrendingTVShows(
+        tvService.getPopularTVShows(
             header = token,
             page = page,
         )

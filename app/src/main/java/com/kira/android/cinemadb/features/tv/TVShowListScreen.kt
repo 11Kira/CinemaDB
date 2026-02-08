@@ -60,8 +60,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.kira.android.cinemadb.MainActivity.Companion.POPULAR
 import com.kira.android.cinemadb.MainActivity.Companion.TOP_RATED
-import com.kira.android.cinemadb.MainActivity.Companion.TRENDING
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.TVShowResult
 import com.kira.android.cinemadb.util.AppUtil
@@ -81,19 +81,18 @@ fun TVShowListScreen(
 @Composable
 fun MainTVShowScreen(onItemClick: (Long, Int) -> Unit) {
     val tvShows by rememberUpdatedState(newValue = viewModel.tvShowPagingState.collectAsLazyPagingItems())
-    val categoryList = listOf("Trending", "Top Rated")
+    val categoryList = listOf("Popular", "Top Rated")
     val focusManager = LocalFocusManager.current
     Column {
         TVShowSegmentedControl(categoryList.toList()) { selectedItem ->
             when (selectedItem) {
                 0 -> {
                     if (currentlySelected != 0) {
-                        viewModel.getTVShowList(TRENDING)
+                        viewModel.getTVShowList(POPULAR)
                         currentlySelected = 0
                     }
                     viewModel.updateScrollToTopState(true)
                     focusManager.clearFocus()
-
                 }
                 1 -> {
                     if (currentlySelected != 1) {

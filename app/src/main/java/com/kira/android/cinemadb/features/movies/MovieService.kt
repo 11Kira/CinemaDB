@@ -10,8 +10,8 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MovieService {
-    @GET("trending/movie/week")
-    suspend fun getTrendingMovies(
+    @GET("movie/popular")
+    suspend fun getPopularMovies(
         @Header("Authorization") header: String,
         @Query("page") page: Int,
     ): Response<ListResponseObject<List<MovieResult>>>

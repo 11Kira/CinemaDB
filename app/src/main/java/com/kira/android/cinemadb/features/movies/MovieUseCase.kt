@@ -12,7 +12,7 @@ class MovieUseCase @Inject constructor(
         return repository.getTopRatedMovies(token)
     }
 
-    fun getTrendingMovies(token: String): Flow<PagingData<MovieResult>> {
-        return repository.getTrendingMovies(token)
+    fun getPopularMovies(token: String): Flow<PagingData<MovieResult>> {
+        return repository.getPopularMovies(token)
     }
 }

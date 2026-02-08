@@ -17,9 +17,9 @@ class MovieRepository @Inject constructor(
             TopRatedMoviePagingSource(token, remoteSource)
         }.flow
 
-    fun getTrendingMovies(token: String): Flow<PagingData<MovieResult>> =
+    fun getPopularMovies(token: String): Flow<PagingData<MovieResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
-            TrendingMoviePagingSource(token, remoteSource)
+            PopularMoviePagingSource(token, remoteSource)
         }.flow
 
     suspend fun getMovieDetails(token: String, movieId: Long): MovieResult {
