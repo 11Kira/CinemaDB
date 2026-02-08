@@ -15,4 +15,21 @@ object AppUtil {
             else -> "${minutes}m"
         }
     }
+
+    fun formatReleaseYear(startDate: String?, endDate: String? = null): String {
+        // Extract the first 4 characters (the year) safely
+        val startYear = startDate?.take(4) ?: ""
+        val endYear = endDate?.take(4) ?: ""
+
+        return when {
+            // Case: TV Series with both dates (2024-2026)
+            startYear.isNotEmpty() && endYear.isNotEmpty() -> "$startYear-$endYear"
+
+            // Case: Movie or TV Series with only start date (2026)
+            startYear.isNotEmpty() -> startYear
+
+            // Fallback
+            else -> "N/A"
+        }
+    }
 }

@@ -17,6 +17,8 @@ data class TVShowResult (
     val name: String,
     @SerializedName("vote_average")
     val voteAverage: Double,
+    @SerializedName("vote_count")
+    val voteCount: Int,
     @SerializedName("tagline")
     val tagline: String,
     @SerializedName("status")
