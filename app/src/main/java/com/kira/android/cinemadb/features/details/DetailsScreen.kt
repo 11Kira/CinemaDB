@@ -4,8 +4,10 @@ import android.text.TextUtils
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,11 +15,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.StarHalf
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarOutline
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -71,7 +84,7 @@ fun DetailsScreen(
 
 @Composable
 fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     var selectedMovie by remember { mutableStateOf<MovieResult?>(null) }
     var selectedTVShow by remember { mutableStateOf<TVShowResult?>(null) }
 
@@ -109,6 +122,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                 .fillMaxSize()
                 .background(Color.Black)
                 .verticalScroll(rememberScrollState())
+                .padding(bottom = 20.dp)
         ) {
             val posterPath = AppUtil.retrievePosterImageUrl(movie.posterPath)
             Box(
@@ -142,16 +156,6 @@ fun SetupMovieDetails(movie: MovieResult) {
                     fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                     modifier = Modifier.fillMaxWidth(),
                     text = movie.tagline.ifBlank { movie.title },
-                    color = Color.White
-                )
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 14.sp,
-                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    text = movie.overview,
                     color = Color.White
                 )
 
@@ -189,7 +193,7 @@ fun SetupMovieDetails(movie: MovieResult) {
 
                 val casts = ArrayList<String>()
                 movie.credits?.cast?.forEach { cast ->
-                    if (casts.size < 4) casts.add(cast.name)
+                    if (casts.size < 6) casts.add(cast.name)
                 }
                 Text(
                     textAlign = TextAlign.Start,
@@ -207,27 +211,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                     modifier = Modifier
                         .wrapContentWidth()
                         .padding(top = 20.dp),
-                    text = "Origin Country:",
-                    color = Color.White
-                )
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 14.sp,
-                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                    modifier = Modifier.fillMaxWidth(),
-                    text = TextUtils.join(", ", movie.originCountry),
-                    color = Color.White
-                )
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Genres:",
+                    text = "Details:",
                     color = Color.White
                 )
 
@@ -239,9 +223,21 @@ fun SetupMovieDetails(movie: MovieResult) {
                     fontSize = 14.sp,
                     fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                     modifier = Modifier.fillMaxWidth(),
-                    text = TextUtils.join(", ", genres),
+                    text = "${movie.releaseDate} • ${
+                        TextUtils.join(
+                            ", ",
+                            movie.originCountry
+                        )
+                    } • ${TextUtils.join(", ", genres)} • ${AppUtil.formatRuntime(movie.runtime)}",
                     color = Color.White
                 )
+
+                ReviewSection(
+                    rating = movie.voteAverage,
+                    reviewCount = movie.voteCount
+                ) {
+
+                }
 
                 Text(
                     textAlign = TextAlign.Start,
@@ -250,7 +246,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                     modifier = Modifier
                         .wrapContentWidth()
                         .padding(top = 20.dp),
-                    text = "Status:",
+                    text = "Plot Summary:",
                     color = Color.White
                 )
 
@@ -258,48 +254,9 @@ fun SetupMovieDetails(movie: MovieResult) {
                     textAlign = TextAlign.Start,
                     fontSize = 14.sp,
                     fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                    modifier = Modifier.fillMaxWidth(),
-                    text = movie.status,
-                    color = Color.White
-                )
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                     modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Release date:",
-                    color = Color.White
-                )
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 14.sp,
-                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                    modifier = Modifier.fillMaxWidth(),
-                    text = movie.releaseDate,
-                    color = Color.White
-                )
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Runtime:",
-                    color = Color.White
-                )
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 14.sp,
-                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                    modifier = Modifier.fillMaxWidth(),
-                    text = movie.runtime.toString(),
+                        .fillMaxWidth(),
+                    text = movie.overview,
                     color = Color.White
                 )
             }
@@ -652,6 +609,89 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                 text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
                 fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                 fontSize = 15.sp
+            )
+        }
+    }
+}
+
+@Composable
+fun ReviewSection(
+    rating: Double,
+    reviewCount: Int,
+    onReviewClick: () -> Unit
+) {
+    Surface(
+        onClick = onReviewClick,
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    text = "User Reviews",
+                    fontSize = 17.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 4.dp)
+                ) {
+                    DynamicStarRating(rating = rating)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "$rating/10",
+                        fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    )
+                }
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "$reviewCount reviews",
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily()
+                )
+                Icon(
+                    imageVector = Icons.Default.ChevronRight,
+                    contentDescription = null,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DynamicStarRating(
+    rating: Double, // The 1.0 - 10.0 value
+    starColor: Color = Color(0xFFFFD700) // Gold color
+) {
+    Row {
+        // We loop 5 times to create 5 stars
+        for (i in 1..5) {
+            // Each star position represents a threshold of 2 points (2, 4, 6, 8, 10)
+            val fullStarThreshold = i * 2.0
+            // The half-way point for that specific star
+            val halfStarThreshold = fullStarThreshold - 1.0
+
+            val icon = when {
+                rating >= fullStarThreshold -> Icons.Filled.Star
+                rating >= halfStarThreshold -> Icons.AutoMirrored.Filled.StarHalf
+                else -> Icons.Filled.StarOutline
+            }
+
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = starColor,
+                modifier = Modifier.size(20.dp)
             )
         }
     }
