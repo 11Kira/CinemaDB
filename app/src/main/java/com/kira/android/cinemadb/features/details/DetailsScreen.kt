@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarOutline
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -538,7 +537,7 @@ fun ReviewSection(
     Surface(
         onClick = onReviewClick,
         shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+        color = Color.DarkGray,
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 20.dp)
@@ -555,6 +554,7 @@ fun ReviewSection(
                     text = "User Reviews",
                     fontSize = 17.sp,
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    color = Color.White
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -565,6 +565,7 @@ fun ReviewSection(
                     Text(
                         text = "${rating.times(10.0).roundToInt() / 10.0}/10",
                         fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                        color = Color.White
                     )
                 }
             }
@@ -572,11 +573,13 @@ fun ReviewSection(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "$reviewCount reviews",
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily()
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    color = Color.White
                 )
                 Icon(
                     imageVector = Icons.Default.ChevronRight,
                     contentDescription = null,
+                    tint = Color.White
                 )
             }
         }

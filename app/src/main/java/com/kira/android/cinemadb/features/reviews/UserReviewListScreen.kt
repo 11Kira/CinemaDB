@@ -75,7 +75,7 @@ fun PopulateReviewList(
             val selectedReview = movieReviews[index]
             Surface(
                 shape = RoundedCornerShape(12.dp),
-                color = Color.White,
+                color = Color.DarkGray,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 20.dp)
@@ -92,6 +92,7 @@ fun PopulateReviewList(
                             text = selectedReview?.author.toString(),
                             fontSize = 17.sp,
                             fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                            color = Color.White
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -103,6 +104,7 @@ fun PopulateReviewList(
                                 Text(
                                     text = "${rating.times(10.0).roundToInt() / 10.0}/10",
                                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                                    color = Color.White
                                 )
                             }
                         }
@@ -110,6 +112,7 @@ fun PopulateReviewList(
                             text = selectedReview?.content.toString(),
                             fontSize = 15.sp,
                             fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                            color = Color.White
                         )
                     }
                 }
