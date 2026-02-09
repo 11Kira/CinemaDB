@@ -56,14 +56,14 @@ fun MainScreen(type: Int) {
     val movieReviewlist by rememberUpdatedState(newValue = viewModel.movieReviewPagingState.collectAsLazyPagingItems())
     val tvShowReviewlist by rememberUpdatedState(newValue = viewModel.tvShowReviewPagingState.collectAsLazyPagingItems())
     if (type == 1) {
-        PopulateMovieReviewList(movieReviewlist)
+        PopulateReviewList(movieReviewlist)
     } else {
-        PopulateTVShowReviewList(tvShowReviewlist)
+        PopulateReviewList(tvShowReviewlist)
     }
 }
 
 @Composable
-fun PopulateMovieReviewList(
+fun PopulateReviewList(
     movieReviews: LazyPagingItems<UserReviewResult>,
 ) {
     LazyColumn(
@@ -116,11 +116,4 @@ fun PopulateMovieReviewList(
             }
         }
     }
-}
-
-@Composable
-fun PopulateTVShowReviewList(
-    tvShowReviews: LazyPagingItems<UserReviewResult>,
-) {
-
 }

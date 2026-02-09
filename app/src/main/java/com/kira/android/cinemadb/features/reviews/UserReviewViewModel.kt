@@ -34,7 +34,7 @@ class UserReviewViewModel @Inject constructor(
 
     init {
         runBlocking {
-            header = SettingsPrefs(context).getToken.first().toString()
+            header = SettingsPrefs(context).getToken.first()
             accountId = SettingsPrefs(context).getAccountId.first()
         }
     }
