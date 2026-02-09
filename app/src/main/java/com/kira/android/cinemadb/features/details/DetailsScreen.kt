@@ -193,7 +193,7 @@ fun SetupMovieDetails(movie: MovieResult) {
 
                 val casts = ArrayList<String>()
                 movie.credits?.cast?.forEach { cast ->
-                    if (casts.size < 6) casts.add(cast.name)
+                    if (casts.size < 7) casts.add(cast.name)
                 }
                 Text(
                     textAlign = TextAlign.Start,
@@ -395,7 +395,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
 
                 val casts = ArrayList<String>()
                 tvShow.credits?.cast?.forEach { cast ->
-                    if (casts.size < 6) casts.add(cast.name)
+                    if (casts.size < 7) casts.add(cast.name)
                 }
 
                 Text(
