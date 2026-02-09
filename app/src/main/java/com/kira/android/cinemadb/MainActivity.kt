@@ -85,10 +85,13 @@ fun MainScreenView(){
     val isDetailsScreen =
         navBackStackEntry?.destination?.route
             ?.startsWith(DetailsScreenNavigation::class.qualifiedName ?: "") == true
+    val isUserReviewScreen =
+        navBackStackEntry?.destination?.route
+            ?.startsWith(UserReviewScreenNavigation::class.qualifiedName ?: "") == true
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
         bottomBar = {
-            if (!isDetailsScreen) {
+            if (!isDetailsScreen && !isUserReviewScreen) {
                 BottomNavigation(navController = navController)
             }
         },
