@@ -3,6 +3,7 @@ package com.kira.android.cinemadb.features.tv
 import com.kira.android.cinemadb.model.AccountStates
 import com.kira.android.cinemadb.model.ListResponseObject
 import com.kira.android.cinemadb.model.TVShowResult
+import com.kira.android.cinemadb.model.UserReviewResult
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -21,6 +22,13 @@ interface TVService {
         @Header("Authorization") header: String,
         @Query("page") page: Int
     ): Response<ListResponseObject<List<TVShowResult>>>
+
+    @GET("tv/{series_id}/reviews")
+    suspend fun getTVShowReviews(
+        @Header("Authorization") header: String,
+        @Path("series_id") seriesId: Long,
+        @Query("page") page: Int
+    ): Response<ListResponseObject<List<UserReviewResult>>>
 
     @GET("tv/{series_id}")
     suspend fun getTVShowDetails(

@@ -3,6 +3,7 @@ package com.kira.android.cinemadb.features.movies
 import com.kira.android.cinemadb.model.AccountStates
 import com.kira.android.cinemadb.model.ListResponseObject
 import com.kira.android.cinemadb.model.MovieResult
+import com.kira.android.cinemadb.model.UserReviewResult
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -21,6 +22,13 @@ interface MovieService {
         @Header("Authorization") header: String,
         @Query("page") page: Int
     ): Response<ListResponseObject<List<MovieResult>>>
+
+    @GET("movie/{movie_id}/reviews")
+    suspend fun getMovieReviews(
+        @Header("Authorization") header: String,
+        @Path("movie_id") movieId: Long,
+        @Query("page") page: Int
+    ): Response<ListResponseObject<List<UserReviewResult>>>
 
     @GET("movie/{movie_id}")
     suspend fun getMovieDetails(
