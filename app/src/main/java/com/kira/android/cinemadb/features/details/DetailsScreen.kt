@@ -67,10 +67,11 @@ lateinit var viewModel: DetailsViewModel
 @Composable
 fun DetailsScreen(
     id: Long,
-    type: Int
+    type: Int,
+    onReviewClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainScreen(viewModel.movieState)
+    MainScreen(viewModel.movieState, onReviewClick)
     when (type) {
         1 -> {
             viewModel.getMovieDetails(id)
@@ -83,7 +84,7 @@ fun DetailsScreen(
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
+fun MainScreen(sharedFlow: SharedFlow<DetailsState>, onReviewClick: (Long, Int) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var selectedMovie by remember { mutableStateOf<MovieResult?>(null) }
     var selectedTVShow by remember { mutableStateOf<TVShowResult?>(null) }
@@ -108,12 +109,12 @@ fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
         }
     }
 
-    selectedMovie?.let { SetupMovieDetails(movie = it) }
-    selectedTVShow?.let { SetupTVShowDetails(tvShow = it) }
+    selectedMovie?.let { SetupMovieDetails(movie = it, onReviewClick) }
+    selectedTVShow?.let { SetupTVShowDetails(tvShow = it, onReviewClick) }
 }
 
 @Composable
-fun SetupMovieDetails(movie: MovieResult) {
+fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: Int) -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -236,7 +237,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                     rating = movie.voteAverage,
                     reviewCount = movie.voteCount
                 ) {
-
+                    onReviewClick(movie.id, 1)
                 }
 
                 Text(
@@ -316,7 +317,7 @@ fun SetupMovieDetails(movie: MovieResult) {
 }
 
 @Composable
-fun SetupTVShowDetails(tvShow: TVShowResult) {
+fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, type: Int) -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -449,7 +450,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     rating = tvShow.voteAverage,
                     reviewCount = tvShow.voteCount
                 ) {
-
+                    onReviewClick(tvShow.id, 2)
                 }
 
                 Text(

@@ -22,11 +22,13 @@ class UserReviewViewModel @Inject constructor(
     private val tvUseCase: TVUseCase
 ) : ViewModel() {
 
-    lateinit var header: String
+    var header: String
+    var accountId = 0L
 
     init {
-        viewModelScope.launch {
-            header = SettingsPrefs(context).getToken.first()
+        runBlocking {
+            header = SettingsPrefs(context).getToken.first().toString()
+            accountId = SettingsPrefs(context).getAccountId.first()
         }
     }
 
