@@ -2,6 +2,7 @@ package com.kira.android.cinemadb.features.reviews
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.dp
@@ -66,13 +67,15 @@ fun PopulateMovieReviewList(
     movieReviews: LazyPagingItems<UserReviewResult>,
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(movieReviews.itemCount) { index ->
             val selectedReview = movieReviews[index]
             Surface(
                 shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                color = Color.White,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 20.dp)
@@ -86,7 +89,7 @@ fun PopulateMovieReviewList(
                 ) {
                     Column {
                         Text(
-                            text = "User Reviews",
+                            text = selectedReview?.author.toString(),
                             fontSize = 17.sp,
                             fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                         )
@@ -103,6 +106,11 @@ fun PopulateMovieReviewList(
                                 )
                             }
                         }
+                        Text(
+                            text = selectedReview?.content.toString(),
+                            fontSize = 15.sp,
+                            fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                        )
                     }
                 }
             }
