@@ -45,6 +45,7 @@ import androidx.navigation.toRoute
 import com.kira.android.cinemadb.features.account.watchlist.WatchlistScreen
 import com.kira.android.cinemadb.features.details.DetailsScreen
 import com.kira.android.cinemadb.features.movies.MovieListScreen
+import com.kira.android.cinemadb.features.reviews.UserReviewListScreen
 import com.kira.android.cinemadb.features.tv.TVShowListScreen
 import com.kira.android.cinemadb.navigation.BottomMenuItem
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,10 +85,13 @@ fun MainScreenView(){
     val isDetailsScreen =
         navBackStackEntry?.destination?.route
             ?.startsWith(DetailsScreenNavigation::class.qualifiedName ?: "") == true
+    val isUserReviewScreen =
+        navBackStackEntry?.destination?.route
+            ?.startsWith(UserReviewScreenNavigation::class.qualifiedName ?: "") == true
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
         bottomBar = {
-            if (!isDetailsScreen) {
+            if (!isDetailsScreen && !isUserReviewScreen) {
                 BottomNavigation(navController = navController)
             }
         },
@@ -185,13 +189,30 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable<DetailsScreenNavigation> {
             val args = it.toRoute<DetailsScreenNavigation>()
-            DetailsScreen(args.id, args.type)
+            DetailsScreen(
+                args.id,
+                args.type,
+                onReviewClick = { mediaId, type ->
+                    navController.navigate(UserReviewScreenNavigation(mediaId, type))
+                }
+            )
+        }
+
+        composable<UserReviewScreenNavigation> {
+            val args = it.toRoute<UserReviewScreenNavigation>()
+            UserReviewListScreen(args.id, args.type)
         }
     }
 }
 
 @Serializable
 data class DetailsScreenNavigation(
+    val id: Long,
+    val type: Int
+)
+
+@Serializable
+data class UserReviewScreenNavigation(
     val id: Long,
     val type: Int
 )

@@ -4,8 +4,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.kira.android.cinemadb.domain.mapMovieDetailsToDomain
+import com.kira.android.cinemadb.features.reviews.MovieReviewPagingSource
 import com.kira.android.cinemadb.model.AccountStates
 import com.kira.android.cinemadb.model.MovieResult
+import com.kira.android.cinemadb.model.UserReviewResult
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -20,6 +22,11 @@ class MovieRepository @Inject constructor(
     fun getTrendingMovies(token: String): Flow<PagingData<MovieResult>> =
         Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
             TrendingMoviePagingSource(token, remoteSource)
+        }.flow
+
+    fun getMovieReviews(token: String, movieId: Long): Flow<PagingData<UserReviewResult>> =
+        Pager(PagingConfig(pageSize = 20, prefetchDistance = 10, enablePlaceholders = false)) {
+            MovieReviewPagingSource(token, movieId, remoteSource)
         }.flow
 
     suspend fun getMovieDetails(token: String, movieId: Long): MovieResult {

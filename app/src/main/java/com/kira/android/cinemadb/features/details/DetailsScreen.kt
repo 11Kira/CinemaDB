@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarOutline
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,10 +66,11 @@ lateinit var viewModel: DetailsViewModel
 @Composable
 fun DetailsScreen(
     id: Long,
-    type: Int
+    type: Int,
+    onReviewClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainScreen(viewModel.movieState)
+    MainScreen(viewModel.movieState, onReviewClick)
     when (type) {
         1 -> {
             viewModel.getMovieDetails(id)
@@ -83,7 +83,7 @@ fun DetailsScreen(
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
+fun MainScreen(sharedFlow: SharedFlow<DetailsState>, onReviewClick: (Long, Int) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var selectedMovie by remember { mutableStateOf<MovieResult?>(null) }
     var selectedTVShow by remember { mutableStateOf<TVShowResult?>(null) }
@@ -108,12 +108,12 @@ fun MainScreen(sharedFlow: SharedFlow<DetailsState>) {
         }
     }
 
-    selectedMovie?.let { SetupMovieDetails(movie = it) }
-    selectedTVShow?.let { SetupTVShowDetails(tvShow = it) }
+    selectedMovie?.let { SetupMovieDetails(movie = it, onReviewClick) }
+    selectedTVShow?.let { SetupTVShowDetails(tvShow = it, onReviewClick) }
 }
 
 @Composable
-fun SetupMovieDetails(movie: MovieResult) {
+fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: Int) -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -193,7 +193,7 @@ fun SetupMovieDetails(movie: MovieResult) {
 
                 val casts = ArrayList<String>()
                 movie.credits?.cast?.forEach { cast ->
-                    if (casts.size < 6) casts.add(cast.name)
+                    if (casts.size < 7) casts.add(cast.name)
                 }
                 Text(
                     textAlign = TextAlign.Start,
@@ -236,7 +236,7 @@ fun SetupMovieDetails(movie: MovieResult) {
                     rating = movie.voteAverage,
                     reviewCount = movie.voteCount
                 ) {
-
+                    onReviewClick(movie.id, 1)
                 }
 
                 Text(
@@ -316,7 +316,7 @@ fun SetupMovieDetails(movie: MovieResult) {
 }
 
 @Composable
-fun SetupTVShowDetails(tvShow: TVShowResult) {
+fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, type: Int) -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -395,7 +395,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
 
                 val casts = ArrayList<String>()
                 tvShow.credits?.cast?.forEach { cast ->
-                    if (casts.size < 6) casts.add(cast.name)
+                    if (casts.size < 7) casts.add(cast.name)
                 }
 
                 Text(
@@ -449,7 +449,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult) {
                     rating = tvShow.voteAverage,
                     reviewCount = tvShow.voteCount
                 ) {
-
+                    onReviewClick(tvShow.id, 2)
                 }
 
                 Text(
@@ -537,7 +537,7 @@ fun ReviewSection(
     Surface(
         onClick = onReviewClick,
         shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+        color = Color.DarkGray,
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 20.dp)
@@ -554,6 +554,7 @@ fun ReviewSection(
                     text = "User Reviews",
                     fontSize = 17.sp,
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    color = Color.White
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -564,6 +565,7 @@ fun ReviewSection(
                     Text(
                         text = "${rating.times(10.0).roundToInt() / 10.0}/10",
                         fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                        color = Color.White
                     )
                 }
             }
@@ -571,11 +573,13 @@ fun ReviewSection(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "$reviewCount reviews",
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily()
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    color = Color.White
                 )
                 Icon(
                     imageVector = Icons.Default.ChevronRight,
                     contentDescription = null,
+                    tint = Color.White
                 )
             }
         }
