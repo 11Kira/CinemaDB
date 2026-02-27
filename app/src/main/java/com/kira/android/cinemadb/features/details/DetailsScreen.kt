@@ -283,8 +283,7 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
                         } else {
                             viewModel.addToWatchlist(1, movie.id, true)
                         }
-                    }
-                    .padding(horizontal = 15.dp, vertical = 10.dp),
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -477,54 +476,59 @@ fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, typ
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Spacer(
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .wrapContentWidth()
-                .padding(10.dp)
-                .clip(CircleShape)
-                .background(color = Color.DarkGray),
-            contentAlignment = Alignment.Center
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .fillMaxWidth()
+        )
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
+            Box(
                 modifier = Modifier
-                    .wrapContentHeight()
+                    .wrapContentWidth()
                     .padding(10.dp)
-                    .clickable {
-                        if (tvShow.accountStates?.watchlist == true) {
-                            viewModel.addToWatchlist(1, tvShow.id, false)
-                        } else {
-                            viewModel.addToWatchlist(1, tvShow.id, true)
-                        }
-                    },
-                color = Color.White,
-                text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                fontSize = 15.sp
-            )
-        }
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(10.dp)
+                        .clickable {
+                            if (tvShow.accountStates?.watchlist == true) {
+                                viewModel.addToWatchlist(1, tvShow.id, false)
+                            } else {
+                                viewModel.addToWatchlist(1, tvShow.id, true)
+                            }
+                        },
+                    color = Color.White,
+                    text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    fontSize = 15.sp
+                )
+            }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(10.dp)
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(color = Color.DarkGray),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                modifier = Modifier.wrapContentHeight(),
-                color = Color.White,
-                text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
-                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                fontSize = 15.sp
-            )
+            Box(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier.wrapContentHeight(),
+                    color = Color.White,
+                    text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
+                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
+                    fontSize = 15.sp
+                )
+            }
         }
     }
 }
