@@ -1,27 +1,23 @@
 package com.kira.android.cinemadb
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,12 +25,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -61,12 +58,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(
+            /*statusBarStyle = SystemBarStyle.dark(
                 Color.Black.toArgb()
-            )
+            )*/
         )
         viewModel = injectedViewModel
         setContent {
+            val view = LocalView.current
+            if (!view.isInEditMode) {
+                SideEffect {
+                    val window = (view.context as Activity).window
+                    WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
+                        false
+                }
+            }
             MainScreenView()
         }
     }
@@ -89,21 +94,15 @@ fun MainScreenView(){
         navBackStackEntry?.destination?.route
             ?.startsWith(UserReviewScreenNavigation::class.qualifiedName ?: "") == true
     Scaffold(
-        modifier = Modifier.safeDrawingPadding(),
         bottomBar = {
             if (!isDetailsScreen && !isUserReviewScreen) {
                 BottomNavigation(navController = navController)
             }
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
-
     ) { contentPadding ->
         Box(modifier = Modifier
             .background(Color.Black)
-            .padding(contentPadding)
             .fillMaxSize()
-            .consumeWindowInsets(contentPadding)
-            .systemBarsPadding()
         ) {
             NavigationGraph(navController = navController)
         }
