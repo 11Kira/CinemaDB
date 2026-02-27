@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -74,14 +75,15 @@ private var currentlySelected = 0
 
 @Composable
 fun TVShowListScreen(
+    contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainTVShowScreen(onItemClick)
+    MainTVShowScreen(contentPadding, onItemClick)
 }
 
 @Composable
-fun MainTVShowScreen(onItemClick: (Long, Int) -> Unit) {
+fun MainTVShowScreen(contentPadding: PaddingValues, onItemClick: (Long, Int) -> Unit) {
     val tvShows by rememberUpdatedState(newValue = viewModel.tvShowPagingState.collectAsLazyPagingItems())
     val categoryList = listOf("Trending", "Top Rated")
     val focusManager = LocalFocusManager.current
@@ -115,7 +117,7 @@ fun MainTVShowScreen(onItemClick: (Long, Int) -> Unit) {
         SearchField(
             onClearFocus = { focusManager.clearFocus() }
         )
-        PopulateTVShowGrid(tvShows, onItemClick)
+        PopulateTVShowGrid(tvShows, contentPadding, onItemClick)
     }
 }
 
@@ -273,6 +275,7 @@ fun SearchField(
 @Composable
 fun PopulateTVShowGrid(
     tvShows: LazyPagingItems<TVShowResult>,
+    contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
     val lazyRowState = rememberLazyStaggeredGridState()
@@ -290,6 +293,9 @@ fun PopulateTVShowGrid(
     ) {
         LazyVerticalStaggeredGrid(
             state = lazyRowState,
+            contentPadding = PaddingValues(
+                bottom = contentPadding.calculateBottomPadding() + 16.dp
+            ),
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),

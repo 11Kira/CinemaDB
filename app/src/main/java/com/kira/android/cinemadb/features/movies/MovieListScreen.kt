@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -74,14 +75,15 @@ private var currentlySelected = 0
 
 @Composable
 fun MovieListScreen(
+    contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainMovieScreen(onItemClick)
+    MainMovieScreen(contentPadding, onItemClick)
 }
 
 @Composable
-fun MainMovieScreen(onItemClick: (Long, Int) -> Unit) {
+fun MainMovieScreen(contentPadding: PaddingValues, onItemClick: (Long, Int) -> Unit) {
     val movies by rememberUpdatedState(newValue = viewModel.moviesPagingState.collectAsLazyPagingItems())
     val categoryList = listOf("Trending", "Top Rated")
     val focusManager = LocalFocusManager.current
@@ -115,7 +117,7 @@ fun MainMovieScreen(onItemClick: (Long, Int) -> Unit) {
         SearchField(
             onClearFocus = { focusManager.clearFocus() }
         )
-        PopulateMovieGrid(movies, onItemClick)
+        PopulateMovieGrid(movies, contentPadding, onItemClick)
     }
 }
 
@@ -273,6 +275,7 @@ fun SearchField(
 @Composable
 fun PopulateMovieGrid(
     movies: LazyPagingItems<MovieResult>,
+    contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
     val lazyRowState = rememberLazyStaggeredGridState()
@@ -290,6 +293,9 @@ fun PopulateMovieGrid(
     ) {
         LazyVerticalStaggeredGrid(
             state = lazyRowState,
+            contentPadding = PaddingValues(
+                bottom = contentPadding.calculateBottomPadding() + 16.dp
+            ),
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),

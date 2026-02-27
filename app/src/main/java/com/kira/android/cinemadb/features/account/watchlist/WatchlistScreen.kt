@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -63,14 +64,15 @@ private var currentlySelected = 0
 
 @Composable
 fun WatchlistScreen(
+    contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainWatchlistScreen(onItemClick)
+    MainWatchlistScreen(contentPadding, onItemClick)
 }
 
 @Composable
-fun MainWatchlistScreen(onItemClick: (Long, Int) -> Unit) {
+fun MainWatchlistScreen(contentPadding: PaddingValues, onItemClick: (Long, Int) -> Unit) {
     val movieWatchlist by rememberUpdatedState(newValue = viewModel.movieWatchlistState.collectAsLazyPagingItems())
     val tvShowWatchlist by rememberUpdatedState(newValue = viewModel.tvShowWatchlistState.collectAsLazyPagingItems())
     val typeSelected  by remember { mutableStateOf(viewModel.selectedWatchlistTab) }
@@ -103,9 +105,9 @@ fun MainWatchlistScreen(onItemClick: (Long, Int) -> Unit) {
         }
 
         if (typeSelected.collectAsState().value == "Movies") {
-            PopulateMovieWatchlistGrid(movieWatchlist, onItemClick)
+            PopulateMovieWatchlistGrid(movieWatchlist, contentPadding, onItemClick)
         } else {
-            PopulateTVShowWatchlistGrid(tvShowWatchlist, onItemClick)
+            PopulateTVShowWatchlistGrid(tvShowWatchlist, contentPadding, onItemClick)
         }
     }
 }
@@ -188,6 +190,7 @@ fun SegmentedControlWatchlist(
 @Composable
 fun PopulateMovieWatchlistGrid(
     movies: LazyPagingItems<MovieResult>,
+    contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
@@ -219,6 +222,9 @@ fun PopulateMovieWatchlistGrid(
         ) {
             LazyVerticalStaggeredGrid(
                 state = lazyRowState,
+                contentPadding = PaddingValues(
+                    bottom = contentPadding.calculateBottomPadding() + 16.dp
+                ),
                 columns = StaggeredGridCells.Fixed(2),
                 verticalItemSpacing = 5.dp,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -270,6 +276,7 @@ fun PopulateMovieWatchlistGrid(
 @Composable
 fun PopulateTVShowWatchlistGrid(
     tvShows: LazyPagingItems<TVShowResult>,
+    contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
@@ -301,6 +308,9 @@ fun PopulateTVShowWatchlistGrid(
         ) {
             LazyVerticalStaggeredGrid(
                 state = lazyRowState,
+                contentPadding = PaddingValues(
+                    bottom = contentPadding.calculateBottomPadding() + 16.dp
+                ),
                 columns = StaggeredGridCells.Fixed(2),
                 verticalItemSpacing = 5.dp,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),

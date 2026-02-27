@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.BottomNavigation
@@ -104,7 +105,7 @@ fun MainScreenView(){
             .background(Color.Black)
             .fillMaxSize()
         ) {
-            NavigationGraph(navController = navController)
+            NavigationGraph(navController = navController, contentPadding)
         }
     }
 }
@@ -160,13 +161,14 @@ fun BottomNavigation(navController: NavController) {
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController) {
+fun NavigationGraph(navController: NavHostController, contentPadding: PaddingValues) {
     NavHost(
         navController = navController,
         startDestination = BottomMenuItem.Movies.screenRoute
     ) {
         composable(BottomMenuItem.Movies.screenRoute) {
             MovieListScreen(
+                contentPadding,
                 onItemClick = { movieId, type ->
                     navController.navigate(DetailsScreenNavigation(movieId, type))
                 }
@@ -174,6 +176,7 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable(BottomMenuItem.TV.screenRoute) {
             TVShowListScreen(
+                contentPadding,
                 onItemClick = { tvShowId, type ->
                     navController.navigate(DetailsScreenNavigation(tvShowId, type))
                 }
@@ -181,6 +184,7 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable(BottomMenuItem.Watchlist.screenRoute) {
             WatchlistScreen(
+                contentPadding,
                 onItemClick = { mediaId, type ->
                     navController.navigate(DetailsScreenNavigation(mediaId, type))
                 }
