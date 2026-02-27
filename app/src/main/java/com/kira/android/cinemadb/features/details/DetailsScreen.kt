@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
@@ -257,54 +260,60 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Spacer(
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .wrapContentWidth()
-                .padding(10.dp)
-                .clip(CircleShape)
-                .background(color = Color.DarkGray),
-            contentAlignment = Alignment.Center
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .fillMaxWidth()
+        )
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
+            Box(
                 modifier = Modifier
-                    .wrapContentHeight()
-                    .padding(10.dp)
+                    .wrapContentWidth()
+                    .padding(start = 10.dp)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray)
                     .clickable {
                         if (movie.accountStates?.watchlist == true) {
                             viewModel.addToWatchlist(1, movie.id, false)
                         } else {
                             viewModel.addToWatchlist(1, movie.id, true)
                         }
-                    },
-                color = Color.White,
-                text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                fontSize = 15.sp
-            )
-        }
+                    }
+                    .padding(horizontal = 15.dp, vertical = 10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(10.dp),
+                    color = Color.White,
+                    text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    fontSize = 15.sp
+                )
+            }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(10.dp)
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(color = Color.DarkGray),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                modifier = Modifier.wrapContentHeight(),
-                color = Color.White,
-                text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
-                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                fontSize = 15.sp
-            )
+            Box(
+                modifier = Modifier
+                    .padding(end = 10.dp)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    modifier = Modifier.wrapContentHeight(),
+                    color = Color.White,
+                    text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
+                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
+                    fontSize = 15.sp
+                )
+            }
         }
     }
 }
