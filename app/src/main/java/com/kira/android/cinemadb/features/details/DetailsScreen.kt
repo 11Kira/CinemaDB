@@ -41,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
@@ -52,8 +51,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
@@ -131,13 +129,9 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
                     .wrapContentHeight()
             ) {
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(posterPath)
-                        .crossfade(true)
-                        .build(),
+                    model = posterPath,
                     contentDescription = "Poster",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
+                    modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(id = R.drawable.ic_video),
                     error = painterResource(id = R.drawable.ic_video)
@@ -334,9 +328,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, typ
                     .wrapContentHeight()
             ) {
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(posterPath)
-                        .crossfade(true)
-                        .build(),
+                    model = posterPath,
                     contentDescription = "Poster",
                     modifier = Modifier
                         .fillMaxWidth()
