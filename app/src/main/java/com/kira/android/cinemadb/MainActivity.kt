@@ -10,12 +10,17 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -31,6 +36,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
@@ -58,11 +64,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(
-            /*statusBarStyle = SystemBarStyle.dark(
-                Color.Black.toArgb()
-            )*/
-        )
+        enableEdgeToEdge()
         viewModel = injectedViewModel
         setContent {
             val view = LocalView.current
@@ -104,6 +106,7 @@ fun MainScreenView(){
         Box(modifier = Modifier
             .background(Color.Black)
             .fillMaxSize()
+            .padding(contentPadding)
         ) {
             NavigationGraph(navController = navController, contentPadding)
         }
@@ -120,44 +123,53 @@ fun BottomNavigation(navController: NavController) {
         BottomMenuItem.TV,
         BottomMenuItem.Watchlist
     )
-
-    BottomNavigation(
-        modifier = Modifier.fillMaxWidth(),
-        backgroundColor = Color.DarkGray,
+    Surface(
+        color = Color.DarkGray,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        screens.forEach {
-            BottomNavigationItem(
-                selected = (selectedItem == selectedTab.collectAsState().value),
-                onClick = {
-                    selectedItem = it.label
-                    navController.navigate(it.screenRoute) {
-                        navController.graph.startDestinationRoute?.let { screenRoute ->
-                            popUpTo(screenRoute) {
-                                saveState = true
+        BottomNavigation(
+            modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
+            backgroundColor = Color.DarkGray,
+            elevation = 0.dp
+        ) {
+            screens.forEach {
+                BottomNavigationItem(
+                    selected = (selectedItem == selectedTab.collectAsState().value),
+                    onClick = {
+                        selectedItem = it.label
+                        navController.navigate(it.screenRoute) {
+                            navController.graph.startDestinationRoute?.let { screenRoute ->
+                                popUpTo(screenRoute) {
+                                    saveState = true
+                                }
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
+                        viewModel.updateSelectedTab(it.label)
+                    },
+                    label = {
+                        Text(
+                            text = it.label,
+                            color = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray,
+                            fontSize = 10.sp,
+                            fontFamily = if (selectedItem == selectedTab.collectAsState().value) Font(
+                                R.font.roboto_bold
+                            ).toFontFamily() else Font(R.font.roboto_medium).toFontFamily(),
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(it.icon),
+                            contentDescription = it.label,
+                            tint = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray
+                        )
                     }
-                    viewModel.updateSelectedTab(it.label)
-                },
-                label = {
-                    Text(
-                        text = it.label,
-                        color = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray,
-                        fontSize = 10.sp,
-                        fontFamily = if (selectedItem == selectedTab.collectAsState().value) Font(R.font.roboto_bold).toFontFamily() else Font(R.font.roboto_medium).toFontFamily(),
-                    ) },
-                icon = {
-                    Icon(
-                        imageVector  = ImageVector.vectorResource(it.icon),
-                        contentDescription = it.label,
-                        tint = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray
-                    )
-                }
-            )
+                )
+            }
         }
     }
+
 }
 
 @Composable
