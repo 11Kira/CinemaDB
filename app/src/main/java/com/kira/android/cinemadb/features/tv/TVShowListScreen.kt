@@ -43,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -58,8 +57,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.MainActivity.Companion.TOP_RATED
 import com.kira.android.cinemadb.MainActivity.Companion.TRENDING
 import com.kira.android.cinemadb.R
@@ -298,7 +296,7 @@ fun PopulateTVShowGrid(
                                 .fillMaxWidth()
                                 .height(350.dp)
                                 .clickable { selectedTvShow?.id?.let { onItemClick(it, 2) } },
-                            model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                            model = posterPath,
                             contentDescription = "Description",
                             contentScale = ContentScale.Crop,
                             placeholder = painterResource(id = R.drawable.ic_video),

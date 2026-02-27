@@ -40,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -52,8 +51,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
@@ -268,7 +266,7 @@ fun PopulateMovieSearchGrid(
                                 .fillMaxWidth()
                                 .height(350.dp)
                                 .clickable { selectedMovie?.id?.let { onItemClick(it, 1) } },
-                            model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                            model = posterPath,
                             contentDescription = "Description",
                             contentScale = ContentScale.Crop,
                             placeholder = painterResource(id = R.drawable.ic_video),
@@ -324,7 +322,7 @@ fun PopulateTVShowSearchGrid(
                                 .fillMaxWidth()
                                 .height(350.dp)
                                 .clickable { selectedTVShow?.id?.let { onItemClick(it, 2) } },
-                            model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                            model = posterPath,
                             contentDescription = "Description",
                             contentScale = ContentScale.Crop,
                             placeholder = painterResource(id = R.drawable.ic_video),
