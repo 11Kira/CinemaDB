@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,10 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.lifecycle.lifecycleScope
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.MainActivity
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.util.SettingsPrefs
@@ -33,6 +33,7 @@ class LoadingActivity: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             LoadingScreenView()
         }
@@ -54,7 +55,7 @@ fun LoadingScreenView() {
         .fillMaxSize()
         .background(color = Color.DarkGray)) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current).data(LocalContext.current.resources.getDrawable(R.drawable.logo)).crossfade(true).build(),
+            model = LocalResources.current.getDrawable(R.drawable.logo),
             contentDescription = "Poster",
             modifier = Modifier
                 .fillMaxWidth()

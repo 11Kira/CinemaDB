@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
@@ -41,7 +44,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
@@ -52,8 +54,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
@@ -131,13 +132,9 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
                     .wrapContentHeight()
             ) {
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(posterPath)
-                        .crossfade(true)
-                        .build(),
+                    model = posterPath,
                     contentDescription = "Poster",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
+                    modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(id = R.drawable.ic_video),
                     error = painterResource(id = R.drawable.ic_video)
@@ -263,24 +260,23 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Spacer(
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .wrapContentWidth()
-                .padding(10.dp)
-                .clip(CircleShape)
-                .background(color = Color.DarkGray),
-            contentAlignment = Alignment.Center
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .fillMaxWidth()
+        )
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
+            Box(
                 modifier = Modifier
-                    .wrapContentHeight()
-                    .padding(10.dp)
+                    .wrapContentWidth()
+                    .padding(start = 10.dp)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray)
                     .clickable {
                         if (movie.accountStates?.watchlist == true) {
                             viewModel.addToWatchlist(1, movie.id, false)
@@ -288,29 +284,35 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
                             viewModel.addToWatchlist(1, movie.id, true)
                         }
                     },
-                color = Color.White,
-                text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                fontSize = 15.sp
-            )
-        }
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(10.dp),
+                    color = Color.White,
+                    text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    fontSize = 15.sp
+                )
+            }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(10.dp)
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(color = Color.DarkGray),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                modifier = Modifier.wrapContentHeight(),
-                color = Color.White,
-                text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
-                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                fontSize = 15.sp
-            )
+            Box(
+                modifier = Modifier
+                    .padding(end = 10.dp)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    modifier = Modifier.wrapContentHeight(),
+                    color = Color.White,
+                    text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
+                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
+                    fontSize = 15.sp
+                )
+            }
         }
     }
 }
@@ -334,9 +336,7 @@ fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, typ
                     .wrapContentHeight()
             ) {
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(posterPath)
-                        .crossfade(true)
-                        .build(),
+                    model = posterPath,
                     contentDescription = "Poster",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -476,54 +476,59 @@ fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, typ
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Spacer(
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .wrapContentWidth()
-                .padding(10.dp)
-                .clip(CircleShape)
-                .background(color = Color.DarkGray),
-            contentAlignment = Alignment.Center
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .fillMaxWidth()
+        )
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
+            Box(
                 modifier = Modifier
-                    .wrapContentHeight()
+                    .wrapContentWidth()
                     .padding(10.dp)
-                    .clickable {
-                        if (tvShow.accountStates?.watchlist == true) {
-                            viewModel.addToWatchlist(1, tvShow.id, false)
-                        } else {
-                            viewModel.addToWatchlist(1, tvShow.id, true)
-                        }
-                    },
-                color = Color.White,
-                text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                fontSize = 15.sp
-            )
-        }
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(10.dp)
+                        .clickable {
+                            if (tvShow.accountStates?.watchlist == true) {
+                                viewModel.addToWatchlist(1, tvShow.id, false)
+                            } else {
+                                viewModel.addToWatchlist(1, tvShow.id, true)
+                            }
+                        },
+                    color = Color.White,
+                    text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    fontSize = 15.sp
+                )
+            }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(10.dp)
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(color = Color.DarkGray),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                modifier = Modifier.wrapContentHeight(),
-                color = Color.White,
-                text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
-                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                fontSize = 15.sp
-            )
+            Box(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(color = Color.DarkGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier.wrapContentHeight(),
+                    color = Color.White,
+                    text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
+                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
+                    fontSize = 15.sp
+                )
+            }
         }
     }
 }

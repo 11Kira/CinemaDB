@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
@@ -50,8 +50,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
@@ -65,14 +64,15 @@ private var currentlySelected = 0
 
 @Composable
 fun WatchlistScreen(
+    contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainWatchlistScreen(onItemClick)
+    MainWatchlistScreen(contentPadding, onItemClick)
 }
 
 @Composable
-fun MainWatchlistScreen(onItemClick: (Long, Int) -> Unit) {
+fun MainWatchlistScreen(contentPadding: PaddingValues, onItemClick: (Long, Int) -> Unit) {
     val movieWatchlist by rememberUpdatedState(newValue = viewModel.movieWatchlistState.collectAsLazyPagingItems())
     val tvShowWatchlist by rememberUpdatedState(newValue = viewModel.tvShowWatchlistState.collectAsLazyPagingItems())
     val typeSelected  by remember { mutableStateOf(viewModel.selectedWatchlistTab) }
@@ -105,9 +105,9 @@ fun MainWatchlistScreen(onItemClick: (Long, Int) -> Unit) {
         }
 
         if (typeSelected.collectAsState().value == "Movies") {
-            PopulateMovieWatchlistGrid(movieWatchlist, onItemClick)
+            PopulateMovieWatchlistGrid(movieWatchlist, contentPadding, onItemClick)
         } else {
-            PopulateTVShowWatchlistGrid(tvShowWatchlist, onItemClick)
+            PopulateTVShowWatchlistGrid(tvShowWatchlist, contentPadding, onItemClick)
         }
     }
 }
@@ -190,6 +190,7 @@ fun SegmentedControlWatchlist(
 @Composable
 fun PopulateMovieWatchlistGrid(
     movies: LazyPagingItems<MovieResult>,
+    contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
@@ -221,6 +222,9 @@ fun PopulateMovieWatchlistGrid(
         ) {
             LazyVerticalStaggeredGrid(
                 state = lazyRowState,
+                contentPadding = PaddingValues(
+                    bottom = contentPadding.calculateBottomPadding() + 16.dp
+                ),
                 columns = StaggeredGridCells.Fixed(2),
                 verticalItemSpacing = 5.dp,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -236,7 +240,7 @@ fun PopulateMovieWatchlistGrid(
                                     .fillMaxWidth()
                                     .height(350.dp)
                                     .clickable { selectedMovie?.id?.let { onItemClick(it, 1) } },
-                                model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                                model = posterPath,
                                 contentDescription = "Description",
                                 contentScale = ContentScale.Crop,
                                 placeholder = painterResource(id = R.drawable.ic_video),
@@ -272,6 +276,7 @@ fun PopulateMovieWatchlistGrid(
 @Composable
 fun PopulateTVShowWatchlistGrid(
     tvShows: LazyPagingItems<TVShowResult>,
+    contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
@@ -303,6 +308,9 @@ fun PopulateTVShowWatchlistGrid(
         ) {
             LazyVerticalStaggeredGrid(
                 state = lazyRowState,
+                contentPadding = PaddingValues(
+                    bottom = contentPadding.calculateBottomPadding() + 16.dp
+                ),
                 columns = StaggeredGridCells.Fixed(2),
                 verticalItemSpacing = 5.dp,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -326,7 +334,7 @@ fun PopulateTVShowWatchlistGrid(
                                                 )
                                             }
                                         },
-                                    model = ImageRequest.Builder(LocalContext.current).data(posterPath).crossfade(true).build(),
+                                    model = posterPath,
                                     contentDescription = "Description",
                                     contentScale = ContentScale.Crop,
                                     placeholder = painterResource(id = R.drawable.ic_video),

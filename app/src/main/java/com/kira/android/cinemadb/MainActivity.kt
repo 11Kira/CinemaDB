@@ -1,27 +1,29 @@
 package com.kira.android.cinemadb
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,12 +31,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -60,13 +64,17 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(
-                Color.Black.toArgb()
-            )
-        )
+        enableEdgeToEdge()
         viewModel = injectedViewModel
         setContent {
+            val view = LocalView.current
+            if (!view.isInEditMode) {
+                SideEffect {
+                    val window = (view.context as Activity).window
+                    WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
+                        false
+                }
+            }
             MainScreenView()
         }
     }
@@ -89,23 +97,18 @@ fun MainScreenView(){
         navBackStackEntry?.destination?.route
             ?.startsWith(UserReviewScreenNavigation::class.qualifiedName ?: "") == true
     Scaffold(
-        modifier = Modifier.safeDrawingPadding(),
         bottomBar = {
             if (!isDetailsScreen && !isUserReviewScreen) {
                 BottomNavigation(navController = navController)
             }
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
-
     ) { contentPadding ->
         Box(modifier = Modifier
             .background(Color.Black)
-            .padding(contentPadding)
             .fillMaxSize()
-            .consumeWindowInsets(contentPadding)
-            .systemBarsPadding()
+            .padding(contentPadding)
         ) {
-            NavigationGraph(navController = navController)
+            NavigationGraph(navController = navController, contentPadding)
         }
     }
 }
@@ -120,54 +123,64 @@ fun BottomNavigation(navController: NavController) {
         BottomMenuItem.TV,
         BottomMenuItem.Watchlist
     )
-
-    BottomNavigation(
-        modifier = Modifier.fillMaxWidth(),
-        backgroundColor = Color.DarkGray,
+    Surface(
+        color = Color.DarkGray,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        screens.forEach {
-            BottomNavigationItem(
-                selected = (selectedItem == selectedTab.collectAsState().value),
-                onClick = {
-                    selectedItem = it.label
-                    navController.navigate(it.screenRoute) {
-                        navController.graph.startDestinationRoute?.let { screenRoute ->
-                            popUpTo(screenRoute) {
-                                saveState = true
+        BottomNavigation(
+            modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
+            backgroundColor = Color.DarkGray,
+            elevation = 0.dp
+        ) {
+            screens.forEach {
+                BottomNavigationItem(
+                    selected = (selectedItem == selectedTab.collectAsState().value),
+                    onClick = {
+                        selectedItem = it.label
+                        navController.navigate(it.screenRoute) {
+                            navController.graph.startDestinationRoute?.let { screenRoute ->
+                                popUpTo(screenRoute) {
+                                    saveState = true
+                                }
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
+                        viewModel.updateSelectedTab(it.label)
+                    },
+                    label = {
+                        Text(
+                            text = it.label,
+                            color = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray,
+                            fontSize = 10.sp,
+                            fontFamily = if (selectedItem == selectedTab.collectAsState().value) Font(
+                                R.font.roboto_bold
+                            ).toFontFamily() else Font(R.font.roboto_medium).toFontFamily(),
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(it.icon),
+                            contentDescription = it.label,
+                            tint = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray
+                        )
                     }
-                    viewModel.updateSelectedTab(it.label)
-                },
-                label = {
-                    Text(
-                        text = it.label,
-                        color = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray,
-                        fontSize = 10.sp,
-                        fontFamily = if (selectedItem == selectedTab.collectAsState().value) Font(R.font.roboto_bold).toFontFamily() else Font(R.font.roboto_medium).toFontFamily(),
-                    ) },
-                icon = {
-                    Icon(
-                        imageVector  = ImageVector.vectorResource(it.icon),
-                        contentDescription = it.label,
-                        tint = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray
-                    )
-                }
-            )
+                )
+            }
         }
     }
+
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController) {
+fun NavigationGraph(navController: NavHostController, contentPadding: PaddingValues) {
     NavHost(
         navController = navController,
         startDestination = BottomMenuItem.Movies.screenRoute
     ) {
         composable(BottomMenuItem.Movies.screenRoute) {
             MovieListScreen(
+                contentPadding,
                 onItemClick = { movieId, type ->
                     navController.navigate(DetailsScreenNavigation(movieId, type))
                 }
@@ -175,6 +188,7 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable(BottomMenuItem.TV.screenRoute) {
             TVShowListScreen(
+                contentPadding,
                 onItemClick = { tvShowId, type ->
                     navController.navigate(DetailsScreenNavigation(tvShowId, type))
                 }
@@ -182,6 +196,7 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable(BottomMenuItem.Watchlist.screenRoute) {
             WatchlistScreen(
+                contentPadding,
                 onItemClick = { mediaId, type ->
                     navController.navigate(DetailsScreenNavigation(mediaId, type))
                 }
