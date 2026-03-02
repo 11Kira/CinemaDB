@@ -2,6 +2,7 @@ package com.kira.android.cinemadb.features.tv
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -25,16 +27,17 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,10 +46,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -208,6 +214,7 @@ fun SearchField(
     val searchText by viewModel.searchText.collectAsState()
     val onSearchTextChange = viewModel::onSearchTVShowTextChange
     val keyboardController = LocalSoftwareKeyboardController.current
+    var isFocused by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -220,54 +227,75 @@ fun SearchField(
                 focusManager.clearFocus()
             }
     ) {
-        OutlinedTextField(
+        BasicTextField(
             value = searchText,
             onValueChange = onSearchTextChange,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 5.dp, bottom = 10.dp),
-            shape = RoundedCornerShape(24),
+                .padding(top = 5.dp, bottom = 10.dp)
+                .onFocusChanged { isFocused = it.isFocused },
             singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done
-            ),
+            cursorBrush = SolidColor(Color.White),
+            textStyle = TextStyle(color = Color.White, fontSize = 16.sp),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
-                onDone = {
+                onSearch = {
                     keyboardController?.hide()
-                    viewModel.onSearchTVShowTextChange(searchText)
+                    focusManager.clearFocus()
                 }
             ),
-            trailingIcon = {
-                if (searchText.isNotEmpty()) {
+            decorationBox = { innerTextField ->
+                Row(
+                    modifier = Modifier
+                        .height(38.dp)
+                        .background(color = Color.Transparent)
+                        .border(
+                            width = 1.5.dp,
+                            color = if (isFocused) Color.White else Color.DarkGray,
+                            shape = RoundedCornerShape(24)
+                        )
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
-                        Icons.Default.Clear,
-                        contentDescription = "clear text",
-                        modifier = Modifier.clickable {
-                            onSearchTextChange("")
-                            viewModel.clearSearch()
-                            viewModel.updateScrollToTopState(true)
-                            onClearFocus()
-                        }
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = if (isFocused) Color.White else Color.Gray,
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (searchText.isEmpty()) {
+                            Text(
+                                modifier = Modifier.align(Alignment.CenterStart),
+                                text = "Search TV Show...",
+                                style = TextStyle(
+                                    color = Color.Gray,
+                                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                                    fontSize = 14.sp,
+                                ),
+                            )
+                        }
+                        innerTextField()
+                    }
+                    if (searchText.isNotEmpty()) {
+                        IconButton(
+                            onClick = {
+                                onSearchTextChange("")
+                                viewModel.clearSearch()
+                                viewModel.updateScrollToTopState(true)
+                                onClearFocus()
+                            },
+                            modifier = Modifier.size(20.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Clear,
+                                contentDescription = "Clear",
+                                tint = Color.Gray
+                            )
+                        }
+                    }
                 }
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                cursorColor = Color.White,
-                focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color.DarkGray,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-            ),
-            placeholder = {
-                Text(
-                    text = "Search TV Show",
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        color = Color.White,
-                        fontFamily = Font(R.font.roboto_medium).toFontFamily()
-                    ),
-                )
-            },
+            }
         )
     }
 }
