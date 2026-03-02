@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarOutline
@@ -57,6 +58,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.R
+import com.kira.android.cinemadb.components.CircularIconButton
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
 import com.kira.android.cinemadb.util.AppUtil
@@ -283,16 +285,19 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
                 .fillMaxWidth()
         )
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            CircularIconButton(icon = Icons.Default.ArrowBack, onClick = {})
+
             Box(
                 modifier = Modifier
                     .wrapContentWidth()
-                    .padding(start = 10.dp)
                     .clip(CircleShape)
-                    .background(color = Color.DarkGray)
+                    .background(color = Color.Black.copy(alpha = 0.5f))
                     .clickable {
                         if (movie.accountStates?.watchlist == true) {
                             viewModel.addToWatchlist(1, movie.id, false)
@@ -309,23 +314,6 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
                     color = Color.White,
                     text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    fontSize = 15.sp
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .padding(end = 10.dp)
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(color = Color.DarkGray),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    modifier = Modifier.wrapContentHeight(),
-                    color = Color.White,
-                    text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
-                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                     fontSize = 15.sp
                 )
             }
@@ -499,16 +487,19 @@ fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, typ
                 .fillMaxWidth()
         )
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            CircularIconButton(icon = Icons.Default.ArrowBack, onClick = {})
+
             Box(
                 modifier = Modifier
                     .wrapContentWidth()
-                    .padding(10.dp)
                     .clip(CircleShape)
-                    .background(color = Color.DarkGray),
+                    .background(color = Color.Black.copy(alpha = 0.5f)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -525,23 +516,6 @@ fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, typ
                     color = Color.White,
                     text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    fontSize = 15.sp
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(color = Color.DarkGray),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    modifier = Modifier.wrapContentHeight(),
-                    color = Color.White,
-                    text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
-                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                     fontSize = 15.sp
                 )
             }
