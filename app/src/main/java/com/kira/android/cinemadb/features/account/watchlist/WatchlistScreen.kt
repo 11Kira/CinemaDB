@@ -178,7 +178,11 @@ fun SegmentedControlWatchlist(
                             bottomEndPercent = 24
                         )
                     },
-                    border = BorderStroke(1.5.dp, Color.DarkGray),
+                    border = if (selectedTab.collectAsState().value == item) {
+                        BorderStroke(1.5.dp, Color.White)
+                    } else {
+                        BorderStroke(1.5.dp, Color.DarkGray)
+                    }
                 ) {
                     Text(
                         text = item,
