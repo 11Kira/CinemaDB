@@ -233,8 +233,7 @@ fun SearchField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 5.dp, bottom = 10.dp)
-                .onFocusChanged { isFocused = it.isFocused }
-                .height(35.dp),
+                .onFocusChanged { isFocused = it.isFocused },
             singleLine = true,
             cursorBrush = SolidColor(Color.White),
             textStyle = TextStyle(color = Color.White, fontSize = 16.sp),
@@ -248,7 +247,7 @@ fun SearchField(
             decorationBox = { innerTextField ->
                 Row(
                     modifier = Modifier
-                        .height(45.dp)
+                        .height(38.dp)
                         .background(color = Color.Transparent)
                         .border(
                             width = 1.5.dp,
