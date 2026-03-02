@@ -44,7 +44,6 @@ import com.kira.android.cinemadb.R
 fun SearchTextField(
     searchText: String = "",
     onSearchTextChange: (String) -> Unit = {},
-    onClearFocus: () -> Unit = {},
     onClearClicked: () -> Unit = {},
     keyboardController: SoftwareKeyboardController?,
     focusManager: FocusManager

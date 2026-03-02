@@ -142,7 +142,6 @@ fun SearchField(
         SearchTextField(
             searchText,
             onSearchTextChange,
-            onClearFocus,
             onClearClicked = {
                 onSearchTextChange("")
                 viewModel.clearSearch()
