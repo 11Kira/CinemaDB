@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarOutline
@@ -42,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -54,8 +56,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.R
+import com.kira.android.cinemadb.components.CircularIconButton
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
 import com.kira.android.cinemadb.util.AppUtil
@@ -68,10 +72,11 @@ lateinit var viewModel: DetailsViewModel
 fun DetailsScreen(
     id: Long,
     type: Int,
-    onReviewClick: (Long, Int) -> Unit
+    onReviewClick: (Long, Int) -> Unit,
+    navController: NavController
 ) {
     viewModel = hiltViewModel()
-    MainScreen(viewModel.movieState, onReviewClick)
+    MainScreen(navController, viewModel.movieState, onReviewClick)
     when (type) {
         1 -> {
             viewModel.getMovieDetails(id)
@@ -84,7 +89,11 @@ fun DetailsScreen(
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<DetailsState>, onReviewClick: (Long, Int) -> Unit) {
+fun MainScreen(
+    navController: NavController,
+    sharedFlow: SharedFlow<DetailsState>,
+    onReviewClick: (Long, Int) -> Unit
+) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var selectedMovie by remember { mutableStateOf<MovieResult?>(null) }
     var selectedTVShow by remember { mutableStateOf<TVShowResult?>(null) }
@@ -109,12 +118,16 @@ fun MainScreen(sharedFlow: SharedFlow<DetailsState>, onReviewClick: (Long, Int) 
         }
     }
 
-    selectedMovie?.let { SetupMovieDetails(movie = it, onReviewClick) }
-    selectedTVShow?.let { SetupTVShowDetails(tvShow = it, onReviewClick) }
+    selectedMovie?.let { SetupMovieDetails(movie = it, navController, onReviewClick) }
+    selectedTVShow?.let { SetupTVShowDetails(tvShow = it, navController, onReviewClick) }
 }
 
 @Composable
-fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: Int) -> Unit) {
+fun SetupMovieDetails(
+    movie: MovieResult,
+    navController: NavController,
+    onReviewClick: (movieId: Long, type: Int) -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -138,6 +151,21 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(id = R.drawable.ic_video),
                     error = painterResource(id = R.drawable.ic_video)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Black.copy(alpha = 0.4f),
+                                    Color.Transparent
+                                )
+                            )
+                        )
+                        .align(Alignment.TopCenter)
                 )
             }
 
@@ -267,16 +295,22 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
                 .fillMaxWidth()
         )
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            CircularIconButton(
+                icon = Icons.Default.ArrowBack,
+                onClick = { navController.navigateUp() }
+            )
+
             Box(
                 modifier = Modifier
                     .wrapContentWidth()
-                    .padding(start = 10.dp)
                     .clip(CircleShape)
-                    .background(color = Color.DarkGray)
+                    .background(color = Color.Black.copy(alpha = 0.5f))
                     .clickable {
                         if (movie.accountStates?.watchlist == true) {
                             viewModel.addToWatchlist(1, movie.id, false)
@@ -296,29 +330,16 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
                     fontSize = 15.sp
                 )
             }
-
-            Box(
-                modifier = Modifier
-                    .padding(end = 10.dp)
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(color = Color.DarkGray),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    modifier = Modifier.wrapContentHeight(),
-                    color = Color.White,
-                    text = (movie.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
-                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                    fontSize = 15.sp
-                )
-            }
         }
     }
 }
 
 @Composable
-fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, type: Int) -> Unit) {
+fun SetupTVShowDetails(
+    tvShow: TVShowResult,
+    navController: NavController,
+    onReviewClick: (tvShowId: Long, type: Int) -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -483,16 +504,22 @@ fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, typ
                 .fillMaxWidth()
         )
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            CircularIconButton(
+                icon = Icons.Default.ArrowBack,
+                onClick = { navController.navigateUp() }
+            )
+
             Box(
                 modifier = Modifier
                     .wrapContentWidth()
-                    .padding(10.dp)
                     .clip(CircleShape)
-                    .background(color = Color.DarkGray),
+                    .background(color = Color.Black.copy(alpha = 0.5f)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -509,23 +536,6 @@ fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, typ
                     color = Color.White,
                     text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    fontSize = 15.sp
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(color = Color.DarkGray),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    modifier = Modifier.wrapContentHeight(),
-                    color = Color.White,
-                    text = (tvShow.voteAverage.times(10.0).roundToInt() / 10.0).toString(),
-                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                     fontSize = 15.sp
                 )
             }
