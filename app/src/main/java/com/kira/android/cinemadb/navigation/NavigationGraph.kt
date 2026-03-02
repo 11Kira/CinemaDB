@@ -2,6 +2,7 @@ package com.kira.android.cinemadb.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,7 +25,9 @@ fun NavigationGraph(navController: NavHostController, contentPadding: PaddingVal
             MovieListScreen(
                 contentPadding,
                 onItemClick = { movieId, type ->
-                    navController.navigate(DetailsScreenNavigation(movieId, type))
+                    if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+                        navController.navigate(DetailsScreenNavigation(movieId, type))
+                    }
                 }
             )
         }
@@ -32,7 +35,9 @@ fun NavigationGraph(navController: NavHostController, contentPadding: PaddingVal
             TVShowListScreen(
                 contentPadding,
                 onItemClick = { tvShowId, type ->
-                    navController.navigate(DetailsScreenNavigation(tvShowId, type))
+                    if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+                        navController.navigate(DetailsScreenNavigation(tvShowId, type))
+                    }
                 }
             )
         }
@@ -40,7 +45,9 @@ fun NavigationGraph(navController: NavHostController, contentPadding: PaddingVal
             WatchlistScreen(
                 contentPadding,
                 onItemClick = { mediaId, type ->
-                    navController.navigate(DetailsScreenNavigation(mediaId, type))
+                    if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+                        navController.navigate(DetailsScreenNavigation(mediaId, type))
+                    }
                 }
             )
         }
@@ -50,7 +57,9 @@ fun NavigationGraph(navController: NavHostController, contentPadding: PaddingVal
                 args.id,
                 args.type,
                 onReviewClick = { mediaId, type ->
-                    navController.navigate(UserReviewScreenNavigation(mediaId, type))
+                    if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+                        navController.navigate(UserReviewScreenNavigation(mediaId, type))
+                    }
                 },
                 navController
             )
