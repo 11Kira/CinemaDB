@@ -28,7 +28,7 @@ import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kira.android.cinemadb.R
-import com.kira.android.cinemadb.features.details.DynamicStarRating
+import com.kira.android.cinemadb.components.DynamicStarRating
 import com.kira.android.cinemadb.model.UserReviewResult
 import kotlin.math.roundToInt
 
@@ -43,13 +43,8 @@ fun UserReviewListScreen(
     viewModel = hiltViewModel()
     MainScreen(navController, type)
     when (type) {
-        1 -> {
-            viewModel.getMovieReviews(id)
-        }
-
-        2 -> {
-            viewModel.getTVShowReviews(id)
-        }
+        1 -> viewModel.getMovieReviews(id)
+        2 -> viewModel.getTVShowReviews(id)
     }
 }
 

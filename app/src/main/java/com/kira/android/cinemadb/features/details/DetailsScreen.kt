@@ -14,24 +14,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarOutline
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,13 +48,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.kira.android.cinemadb.HeaderText
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.components.CircularIconButton
+import com.kira.android.cinemadb.components.ReviewSection
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
 import com.kira.android.cinemadb.util.AppUtil
 import kotlinx.coroutines.flow.SharedFlow
-import kotlin.math.roundToInt
 
 lateinit var viewModel: DetailsViewModel
 
@@ -136,8 +128,6 @@ fun MainScreen(
             onReviewClick
         )
     }
-
-    //selectedTVShow?.let { SetupTVShowDetails(tvShow = it, navController, onReviewClick) }
 }
 
 @Composable
@@ -196,6 +186,7 @@ fun SetupMovieDetails(
             }
 
             Spacer(modifier = Modifier.height(15.dp))
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -215,16 +206,7 @@ fun SetupMovieDetails(
                     color = Color.White
                 )
 
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Title:",
-                    color = Color.White
-                )
+                HeaderText("Title")
 
                 Text(
                     textAlign = TextAlign.Start,
@@ -240,16 +222,7 @@ fun SetupMovieDetails(
                     color = Color.White
                 )
 
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Cast:",
-                    color = Color.White
-                )
+                HeaderText("Cast")
 
                 val casts = ArrayList<String>()
                 if (type == 1) {
@@ -271,16 +244,7 @@ fun SetupMovieDetails(
                     color = Color.White
                 )
 
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Details:",
-                    color = Color.White
-                )
+                HeaderText("Details")
 
                 val genres = ArrayList<String>()
                 if (type == 1) {
@@ -343,16 +307,7 @@ fun SetupMovieDetails(
                     }
                 }
 
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Plot Summary:",
-                    color = Color.White
-                )
+                HeaderText("Plot Summary:")
 
                 Text(
                     textAlign = TextAlign.Start,
@@ -398,13 +353,13 @@ fun SetupMovieDetails(
                     .clickable {
                         if (type == 1) {
                             if (movie?.accountStates?.watchlist == true) {
-                                viewModel.addToWatchlist(type, movie?.id ?: 0L, false)
+                                viewModel.addToWatchlist(type, movie.id, false)
                             } else {
                                 viewModel.addToWatchlist(type, movie?.id ?: 0L, true)
                             }
                         } else {
                             if (tvShow?.accountStates?.watchlist == true) {
-                                viewModel.addToWatchlist(type, tvShow?.id ?: 0L, false)
+                                viewModel.addToWatchlist(type, tvShow.id, false)
                             } else {
                                 viewModel.addToWatchlist(type, tvShow?.id ?: 0L, true)
                             }
@@ -427,93 +382,6 @@ fun SetupMovieDetails(
                     fontSize = 15.sp
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun ReviewSection(
-    rating: Double,
-    reviewCount: Int,
-    onReviewClick: () -> Unit
-) {
-    Surface(
-        onClick = onReviewClick,
-        shape = RoundedCornerShape(12.dp),
-        color = Color.DarkGray,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    text = "User Reviews",
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    color = Color.White
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 4.dp)
-                ) {
-                    DynamicStarRating(rating = rating)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "${rating.times(10.0).roundToInt() / 10.0}/10",
-                        fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                        color = Color.White
-                    )
-                }
-            }
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = "$reviewCount reviews",
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    color = Color.White
-                )
-                Icon(
-                    imageVector = Icons.Default.ChevronRight,
-                    contentDescription = null,
-                    tint = Color.White
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun DynamicStarRating(
-    rating: Double, // The 1.0 - 10.0 value
-    starColor: Color = Color(0xFFFFD700) // Gold color
-) {
-    Row {
-        // We loop 5 times to create 5 stars
-        for (i in 1..5) {
-            // Each star position represents a threshold of 2 points (2, 4, 6, 8, 10)
-            val fullStarThreshold = i * 2.0
-            // The half-way point for that specific star
-            val halfStarThreshold = fullStarThreshold - 1.0
-
-            val icon = when {
-                rating >= fullStarThreshold -> Icons.Filled.Star
-                rating >= halfStarThreshold -> Icons.AutoMirrored.Filled.StarHalf
-                else -> Icons.Filled.StarOutline
-            }
-
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = starColor,
-                modifier = Modifier.size(20.dp)
-            )
         }
     }
 }
