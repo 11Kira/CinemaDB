@@ -10,29 +10,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarOutline
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,13 +48,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.kira.android.cinemadb.HeaderText
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.components.CircularIconButton
+import com.kira.android.cinemadb.components.ReviewSection
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
 import com.kira.android.cinemadb.util.AppUtil
 import kotlinx.coroutines.flow.SharedFlow
-import kotlin.math.roundToInt
 
 lateinit var viewModel: DetailsViewModel
 
@@ -76,7 +67,7 @@ fun DetailsScreen(
     navController: NavController
 ) {
     viewModel = hiltViewModel()
-    MainScreen(navController, viewModel.movieState, onReviewClick)
+    MainScreen(navController, type, viewModel.movieState, onReviewClick)
     when (type) {
         1 -> {
             viewModel.getMovieDetails(id)
@@ -91,6 +82,7 @@ fun DetailsScreen(
 @Composable
 fun MainScreen(
     navController: NavController,
+    type: Int,
     sharedFlow: SharedFlow<DetailsState>,
     onReviewClick: (Long, Int) -> Unit
 ) {
@@ -118,13 +110,31 @@ fun MainScreen(
         }
     }
 
-    selectedMovie?.let { SetupMovieDetails(movie = it, navController, onReviewClick) }
-    selectedTVShow?.let { SetupTVShowDetails(tvShow = it, navController, onReviewClick) }
+    selectedMovie?.let {
+        SetupMovieDetails(
+            movie = it,
+            tvShow = null,
+            type,
+            navController,
+            onReviewClick
+        )
+    }
+    selectedTVShow?.let {
+        SetupMovieDetails(
+            movie = null,
+            tvShow = it,
+            type,
+            navController,
+            onReviewClick
+        )
+    }
 }
 
 @Composable
 fun SetupMovieDetails(
-    movie: MovieResult,
+    movie: MovieResult? = null,
+    tvShow: TVShowResult? = null,
+    type: Int,
     navController: NavController,
     onReviewClick: (movieId: Long, type: Int) -> Unit
 ) {
@@ -138,7 +148,13 @@ fun SetupMovieDetails(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 20.dp)
         ) {
-            val posterPath = AppUtil.retrievePosterImageUrl(movie.posterPath)
+            val posterPath = AppUtil.retrievePosterImageUrl(
+                if (type == 1) {
+                    movie?.posterPath.toString()
+                } else {
+                    tvShow?.posterPath.toString()
+                }
+            )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -170,6 +186,7 @@ fun SetupMovieDetails(
             }
 
             Spacer(modifier = Modifier.height(15.dp))
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -180,20 +197,16 @@ fun SetupMovieDetails(
                     fontSize = 25.sp,
                     fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                     modifier = Modifier.fillMaxWidth(),
-                    text = movie.tagline.ifBlank { movie.title },
+                    text =
+                        if (type == 1) {
+                            movie?.tagline?.ifBlank { movie.title }.toString()
+                        } else {
+                            tvShow?.tagline?.ifBlank { tvShow.name }.toString()
+                        },
                     color = Color.White
                 )
 
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Title:",
-                    color = Color.White
-                )
+                HeaderText("Title")
 
                 Text(
                     textAlign = TextAlign.Start,
@@ -201,25 +214,27 @@ fun SetupMovieDetails(
                     fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                     modifier = Modifier
                         .wrapContentWidth(),
-                    text = movie.title,
+                    text = if (type == 1) {
+                        movie?.title.toString()
+                    } else {
+                        tvShow?.name.toString()
+                    },
                     color = Color.White
                 )
 
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Cast:",
-                    color = Color.White
-                )
+                HeaderText("Cast")
 
                 val casts = ArrayList<String>()
-                movie.credits?.cast?.forEach { cast ->
-                    if (casts.size < 7) casts.add(cast.name)
+                if (type == 1) {
+                    movie?.credits?.cast?.forEach { cast ->
+                        if (casts.size < 7) casts.add(cast.name)
+                    }
+                } else {
+                    tvShow?.credits?.cast?.forEach { cast ->
+                        if (casts.size < 7) casts.add(cast.name)
+                    }
                 }
+
                 Text(
                     textAlign = TextAlign.Start,
                     fontSize = 14.sp,
@@ -229,51 +244,70 @@ fun SetupMovieDetails(
                     color = Color.White
                 )
 
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Details:",
-                    color = Color.White
-                )
+                HeaderText("Details")
 
                 val genres = ArrayList<String>()
-                movie.genres.forEach { genre -> genres.add(genre.name) }
+                if (type == 1) {
+                    movie?.genres?.forEach { genre -> genres.add(genre.name) }
+                } else {
+                    tvShow?.genres?.forEach { genre -> genres.add(genre.name) }
+                }
+
+                val seasons = if ((tvShow?.numberOfSeasons ?: 0) > 1) "Seasons" else "Season"
+                val episodes = if ((tvShow?.numberOfEpisodes ?: 0) > 1) "Episodes" else "Episode"
 
                 Text(
                     textAlign = TextAlign.Start,
                     fontSize = 14.sp,
                     fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                     modifier = Modifier.fillMaxWidth(),
-                    text = "${AppUtil.formatReleaseYear(movie.releaseDate)} • ${
-                        TextUtils.join(
-                            ", ",
-                            movie.originCountry
-                        )
-                    } • ${TextUtils.join(", ", genres)} • ${AppUtil.formatRuntime(movie.runtime)}",
+                    text = if (type == 1) {
+                        "${AppUtil.formatReleaseYear(movie?.releaseDate)} • ${
+                            TextUtils.join(
+                                ", ",
+                                movie?.originCountry ?: emptyList<String>()
+                            )
+                        } • ${
+                            TextUtils.join(
+                                ", ",
+                                genres
+                            )
+                        } • ${AppUtil.formatRuntime(movie?.runtime ?: 0)}"
+                    } else {
+                        "${
+                            AppUtil.formatReleaseYear(
+                                tvShow?.firstAirDate,
+                                tvShow?.lastAirDate
+                            )
+                        } • ${
+                            TextUtils.join(
+                                ", ",
+                                tvShow?.originCountry ?: emptyList<String>()
+                            )
+                        } • ${
+                            TextUtils.join(", ", genres)
+                        }\n${tvShow?.numberOfSeasons} $seasons • ${tvShow?.numberOfEpisodes} $episodes • ${tvShow?.status}"
+                    },
                     color = Color.White
                 )
 
-                ReviewSection(
-                    rating = movie.voteAverage,
-                    reviewCount = movie.voteCount
-                ) {
-                    onReviewClick(movie.id, 1)
+                if (type == 1) {
+                    ReviewSection(
+                        rating = movie?.voteAverage ?: 0.0,
+                        reviewCount = movie?.voteCount ?: 0
+                    ) {
+                        onReviewClick(movie?.id ?: 0L, type)
+                    }
+                } else {
+                    ReviewSection(
+                        rating = tvShow?.voteAverage ?: 0.0,
+                        reviewCount = tvShow?.voteCount ?: 0
+                    ) {
+                        onReviewClick(tvShow?.id ?: 0L, type)
+                    }
                 }
 
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Plot Summary:",
-                    color = Color.White
-                )
+                HeaderText("Plot Summary:")
 
                 Text(
                     textAlign = TextAlign.Start,
@@ -281,7 +315,12 @@ fun SetupMovieDetails(
                     fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                     modifier = Modifier
                         .fillMaxWidth(),
-                    text = movie.overview,
+                    text =
+                        if (type == 1) {
+                            movie?.overview.toString()
+                        } else {
+                            tvShow?.overview.toString()
+                        },
                     color = Color.White
                 )
             }
@@ -312,11 +351,20 @@ fun SetupMovieDetails(
                     .clip(CircleShape)
                     .background(color = Color.Black.copy(alpha = 0.5f))
                     .clickable {
-                        if (movie.accountStates?.watchlist == true) {
-                            viewModel.addToWatchlist(1, movie.id, false)
+                        if (type == 1) {
+                            if (movie?.accountStates?.watchlist == true) {
+                                viewModel.addToWatchlist(type, movie.id, false)
+                            } else {
+                                viewModel.addToWatchlist(type, movie?.id ?: 0L, true)
+                            }
                         } else {
-                            viewModel.addToWatchlist(1, movie.id, true)
+                            if (tvShow?.accountStates?.watchlist == true) {
+                                viewModel.addToWatchlist(type, tvShow.id, false)
+                            } else {
+                                viewModel.addToWatchlist(type, tvShow?.id ?: 0L, true)
+                            }
                         }
+
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -325,307 +373,15 @@ fun SetupMovieDetails(
                         .wrapContentHeight()
                         .padding(10.dp),
                     color = Color.White,
-                    text = if (movie.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
+                    text = if (type == 1) {
+                        if (movie?.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist"
+                    } else {
+                        if (tvShow?.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist"
+                    },
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                     fontSize = 15.sp
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun SetupTVShowDetails(
-    tvShow: TVShowResult,
-    navController: NavController,
-    onReviewClick: (tvShowId: Long, type: Int) -> Unit
-) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black)
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 20.dp)
-        ) {
-            val posterPath = AppUtil.retrievePosterImageUrl(tvShow.posterPath)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                AsyncImage(
-                    model = posterPath,
-                    contentDescription = "Poster",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
-                    contentScale = ContentScale.Crop,
-                    placeholder = painterResource(id = R.drawable.ic_video),
-                    error = painterResource(id = R.drawable.ic_video)
-                )
-            }
-            Spacer(modifier = Modifier.height(15.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 10.dp, bottom = 10.dp, end = 10.dp)
-            ) {
-                Text(
-                    textAlign = TextAlign.Center,
-                    fontSize = 25.sp,
-                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                    modifier = Modifier.fillMaxWidth(),
-                    text = tvShow.tagline.ifBlank { tvShow.name },
-                    color = Color.White
-                )
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Title:",
-                    color = Color.White
-                )
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 14.sp,
-                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth(),
-                    text = tvShow.name,
-                    color = Color.White
-                )
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Cast:",
-                    color = Color.White
-                )
-
-                val casts = ArrayList<String>()
-                tvShow.credits?.cast?.forEach { cast ->
-                    if (casts.size < 7) casts.add(cast.name)
-                }
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 14.sp,
-                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                    modifier = Modifier.fillMaxWidth(),
-                    text = TextUtils.join(", ", casts),
-                    color = Color.White
-                )
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Details:",
-                    color = Color.White
-                )
-
-                val genres = ArrayList<String>()
-                tvShow.genres.forEach { genre -> genres.add(genre.name) }
-
-                val seasons = if (tvShow.numberOfSeasons > 1) "Seasons" else "Season"
-                val episodes = if (tvShow.numberOfEpisodes > 1) "Episodes" else "Episode"
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 14.sp,
-                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "${
-                        AppUtil.formatReleaseYear(
-                            tvShow.firstAirDate,
-                            tvShow.lastAirDate
-                        )
-                    } • ${
-                        TextUtils.join(
-                            ", ",
-                            tvShow.originCountry
-                        )
-                    } • ${
-                        TextUtils.join(", ", genres)
-                    }\n${tvShow.numberOfSeasons} $seasons • ${tvShow.numberOfEpisodes} $episodes • ${tvShow.status}",
-                    color = Color.White
-                )
-
-                ReviewSection(
-                    rating = tvShow.voteAverage,
-                    reviewCount = tvShow.voteCount
-                ) {
-                    onReviewClick(tvShow.id, 2)
-                }
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(top = 20.dp),
-                    text = "Plot Summary:",
-                    color = Color.White
-                )
-
-                Text(
-                    textAlign = TextAlign.Start,
-                    fontSize = 14.sp,
-                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = tvShow.overview,
-                    color = Color.White
-                )
-            }
-        }
-    }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Spacer(
-            modifier = Modifier
-                .windowInsetsTopHeight(WindowInsets.statusBars)
-                .fillMaxWidth()
-        )
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CircularIconButton(
-                icon = Icons.Default.ArrowBack,
-                onClick = { navController.navigateUp() }
-            )
-
-            Box(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .clip(CircleShape)
-                    .background(color = Color.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .padding(10.dp)
-                        .clickable {
-                            if (tvShow.accountStates?.watchlist == true) {
-                                viewModel.addToWatchlist(1, tvShow.id, false)
-                            } else {
-                                viewModel.addToWatchlist(1, tvShow.id, true)
-                            }
-                        },
-                    color = Color.White,
-                    text = if (tvShow.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist",
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    fontSize = 15.sp
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ReviewSection(
-    rating: Double,
-    reviewCount: Int,
-    onReviewClick: () -> Unit
-) {
-    Surface(
-        onClick = onReviewClick,
-        shape = RoundedCornerShape(12.dp),
-        color = Color.DarkGray,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    text = "User Reviews",
-                    fontSize = 17.sp,
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    color = Color.White
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 4.dp)
-                ) {
-                    DynamicStarRating(rating = rating)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "${rating.times(10.0).roundToInt() / 10.0}/10",
-                        fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                        color = Color.White
-                    )
-                }
-            }
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = "$reviewCount reviews",
-                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    color = Color.White
-                )
-                Icon(
-                    imageVector = Icons.Default.ChevronRight,
-                    contentDescription = null,
-                    tint = Color.White
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun DynamicStarRating(
-    rating: Double, // The 1.0 - 10.0 value
-    starColor: Color = Color(0xFFFFD700) // Gold color
-) {
-    Row {
-        // We loop 5 times to create 5 stars
-        for (i in 1..5) {
-            // Each star position represents a threshold of 2 points (2, 4, 6, 8, 10)
-            val fullStarThreshold = i * 2.0
-            // The half-way point for that specific star
-            val halfStarThreshold = fullStarThreshold - 1.0
-
-            val icon = when {
-                rating >= fullStarThreshold -> Icons.Filled.Star
-                rating >= halfStarThreshold -> Icons.AutoMirrored.Filled.StarHalf
-                else -> Icons.Filled.StarOutline
-            }
-
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = starColor,
-                modifier = Modifier.size(20.dp)
-            )
         }
     }
 }
