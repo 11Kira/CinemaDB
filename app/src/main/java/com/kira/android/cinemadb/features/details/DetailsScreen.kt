@@ -56,6 +56,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.components.CircularIconButton
@@ -71,10 +72,11 @@ lateinit var viewModel: DetailsViewModel
 fun DetailsScreen(
     id: Long,
     type: Int,
-    onReviewClick: (Long, Int) -> Unit
+    onReviewClick: (Long, Int) -> Unit,
+    navController: NavController
 ) {
     viewModel = hiltViewModel()
-    MainScreen(viewModel.movieState, onReviewClick)
+    MainScreen(navController, viewModel.movieState, onReviewClick)
     when (type) {
         1 -> {
             viewModel.getMovieDetails(id)
@@ -87,7 +89,11 @@ fun DetailsScreen(
 }
 
 @Composable
-fun MainScreen(sharedFlow: SharedFlow<DetailsState>, onReviewClick: (Long, Int) -> Unit) {
+fun MainScreen(
+    navController: NavController,
+    sharedFlow: SharedFlow<DetailsState>,
+    onReviewClick: (Long, Int) -> Unit
+) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var selectedMovie by remember { mutableStateOf<MovieResult?>(null) }
     var selectedTVShow by remember { mutableStateOf<TVShowResult?>(null) }
@@ -112,12 +118,16 @@ fun MainScreen(sharedFlow: SharedFlow<DetailsState>, onReviewClick: (Long, Int) 
         }
     }
 
-    selectedMovie?.let { SetupMovieDetails(movie = it, onReviewClick) }
-    selectedTVShow?.let { SetupTVShowDetails(tvShow = it, onReviewClick) }
+    selectedMovie?.let { SetupMovieDetails(movie = it, navController, onReviewClick) }
+    selectedTVShow?.let { SetupTVShowDetails(tvShow = it, navController, onReviewClick) }
 }
 
 @Composable
-fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: Int) -> Unit) {
+fun SetupMovieDetails(
+    movie: MovieResult,
+    navController: NavController,
+    onReviewClick: (movieId: Long, type: Int) -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -291,7 +301,10 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CircularIconButton(icon = Icons.Default.ArrowBack, onClick = {})
+            CircularIconButton(
+                icon = Icons.Default.ArrowBack,
+                onClick = { navController.navigateUp() }
+            )
 
             Box(
                 modifier = Modifier
@@ -322,7 +335,11 @@ fun SetupMovieDetails(movie: MovieResult, onReviewClick: (movieId: Long, type: I
 }
 
 @Composable
-fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, type: Int) -> Unit) {
+fun SetupTVShowDetails(
+    tvShow: TVShowResult,
+    navController: NavController,
+    onReviewClick: (tvShowId: Long, type: Int) -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -493,7 +510,10 @@ fun SetupTVShowDetails(tvShow: TVShowResult, onReviewClick: (tvShowId: Long, typ
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CircularIconButton(icon = Icons.Default.ArrowBack, onClick = {})
+            CircularIconButton(
+                icon = Icons.Default.ArrowBack,
+                onClick = { navController.navigateUp() }
+            )
 
             Box(
                 modifier = Modifier

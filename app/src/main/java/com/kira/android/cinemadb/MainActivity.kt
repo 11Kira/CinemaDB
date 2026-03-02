@@ -9,7 +9,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,18 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import com.kira.android.cinemadb.features.account.watchlist.WatchlistScreen
-import com.kira.android.cinemadb.features.details.DetailsScreen
-import com.kira.android.cinemadb.features.movies.MovieListScreen
-import com.kira.android.cinemadb.features.reviews.UserReviewListScreen
-import com.kira.android.cinemadb.features.tv.TVShowListScreen
 import com.kira.android.cinemadb.navigation.BottomMenuItem
+import com.kira.android.cinemadb.navigation.NavigationGraph
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
 
@@ -170,54 +161,6 @@ fun BottomNavigation(navController: NavController) {
         }
     }
 
-}
-
-@Composable
-fun NavigationGraph(navController: NavHostController, contentPadding: PaddingValues) {
-    NavHost(
-        navController = navController,
-        startDestination = BottomMenuItem.Movies.screenRoute
-    ) {
-        composable(BottomMenuItem.Movies.screenRoute) {
-            MovieListScreen(
-                contentPadding,
-                onItemClick = { movieId, type ->
-                    navController.navigate(DetailsScreenNavigation(movieId, type))
-                }
-            )
-        }
-        composable(BottomMenuItem.TV.screenRoute) {
-            TVShowListScreen(
-                contentPadding,
-                onItemClick = { tvShowId, type ->
-                    navController.navigate(DetailsScreenNavigation(tvShowId, type))
-                }
-            )
-        }
-        composable(BottomMenuItem.Watchlist.screenRoute) {
-            WatchlistScreen(
-                contentPadding,
-                onItemClick = { mediaId, type ->
-                    navController.navigate(DetailsScreenNavigation(mediaId, type))
-                }
-            )
-        }
-        composable<DetailsScreenNavigation> {
-            val args = it.toRoute<DetailsScreenNavigation>()
-            DetailsScreen(
-                args.id,
-                args.type,
-                onReviewClick = { mediaId, type ->
-                    navController.navigate(UserReviewScreenNavigation(mediaId, type))
-                }
-            )
-        }
-
-        composable<UserReviewScreenNavigation> {
-            val args = it.toRoute<UserReviewScreenNavigation>()
-            UserReviewListScreen(args.id, args.type)
-        }
-    }
 }
 
 @Serializable

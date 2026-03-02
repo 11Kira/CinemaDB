@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kira.android.cinemadb.R
@@ -36,10 +37,11 @@ lateinit var viewModel: UserReviewViewModel
 @Composable
 fun UserReviewListScreen(
     id: Long,
-    type: Int
+    type: Int,
+    navController: NavController
 ) {
     viewModel = hiltViewModel()
-    MainScreen(type)
+    MainScreen(navController, type)
     when (type) {
         1 -> {
             viewModel.getMovieReviews(id)
@@ -52,19 +54,20 @@ fun UserReviewListScreen(
 }
 
 @Composable
-fun MainScreen(type: Int) {
+fun MainScreen(navController: NavController, type: Int) {
     val movieReviewlist by rememberUpdatedState(newValue = viewModel.movieReviewPagingState.collectAsLazyPagingItems())
     val tvShowReviewlist by rememberUpdatedState(newValue = viewModel.tvShowReviewPagingState.collectAsLazyPagingItems())
     if (type == 1) {
-        PopulateReviewList(movieReviewlist)
+        PopulateReviewList(movieReviewlist, navController)
     } else {
-        PopulateReviewList(tvShowReviewlist)
+        PopulateReviewList(tvShowReviewlist, navController)
     }
 }
 
 @Composable
 fun PopulateReviewList(
     movieReviews: LazyPagingItems<UserReviewResult>,
+    navController: NavController,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
