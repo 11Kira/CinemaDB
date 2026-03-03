@@ -115,6 +115,10 @@ fun TVShowSegmentedControl(
     SegmentedControl(
         items,
         selectedTab,
+        onClick = { item ->
+            viewModel.updateSelectedTVShowTab(item)
+            viewModel.clearSearch()
+        },
         onItemSelection
     )
 }
@@ -206,7 +210,7 @@ fun PopulateTVShowGrid(
                                 .align(Alignment.TopEnd)
                                 .size(35.dp)
                                 .clip(CircleShape)
-                                .background(color = Color.DarkGray),
+                                .background(color = Color.Black.copy(alpha = 0.5f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(

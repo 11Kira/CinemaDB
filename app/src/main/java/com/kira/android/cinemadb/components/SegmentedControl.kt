@@ -25,13 +25,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.kira.android.cinemadb.R
-import com.kira.android.cinemadb.features.movies.viewModel
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun SegmentedControl(
     items: List<String>,
     selectedTab: StateFlow<String>,
+    onClick: (selectedItem: String) -> Unit,
     onItemSelection: (selectedItemIndex: Int) -> Unit
 ) {
     val selectedIndex = remember { mutableStateOf(0) }
@@ -64,8 +64,7 @@ fun SegmentedControl(
                     onClick = {
                         selectedIndex.value = index
                         onItemSelection(selectedIndex.value)
-                        viewModel.updateSelectedMovieTab(item)
-                        viewModel.clearSearch()
+                        onClick(item)
                     },
                     colors = if (selectedTab.collectAsState().value == item) {
                         ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray)
