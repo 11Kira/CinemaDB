@@ -7,15 +7,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -32,6 +29,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -71,38 +69,56 @@ fun MainMovieScreen(contentPadding: PaddingValues, onItemClick: (Long, Int) -> U
     val movies by rememberUpdatedState(newValue = viewModel.moviesPagingState.collectAsLazyPagingItems())
     val categoryList = listOf("Trending", "Top Rated")
     val focusManager = LocalFocusManager.current
-    Column {
-        Spacer(
-            modifier = Modifier
-                .windowInsetsTopHeight(WindowInsets.statusBars)
-                .fillMaxWidth()
-        )
 
-        MovieSegmentedControl(categoryList.toList()) { selectedItem ->
-            when (selectedItem) {
-                0 -> {
-                    if (currentlySelected != 0) {
-                        viewModel.getMovies(TRENDING)
-                        currentlySelected = 0
+    Box(modifier = Modifier.fillMaxSize()) {
+        PopulateMovieGrid(movies, contentPadding, onItemClick)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.3f),
+                            Color.Transparent
+                        )
+                    )
+                )
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+        ) {
+            MovieSegmentedControl(categoryList.toList()) { selectedItem ->
+                when (selectedItem) {
+                    0 -> {
+                        if (currentlySelected != 0) {
+                            viewModel.getMovies(TRENDING)
+                            currentlySelected = 0
+                        }
+                        viewModel.updateScrollToTopState(true)
+                        focusManager.clearFocus()
                     }
-                    viewModel.updateScrollToTopState(true)
-                    focusManager.clearFocus()
-                }
-                1 -> {
-                    if (currentlySelected != 1) {
-                        viewModel.getMovies(TOP_RATED)
-                        currentlySelected = 1
+
+                    1 -> {
+                        if (currentlySelected != 1) {
+                            viewModel.getMovies(TOP_RATED)
+                            currentlySelected = 1
+                        }
+                        viewModel.updateScrollToTopState(true)
+                        focusManager.clearFocus()
                     }
-                    viewModel.updateScrollToTopState(true)
-                    focusManager.clearFocus()
                 }
             }
+            SearchField(
+                onClearFocus = { focusManager.clearFocus() }
+            )
         }
-        SearchField(
-            onClearFocus = { focusManager.clearFocus() }
-        )
-        PopulateMovieGrid(movies, contentPadding, onItemClick)
+
     }
+
+
 }
 
 @Composable
@@ -179,7 +195,10 @@ fun PopulateMovieGrid(
     ) {
         LazyVerticalStaggeredGrid(
             state = lazyRowState,
+            modifier = Modifier
+                .fillMaxSize(),
             contentPadding = PaddingValues(
+                top = 150.dp,
                 bottom = contentPadding.calculateBottomPadding() + 16.dp
             ),
             columns = StaggeredGridCells.Fixed(2),
