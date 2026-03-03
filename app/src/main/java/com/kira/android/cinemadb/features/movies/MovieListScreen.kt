@@ -115,6 +115,10 @@ fun MovieSegmentedControl(
     SegmentedControl(
         items,
         selectedTab,
+        onClick = { item ->
+            viewModel.updateSelectedMovieTab(item)
+            viewModel.clearSearch()
+        },
         onItemSelection
     )
 }

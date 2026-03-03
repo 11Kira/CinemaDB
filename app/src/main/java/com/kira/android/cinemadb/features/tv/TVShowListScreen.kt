@@ -115,6 +115,10 @@ fun TVShowSegmentedControl(
     SegmentedControl(
         items,
         selectedTab,
+        onClick = { item ->
+            viewModel.updateSelectedTVShowTab(item)
+            viewModel.clearSearch()
+        },
         onItemSelection
     )
 }
