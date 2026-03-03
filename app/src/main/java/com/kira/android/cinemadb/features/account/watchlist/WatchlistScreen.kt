@@ -107,9 +107,9 @@ fun MainWatchlistScreen(contentPadding: PaddingValues, onItemClick: (Long, Int) 
         }
 
         if (typeSelected.collectAsState().value == "Movies") {
-            PopulateMovieWatchlistGrid(movieWatchlist, contentPadding, onItemClick)
+            PopulateWatchlistGrid(movieWatchlist, null, 1, contentPadding, onItemClick)
         } else {
-            PopulateTVShowWatchlistGrid(tvShowWatchlist, contentPadding, onItemClick)
+            PopulateWatchlistGrid(null, tvShowWatchlist, 2, contentPadding, onItemClick)
         }
     }
 }
@@ -133,8 +133,10 @@ fun SegmentedControlWatchlist(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PopulateMovieWatchlistGrid(
-    movies: LazyPagingItems<MovieResult>,
+fun PopulateWatchlistGrid(
+    movies: LazyPagingItems<MovieResult>? = null,
+    tvShows: LazyPagingItems<TVShowResult>? = null,
+    type: Int,
     contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
@@ -143,7 +145,7 @@ fun PopulateMovieWatchlistGrid(
     val onRefresh: () -> Unit = {
         isRefreshing = true
         coroutineScope.launch {
-            viewModel.getMovieWatchlist()
+            if (type == 1) viewModel.getMovieWatchlist() else viewModel.getTVShowWatchlist()
             delay(500)
             isRefreshing = false
         }
@@ -174,41 +176,29 @@ fun PopulateMovieWatchlistGrid(
                 verticalItemSpacing = 5.dp,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
                 content = {
-                    items(movies.itemCount) {  index ->
-                        val selectedMovie = movies[index]
-                        val posterPath = selectedMovie?.posterPath?.let { AppUtil.retrievePosterImageUrl(it) }
-                        Box(modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()) {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(350.dp)
-                                    .clickable { selectedMovie?.id?.let { onItemClick(it, 1) } },
-                                model = posterPath,
-                                contentDescription = "Description",
-                                contentScale = ContentScale.Crop,
-                                placeholder = painterResource(id = R.drawable.ic_video),
-                                error = painterResource(id = R.drawable.ic_video)
+                    if (type == 1) {
+                        items(movies?.itemCount ?: 0) { index ->
+                            val selectedMovie = movies?.get(index)
+                            GridItemContent(
+                                selectedMovie = selectedMovie,
+                                selectedTvShow = null,
+                                type = 1,
+                                onItemClick = { id, type ->
+                                    onItemClick(id, type)
+                                }
                             )
-
-                            Box(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .align(Alignment.TopEnd)
-                                    .size(35.dp)
-                                    .clip(CircleShape)
-                                    .background(color = Color.DarkGray),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    modifier = Modifier.wrapContentHeight(),
-                                    color = Color.White,
-                                    text = (selectedMovie?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0)).toString(),
-                                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                                    fontSize = 15.sp
-                                )
-                            }
+                        }
+                    } else {
+                        items(tvShows?.itemCount ?: 0) { index ->
+                            val selectedTvShow = tvShows?.get(index)
+                            GridItemContent(
+                                selectedMovie = null,
+                                selectedTvShow = selectedTvShow,
+                                type = 2,
+                                onItemClick = { id, type ->
+                                    onItemClick(id, type)
+                                }
+                            )
                         }
                     }
                 },
@@ -217,99 +207,62 @@ fun PopulateMovieWatchlistGrid(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PopulateTVShowWatchlistGrid(
-    tvShows: LazyPagingItems<TVShowResult>,
-    contentPadding: PaddingValues,
+fun GridItemContent(
+    selectedMovie: MovieResult? = null,
+    selectedTvShow: TVShowResult? = null,
+    type: Int,
     onItemClick: (Long, Int) -> Unit
 ) {
-    var isRefreshing by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
-    val onRefresh: () -> Unit = {
-        isRefreshing = true
-        coroutineScope.launch {
-            viewModel.getTVShowWatchlist()
-            delay(500)
-            isRefreshing = false
+    val posterPath =
+        if (type == 1) selectedMovie?.posterPath?.let { AppUtil.retrievePosterImageUrl(it) } else selectedTvShow?.posterPath?.let {
+            AppUtil.retrievePosterImageUrl(
+                it
+            )
         }
-    }
-    val lazyRowState = rememberLazyStaggeredGridState()
-    if (viewModel.scrollToTopState.collectAsState().value) {
-        LaunchedEffect(key1 = true) {
-            lazyRowState.scrollToItem(0)
-            viewModel.updateScrollToTopState(false)
-        }
-    }
-
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.Black)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
     ) {
-        PullToRefreshBox(
-            modifier = Modifier.align(Alignment.TopCenter),
-            isRefreshing = isRefreshing,
-            onRefresh = onRefresh,
-        ) {
-            LazyVerticalStaggeredGrid(
-                state = lazyRowState,
-                contentPadding = PaddingValues(
-                    bottom = contentPadding.calculateBottomPadding() + 16.dp
-                ),
-                columns = StaggeredGridCells.Fixed(2),
-                verticalItemSpacing = 5.dp,
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                content = {
-                    if (!viewModel.loadingState.value) {
-                        items(tvShows.itemCount) {  index ->
-                            val selectedTVShow = tvShows[index]
-                            val posterPath = selectedTVShow?.posterPath?.let { AppUtil.retrievePosterImageUrl(it) }
-                            Box(modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()) {
-                                AsyncImage(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(350.dp)
-                                        .clickable {
-                                            selectedTVShow?.id?.let {
-                                                onItemClick(
-                                                    it,
-                                                    2
-                                                )
-                                            }
-                                        },
-                                    model = posterPath,
-                                    contentDescription = "Description",
-                                    contentScale = ContentScale.Crop,
-                                    placeholder = painterResource(id = R.drawable.ic_video),
-                                    error = painterResource(id = R.drawable.ic_video)
-                                )
-
-                                Box(
-                                    modifier = Modifier
-                                        .padding(10.dp)
-                                        .align(Alignment.TopEnd)
-                                        .size(35.dp)
-                                        .clip(CircleShape)
-                                        .background(color = Color.DarkGray),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        modifier = Modifier.wrapContentHeight(),
-                                        color = Color.White,
-                                        text = (selectedTVShow?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0)).toString(),
-                                        fontSize = 15.sp,
-                                        fontFamily = Font(R.font.roboto_bold).toFontFamily()
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-
-
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(350.dp)
+                .clickable {
+                    if (type == 1) selectedMovie?.id?.let {
+                        onItemClick(
+                            it,
+                            1
+                        )
+                    } else selectedTvShow?.id?.let { onItemClick(it, 2) }
                 },
+            model = posterPath,
+            contentDescription = "Description",
+            contentScale = ContentScale.Crop,
+            placeholder = painterResource(id = R.drawable.ic_video),
+            error = painterResource(id = R.drawable.ic_video)
+        )
+
+        Box(
+            modifier = Modifier
+                .padding(10.dp)
+                .align(Alignment.TopEnd)
+                .size(35.dp)
+                .clip(CircleShape)
+                .background(color = Color.DarkGray),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                modifier = Modifier.wrapContentHeight(),
+                color = Color.White,
+                text = if (type == 1) {
+                    selectedMovie?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0).toString()
+                } else {
+                    selectedTvShow?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0).toString()
+                },
+                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
+                fontSize = 15.sp
             )
         }
     }
