@@ -111,7 +111,7 @@ fun MainScreen(
     }
 
     selectedMovie?.let {
-        SetupMovieDetails(
+        SetupDetails(
             movie = it,
             tvShow = null,
             type,
@@ -120,7 +120,7 @@ fun MainScreen(
         )
     }
     selectedTVShow?.let {
-        SetupMovieDetails(
+        SetupDetails(
             movie = null,
             tvShow = it,
             type,
@@ -131,7 +131,7 @@ fun MainScreen(
 }
 
 @Composable
-fun SetupMovieDetails(
+fun SetupDetails(
     movie: MovieResult? = null,
     tvShow: TVShowResult? = null,
     type: Int,
