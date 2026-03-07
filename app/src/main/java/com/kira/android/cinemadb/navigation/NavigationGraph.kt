@@ -16,7 +16,11 @@ import com.kira.android.cinemadb.features.reviews.UserReviewListScreen
 import com.kira.android.cinemadb.features.tv.TVShowListScreen
 
 @Composable
-fun NavigationGraph(navController: NavHostController, contentPadding: PaddingValues) {
+fun NavigationGraph(
+    navController: NavHostController,
+    contentPadding: PaddingValues,
+    onScroll: (Float, Float) -> Unit
+) {
     NavHost(
         navController = navController,
         startDestination = BottomMenuItem.Movies.screenRoute
@@ -28,7 +32,8 @@ fun NavigationGraph(navController: NavHostController, contentPadding: PaddingVal
                     if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
                         navController.navigate(DetailsScreenNavigation(movieId, type))
                     }
-                }
+                },
+                onScroll
             )
         }
         composable(BottomMenuItem.TV.screenRoute) {
