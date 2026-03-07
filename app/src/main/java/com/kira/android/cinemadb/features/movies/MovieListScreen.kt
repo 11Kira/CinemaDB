@@ -219,7 +219,7 @@ fun PopulateMovieGrid(
             modifier = Modifier
                 .fillMaxSize(),
             contentPadding = PaddingValues(
-                top = 150.dp
+                top = 145.dp
             ),
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
