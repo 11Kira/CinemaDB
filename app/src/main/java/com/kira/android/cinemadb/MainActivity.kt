@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -97,7 +96,6 @@ fun MainScreenView(){
         Box(modifier = Modifier
             .background(Color.Black)
             .fillMaxSize()
-            .padding(contentPadding)
         ) {
             NavigationGraph(navController = navController, contentPadding)
         }
