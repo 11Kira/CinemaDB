@@ -11,8 +11,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,6 +35,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
@@ -44,6 +46,7 @@ import com.kira.android.cinemadb.navigation.BottomMenuItem
 import com.kira.android.cinemadb.navigation.NavigationGraph
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
+import kotlin.math.roundToInt
 
 private lateinit var viewModel: MainViewModel
 
@@ -86,10 +89,18 @@ fun MainScreenView(){
     val isUserReviewScreen =
         navBackStackEntry?.destination?.route
             ?.startsWith(UserReviewScreenNavigation::class.qualifiedName ?: "") == true
+
+    val bottomBarOffsetHeightPx = remember { mutableFloatStateOf(0f) }
+
     Scaffold(
         bottomBar = {
             if (!isDetailsScreen && !isUserReviewScreen) {
-                BottomNavigation(navController = navController)
+                BottomNavigation(
+                    navController = navController,
+                    modifier = Modifier.offset {
+                        IntOffset(0, (-bottomBarOffsetHeightPx.floatValue).roundToInt())
+                    }
+                )
             }
         },
     ) { contentPadding ->
@@ -97,13 +108,23 @@ fun MainScreenView(){
             .background(Color.Black)
             .fillMaxSize()
         ) {
-            NavigationGraph(navController = navController, contentPadding)
+            NavigationGraph(
+                navController = navController,
+                contentPadding,
+                onScroll = { delta, limit ->
+                    val newOffset = bottomBarOffsetHeightPx.floatValue + delta
+                    bottomBarOffsetHeightPx.floatValue = newOffset.coerceIn(limit, 0f)
+                }
+            )
         }
     }
 }
 
 @Composable
-fun BottomNavigation(navController: NavController) {
+fun BottomNavigation(
+    navController: NavController,
+    modifier: Modifier
+) {
     var selectedItem by remember { mutableStateOf("movies") }
     val selectedTab by remember { mutableStateOf(viewModel.currentlySelectedTab) }
 
@@ -114,7 +135,7 @@ fun BottomNavigation(navController: NavController) {
     )
     Surface(
         color = Color.DarkGray,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         BottomNavigation(
             modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),

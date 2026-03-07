@@ -7,15 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -26,19 +24,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -60,48 +65,80 @@ private var currentlySelected = 0
 @Composable
 fun MovieListScreen(
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit
+    onItemClick: (Long, Int) -> Unit,
+    onScroll: (Float, Float) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainMovieScreen(contentPadding, onItemClick)
+    MainMovieScreen(
+        contentPadding,
+        onItemClick,
+        onScroll
+    )
 }
 
 @Composable
-fun MainMovieScreen(contentPadding: PaddingValues, onItemClick: (Long, Int) -> Unit) {
+fun MainMovieScreen(
+    contentPadding: PaddingValues,
+    onItemClick: (Long, Int) -> Unit,
+    onScroll: (Float, Float) -> Unit
+) {
     val movies by rememberUpdatedState(newValue = viewModel.moviesPagingState.collectAsLazyPagingItems())
     val categoryList = listOf("Trending", "Top Rated")
     val focusManager = LocalFocusManager.current
-    Column {
-        Spacer(
-            modifier = Modifier
-                .windowInsetsTopHeight(WindowInsets.statusBars)
-                .fillMaxWidth()
-        )
 
-        MovieSegmentedControl(categoryList.toList()) { selectedItem ->
-            when (selectedItem) {
-                0 -> {
-                    if (currentlySelected != 0) {
-                        viewModel.getMovies(TRENDING)
-                        currentlySelected = 0
-                    }
-                    viewModel.updateScrollToTopState(true)
-                    focusManager.clearFocus()
-                }
-                1 -> {
-                    if (currentlySelected != 1) {
-                        viewModel.getMovies(TOP_RATED)
-                        currentlySelected = 1
-                    }
-                    viewModel.updateScrollToTopState(true)
-                    focusManager.clearFocus()
-                }
+    val toolbarHeight = 145.dp
+    val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
+    val topBarOffsetPx = remember { mutableFloatStateOf(0f) }
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val delta = available.y
+                val newTopOffset = topBarOffsetPx.floatValue + delta
+                topBarOffsetPx.floatValue = newTopOffset.coerceIn(-toolbarHeightPx, 0f)
+                onScroll(delta, -toolbarHeightPx)
+                return Offset.Zero
             }
         }
-        SearchField(
-            onClearFocus = { focusManager.clearFocus() }
-        )
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(nestedScrollConnection)
+    ) {
         PopulateMovieGrid(movies, contentPadding, onItemClick)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset { IntOffset(0, topBarOffsetPx.floatValue.roundToInt()) }
+                .background(Color.Black)
+                .statusBarsPadding()
+        ) {
+            MovieSegmentedControl(categoryList.toList()) { selectedItem ->
+                when (selectedItem) {
+                    0 -> {
+                        if (currentlySelected != 0) {
+                            viewModel.getMovies(TRENDING)
+                            currentlySelected = 0
+                        }
+                        viewModel.updateScrollToTopState(true)
+                        focusManager.clearFocus()
+                    }
+
+                    1 -> {
+                        if (currentlySelected != 1) {
+                            viewModel.getMovies(TOP_RATED)
+                            currentlySelected = 1
+                        }
+                        viewModel.updateScrollToTopState(true)
+                        focusManager.clearFocus()
+                    }
+                }
+            }
+            SearchField(
+                onClearFocus = { focusManager.clearFocus() }
+            )
+        }
     }
 }
 
@@ -179,8 +216,11 @@ fun PopulateMovieGrid(
     ) {
         LazyVerticalStaggeredGrid(
             state = lazyRowState,
+            modifier = Modifier
+                .fillMaxSize(),
             contentPadding = PaddingValues(
-                bottom = contentPadding.calculateBottomPadding() + 16.dp
+                top = 150.dp,
+                bottom = contentPadding.calculateBottomPadding()
             ),
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,
@@ -195,11 +235,14 @@ fun PopulateMovieGrid(
                         AsyncImage(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(350.dp)
+                                .heightIn(
+                                    min = 250.dp,
+                                    max = 320.dp
+                                ) // Limits the "chaos" of the stagger
                                 .clickable { selectedMovie?.id?.let { onItemClick(it, 1) } },
                             model = posterPath,
-                            contentDescription = "Description",
                             contentScale = ContentScale.Crop,
+                            contentDescription = "Description",
                             placeholder = painterResource(id = R.drawable.ic_video),
                             error = painterResource(id = R.drawable.ic_video)
                         )

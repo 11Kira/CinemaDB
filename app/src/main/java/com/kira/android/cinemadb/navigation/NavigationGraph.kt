@@ -16,39 +16,46 @@ import com.kira.android.cinemadb.features.reviews.UserReviewListScreen
 import com.kira.android.cinemadb.features.tv.TVShowListScreen
 
 @Composable
-fun NavigationGraph(navController: NavHostController, contentPadding: PaddingValues) {
+fun NavigationGraph(
+    navController: NavHostController,
+    contentPadding: PaddingValues,
+    onScroll: (Float, Float) -> Unit
+) {
     NavHost(
         navController = navController,
         startDestination = BottomMenuItem.Movies.screenRoute
     ) {
         composable(BottomMenuItem.Movies.screenRoute) {
             MovieListScreen(
-                contentPadding,
+                contentPadding = contentPadding,
                 onItemClick = { movieId, type ->
                     if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
                         navController.navigate(DetailsScreenNavigation(movieId, type))
                     }
-                }
+                },
+                onScroll = onScroll
             )
         }
         composable(BottomMenuItem.TV.screenRoute) {
             TVShowListScreen(
-                contentPadding,
+                contentPadding = contentPadding,
                 onItemClick = { tvShowId, type ->
                     if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
                         navController.navigate(DetailsScreenNavigation(tvShowId, type))
                     }
-                }
+                },
+                onScroll = onScroll
             )
         }
         composable(BottomMenuItem.Watchlist.screenRoute) {
             WatchlistScreen(
-                contentPadding,
+                contentPadding = contentPadding,
                 onItemClick = { mediaId, type ->
                     if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
                         navController.navigate(DetailsScreenNavigation(mediaId, type))
                     }
-                }
+                },
+                onScroll = onScroll
             )
         }
         composable<DetailsScreenNavigation> {
