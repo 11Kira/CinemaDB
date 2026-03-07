@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -234,11 +235,14 @@ fun PopulateTVShowGrid(
                         AsyncImage(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .wrapContentHeight()
+                                .heightIn(
+                                    min = 250.dp,
+                                    max = 320.dp
+                                ) // Limits the "chaos" of the stagger
                                 .clickable { selectedTvShow?.id?.let { onItemClick(it, 2) } },
                             model = posterPath,
-                            contentDescription = "Description",
                             contentScale = ContentScale.Crop,
+                            contentDescription = "Description",
                             placeholder = painterResource(id = R.drawable.ic_video),
                             error = painterResource(id = R.drawable.ic_video)
                         )
