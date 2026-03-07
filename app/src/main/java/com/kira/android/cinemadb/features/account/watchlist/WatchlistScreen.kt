@@ -208,8 +208,7 @@ fun PopulateWatchlistGrid(
                 modifier = Modifier
                     .fillMaxSize(),
                 contentPadding = PaddingValues(
-                    top = 102.dp,
-                    bottom = contentPadding.calculateBottomPadding()
+                    top = 97.dp
                 ),
                 columns = StaggeredGridCells.Fixed(2),
                 verticalItemSpacing = 5.dp,
