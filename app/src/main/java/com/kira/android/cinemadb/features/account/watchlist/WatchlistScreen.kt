@@ -61,14 +61,23 @@ private var currentlySelected = 0
 @Composable
 fun WatchlistScreen(
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit
+    onItemClick: (Long, Int) -> Unit,
+    onScroll: (Float, Float) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainWatchlistScreen(contentPadding, onItemClick)
+    MainWatchlistScreen(
+        contentPadding,
+        onItemClick,
+        onScroll
+    )
 }
 
 @Composable
-fun MainWatchlistScreen(contentPadding: PaddingValues, onItemClick: (Long, Int) -> Unit) {
+fun MainWatchlistScreen(
+    contentPadding: PaddingValues,
+    onItemClick: (Long, Int) -> Unit,
+    onScroll: (Float, Float) -> Unit
+) {
     val movieWatchlist by rememberUpdatedState(newValue = viewModel.movieWatchlistState.collectAsLazyPagingItems())
     val tvShowWatchlist by rememberUpdatedState(newValue = viewModel.tvShowWatchlistState.collectAsLazyPagingItems())
     val typeSelected  by remember { mutableStateOf(viewModel.selectedWatchlistTab) }

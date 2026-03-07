@@ -68,7 +68,11 @@ fun MovieListScreen(
     onScroll: (Float, Float) -> Unit
 ) {
     viewModel = hiltViewModel()
-    MainMovieScreen(contentPadding, onItemClick, onScroll)
+    MainMovieScreen(
+        contentPadding,
+        onItemClick,
+        onScroll
+    )
 }
 
 @Composable
@@ -106,7 +110,7 @@ fun MainMovieScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .offset { IntOffset(0, topBarOffsetPx.floatValue.roundToInt()) }
-                .background(Color.Black) // Keeps it opaque while sliding over content
+                .background(Color.Black)
                 .statusBarsPadding()
         ) {
             MovieSegmentedControl(categoryList.toList()) { selectedItem ->
