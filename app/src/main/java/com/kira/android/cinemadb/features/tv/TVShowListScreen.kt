@@ -86,7 +86,7 @@ fun MainTVShowScreen(
     val categoryList = listOf("Trending", "Top Rated")
     val focusManager = LocalFocusManager.current
 
-    val toolbarHeight = 145.dp
+    val toolbarHeight = 142.dp
     val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
     val topBarOffsetPx = remember { mutableFloatStateOf(0f) }
     val nestedScrollConnection = remember {
@@ -219,7 +219,7 @@ fun PopulateTVShowGrid(
         LazyVerticalStaggeredGrid(
             state = lazyRowState,
             contentPadding = PaddingValues(
-                top = 145.dp
+                top = 146.dp
             ),
             columns = StaggeredGridCells.Fixed(2),
             verticalItemSpacing = 5.dp,

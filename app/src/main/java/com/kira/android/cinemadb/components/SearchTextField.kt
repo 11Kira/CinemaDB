@@ -54,7 +54,7 @@ fun SearchTextField(
         onValueChange = onSearchTextChange,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 5.dp)
+            .padding(vertical = 5.dp)
             .onFocusChanged { isFocused = it.isFocused },
         singleLine = true,
         cursorBrush = SolidColor(Color.White),
