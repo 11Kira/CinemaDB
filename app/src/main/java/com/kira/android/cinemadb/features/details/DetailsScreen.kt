@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -158,14 +159,15 @@ fun SetupDetails(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
+                    .height(600.dp)
             ) {
                 AsyncImage(
                     model = posterPath,
                     contentDescription = "Poster",
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .width(600.dp),
                     contentScale = ContentScale.Crop,
-                    placeholder = painterResource(id = R.drawable.ic_video),
                     error = painterResource(id = R.drawable.ic_video)
                 )
 
