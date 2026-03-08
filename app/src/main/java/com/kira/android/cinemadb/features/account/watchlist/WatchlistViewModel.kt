@@ -65,7 +65,7 @@ class WatchlistViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            header = SettingsPrefs(context).getToken.first().toString()
+            header = SettingsPrefs(context).getToken.first()
             accountId = SettingsPrefs(context).getAccountId.first()
             getMovieWatchlist()
         }

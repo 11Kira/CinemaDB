@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,9 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,8 +53,6 @@ import com.kira.android.cinemadb.components.SegmentedControl
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
 import com.kira.android.cinemadb.util.AppUtil
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 lateinit var viewModel: WatchlistViewModel
@@ -176,16 +171,6 @@ fun PopulateWatchlistGrid(
     contentPadding: PaddingValues,
     onItemClick: (Long, Int) -> Unit
 ) {
-    var isRefreshing by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
-    val onRefresh: () -> Unit = {
-        isRefreshing = true
-        coroutineScope.launch {
-            if (type == 1) viewModel.getMovieWatchlist() else viewModel.getTVShowWatchlist()
-            delay(500)
-            isRefreshing = false
-        }
-    }
     val lazyRowState = rememberLazyStaggeredGridState()
     if (viewModel.scrollToTopState.collectAsState().value) {
         LaunchedEffect(key1 = true) {
@@ -198,50 +183,44 @@ fun PopulateWatchlistGrid(
         .fillMaxSize()
         .background(Color.Black)
     ) {
-        PullToRefreshBox(
-            modifier = Modifier.align(Alignment.TopCenter),
-            isRefreshing = isRefreshing,
-            onRefresh = onRefresh,
-        ) {
-            LazyVerticalStaggeredGrid(
-                state = lazyRowState,
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(
-                    top = 97.dp
-                ),
-                columns = StaggeredGridCells.Fixed(2),
-                verticalItemSpacing = 5.dp,
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                content = {
-                    if (type == 1) {
-                        items(movies?.itemCount ?: 0) { index ->
-                            val selectedMovie = movies?.get(index)
-                            GridItemContent(
-                                selectedMovie = selectedMovie,
-                                selectedTvShow = null,
-                                type = 1,
-                                onItemClick = { id, type ->
-                                    onItemClick(id, type)
-                                }
-                            )
-                        }
-                    } else {
-                        items(tvShows?.itemCount ?: 0) { index ->
-                            val selectedTvShow = tvShows?.get(index)
-                            GridItemContent(
-                                selectedMovie = null,
-                                selectedTvShow = selectedTvShow,
-                                type = 2,
-                                onItemClick = { id, type ->
-                                    onItemClick(id, type)
-                                }
-                            )
-                        }
+        LazyVerticalStaggeredGrid(
+            state = lazyRowState,
+            modifier = Modifier
+                .fillMaxSize(),
+            contentPadding = PaddingValues(
+                top = 97.dp
+            ),
+            columns = StaggeredGridCells.Fixed(2),
+            verticalItemSpacing = 5.dp,
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            content = {
+                if (type == 1) {
+                    items(movies?.itemCount ?: 0) { index ->
+                        val selectedMovie = movies?.get(index)
+                        GridItemContent(
+                            selectedMovie = selectedMovie,
+                            selectedTvShow = null,
+                            type = 1,
+                            onItemClick = { id, type ->
+                                onItemClick(id, type)
+                            }
+                        )
                     }
-                },
-            )
-        }
+                } else {
+                    items(tvShows?.itemCount ?: 0) { index ->
+                        val selectedTvShow = tvShows?.get(index)
+                        GridItemContent(
+                            selectedMovie = null,
+                            selectedTvShow = selectedTvShow,
+                            type = 2,
+                            onItemClick = { id, type ->
+                                onItemClick(id, type)
+                            }
+                        )
+                    }
+                }
+            },
+        )
     }
 }
 
