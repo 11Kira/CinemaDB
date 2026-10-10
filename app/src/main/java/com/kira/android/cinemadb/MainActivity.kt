@@ -9,43 +9,27 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.kira.android.cinemadb.ui.navigation.BottomMenuItem
-import com.kira.android.cinemadb.ui.navigation.NavigationGraph
+import com.kira.android.cinemadb.ui.component.BottomNav
+import com.kira.android.cinemadb.ui.navigation.AppNavHost
+import com.kira.android.cinemadb.ui.navigation.DetailsScreenRoute
+import com.kira.android.cinemadb.ui.navigation.UserReviewScreenRoute
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.serialization.Serializable
 import kotlin.math.roundToInt
 
 private lateinit var viewModel: MainViewModel
@@ -83,20 +67,17 @@ class MainActivity : ComponentActivity() {
 fun MainScreenView(){
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val isDetailsScreen =
-        navBackStackEntry?.destination?.route
-            ?.startsWith(DetailsScreenNavigation::class.qualifiedName ?: "") == true
-    val isUserReviewScreen =
-        navBackStackEntry?.destination?.route
-            ?.startsWith(UserReviewScreenNavigation::class.qualifiedName ?: "") == true
-
+    val currentDestination = navBackStackEntry?.destination
+    val isDetailsScreen = currentDestination?.hasRoute<DetailsScreenRoute>() == true
+    val isUserReviewScreen = currentDestination?.hasRoute<UserReviewScreenRoute>() == true
     val bottomBarOffsetHeightPx = remember { mutableFloatStateOf(0f) }
 
     Scaffold(
         bottomBar = {
             if (!isDetailsScreen && !isUserReviewScreen) {
-                BottomNavigation(
+                BottomNav(
                     navController = navController,
+                    viewModel = viewModel,
                     modifier = Modifier.offset {
                         IntOffset(0, (-bottomBarOffsetHeightPx.floatValue).roundToInt())
                     }
@@ -108,9 +89,9 @@ fun MainScreenView(){
             .background(Color.Black)
             .fillMaxSize()
         ) {
-            NavigationGraph(
+            AppNavHost(
                 navController = navController,
-                contentPadding,
+                contentPadding = contentPadding,
                 onScroll = { delta, limit ->
                     val newOffset = bottomBarOffsetHeightPx.floatValue + delta
                     bottomBarOffsetHeightPx.floatValue = newOffset.coerceIn(limit, 0f)
@@ -119,77 +100,3 @@ fun MainScreenView(){
         }
     }
 }
-
-@Composable
-fun BottomNavigation(
-    navController: NavController,
-    modifier: Modifier
-) {
-    var selectedItem by remember { mutableStateOf("movies") }
-    val selectedTab by remember { mutableStateOf(viewModel.currentlySelectedTab) }
-
-    val screens = listOf(
-        BottomMenuItem.Movies,
-        BottomMenuItem.TV,
-        BottomMenuItem.Watchlist
-    )
-    Surface(
-        color = Color.DarkGray,
-        modifier = modifier
-    ) {
-        BottomNavigation(
-            modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
-            backgroundColor = Color.DarkGray,
-            elevation = 0.dp
-        ) {
-            screens.forEach {
-                BottomNavigationItem(
-                    selected = (selectedItem == selectedTab.collectAsState().value),
-                    onClick = {
-                        selectedItem = it.label
-                        navController.navigate(it.screenRoute) {
-                            navController.graph.startDestinationRoute?.let { screenRoute ->
-                                popUpTo(screenRoute) {
-                                    saveState = true
-                                }
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                        viewModel.updateSelectedTab(it.label)
-                    },
-                    label = {
-                        Text(
-                            text = it.label,
-                            color = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray,
-                            fontSize = 10.sp,
-                            fontFamily = if (selectedItem == selectedTab.collectAsState().value) Font(
-                                R.font.roboto_bold
-                            ).toFontFamily() else Font(R.font.roboto_medium).toFontFamily(),
-                        )
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(it.icon),
-                            contentDescription = it.label,
-                            tint = if (selectedTab.collectAsState().value == it.label) Color.White else Color.Gray
-                        )
-                    }
-                )
-            }
-        }
-    }
-
-}
-
-@Serializable
-data class DetailsScreenNavigation(
-    val id: Long,
-    val type: Int
-)
-
-@Serializable
-data class UserReviewScreenNavigation(
-    val id: Long,
-    val type: Int
-)
