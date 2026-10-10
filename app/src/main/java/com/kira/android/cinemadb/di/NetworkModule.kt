@@ -1,7 +1,7 @@
 package com.kira.android.cinemadb.di
 
-import com.kira.android.cinemadb.network.Constants
-import com.kira.android.cinemadb.network.Constants.BASE_URL
+import com.kira.android.cinemadb.utils.Constants
+import com.kira.android.cinemadb.utils.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

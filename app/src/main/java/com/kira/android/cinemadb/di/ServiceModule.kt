@@ -1,9 +1,9 @@
 package com.kira.android.cinemadb.di
 
-import com.kira.android.cinemadb.features.account.AccountService
-import com.kira.android.cinemadb.features.movies.MovieService
-import com.kira.android.cinemadb.features.search.SearchService
-import com.kira.android.cinemadb.features.tv.TVService
+import com.kira.android.cinemadb.data.remote.service.AccountService
+import com.kira.android.cinemadb.data.remote.service.MovieService
+import com.kira.android.cinemadb.data.remote.service.SearchService
+import com.kira.android.cinemadb.data.remote.service.TVService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

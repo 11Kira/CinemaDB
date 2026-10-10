@@ -1,9 +1,0 @@
-package com.kira.android.cinemadb.navigation
-
-import com.kira.android.cinemadb.R
-
-sealed class BottomMenuItem(val label: String, val icon: Int, val screenRoute: String) {
-    data object Movies : BottomMenuItem("Movies", R.drawable.ic_movie, "movies")
-    data object TV : BottomMenuItem("TV Series", R.drawable.ic_tv, "tv")
-    data object Watchlist : BottomMenuItem("Watchlist", R.drawable.ic_list, "watchlist")
-}

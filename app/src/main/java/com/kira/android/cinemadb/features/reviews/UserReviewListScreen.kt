@@ -28,8 +28,8 @@ import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kira.android.cinemadb.R
-import com.kira.android.cinemadb.components.DynamicStarRating
 import com.kira.android.cinemadb.model.UserReviewResult
+import com.kira.android.cinemadb.ui.component.DynamicStarRating
 import kotlin.math.roundToInt
 
 lateinit var viewModel: UserReviewViewModel

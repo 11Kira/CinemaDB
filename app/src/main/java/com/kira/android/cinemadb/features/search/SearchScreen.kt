@@ -55,7 +55,7 @@ import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
-import com.kira.android.cinemadb.util.AppUtil
+import com.kira.android.cinemadb.utils.AppUtil
 import kotlin.math.roundToInt
 
 lateinit var viewModel: SearchViewModel
