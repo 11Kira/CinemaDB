@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.kira.android.cinemadb"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.kira.android.cinemadb"
