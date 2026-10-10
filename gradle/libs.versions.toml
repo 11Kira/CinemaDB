@@ -1,6 +1,6 @@
 [versions]
 agp = "9.4.1"
-animation = "1.10.4"
+animation = "1.12.1"
 coilCompose = "3.6.3"
 coilNetworkOkhttp = "3.6.3"
 coreSplashscreen = "1.2.0"
@@ -17,7 +17,7 @@ activityCompose = "1.13.0"
 composeBom = "2026.09.00"
 material = "1.10.4"
 material3 = "1.4.0"
-navigationCompose = "2.9.7"
+navigationCompose = "2.10.2"
 pagingRuntimeKtx = "3.4.1"
 retrofit = "3.0.0"
 converterGson = "3.0.0"
@@ -30,7 +30,7 @@ lifecycleExtensions = "2.2.0"
 ksp-version = "2.3.6"
 hilt-version = "2.60.1"
 serialization = "1.11.0"
-foundationLayout = "1.10.4"
+foundationLayout = "1.12.1"
 
 [libraries]
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
