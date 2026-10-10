@@ -8,13 +8,13 @@ data class Cast (
     @SerializedName("gender")
     val gender: Int,
     @SerializedName("name")
-    val name: String,
+    val name: String?,
     @SerializedName("character")
-    val character: String,
+    val character: String?,
     @SerializedName("cast_id")
     val castId: Long,
     @SerializedName("credit_id")
-    val creditId: String,
+    val creditId: String?,
     @SerializedName("order")
     val order: Int,
 )

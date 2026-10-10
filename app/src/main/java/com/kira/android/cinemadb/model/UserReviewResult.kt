@@ -4,20 +4,20 @@ import com.google.gson.annotations.SerializedName
 
 data class UserReviewResult(
     @SerializedName("author")
-    val author: String,
+    val author: String?,
     @SerializedName("author_details")
-    val authorDetails: AuthorDetails,
+    val authorDetails: AuthorDetails?,
     @SerializedName("content")
-    val content: String,
+    val content: String?,
 )
 
 data class AuthorDetails(
     @SerializedName("name")
-    val name: String,
+    val name: String?,
     @SerializedName("username")
-    val username: String,
+    val username: String?,
     @SerializedName("avatar_path")
-    val avatarPath: String,
+    val avatarPath: String?,
     @SerializedName("rating")
     val rating: Double
 )
