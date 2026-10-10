@@ -49,10 +49,10 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.R
-import com.kira.android.cinemadb.components.SegmentedControl
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
-import com.kira.android.cinemadb.util.AppUtil
+import com.kira.android.cinemadb.ui.component.SegmentedControl
+import com.kira.android.cinemadb.utils.AppUtil
 import kotlin.math.roundToInt
 
 lateinit var viewModel: WatchlistViewModel

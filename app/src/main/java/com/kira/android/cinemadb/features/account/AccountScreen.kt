@@ -33,7 +33,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.model.Account
-import com.kira.android.cinemadb.util.AppUtil
+import com.kira.android.cinemadb.utils.AppUtil
 import kotlinx.coroutines.flow.SharedFlow
 
 lateinit var viewModel: AccountViewModel

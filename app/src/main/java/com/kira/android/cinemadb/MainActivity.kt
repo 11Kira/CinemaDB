@@ -42,8 +42,8 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.kira.android.cinemadb.navigation.BottomMenuItem
-import com.kira.android.cinemadb.navigation.NavigationGraph
+import com.kira.android.cinemadb.ui.navigation.BottomMenuItem
+import com.kira.android.cinemadb.ui.navigation.NavigationGraph
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
 import kotlin.math.roundToInt

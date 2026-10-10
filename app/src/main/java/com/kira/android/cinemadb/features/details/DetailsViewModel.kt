@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
-import com.kira.android.cinemadb.features.account.AccountUseCase
-import com.kira.android.cinemadb.util.SettingsPrefs
+import com.kira.android.cinemadb.domain.AccountUseCase
+import com.kira.android.cinemadb.domain.DetailsUseCase
+import com.kira.android.cinemadb.utils.SettingsPrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler

@@ -1,12 +1,12 @@
 package com.kira.android.cinemadb.di
 
-import com.kira.android.cinemadb.features.account.AccountRepository
-import com.kira.android.cinemadb.features.account.AccountUseCase
-import com.kira.android.cinemadb.features.details.DetailsUseCase
-import com.kira.android.cinemadb.features.movies.MovieRepository
-import com.kira.android.cinemadb.features.movies.MovieUseCase
-import com.kira.android.cinemadb.features.tv.TVRepository
-import com.kira.android.cinemadb.features.tv.TVUseCase
+import com.kira.android.cinemadb.data.repository.AccountRepository
+import com.kira.android.cinemadb.data.repository.MovieRepository
+import com.kira.android.cinemadb.data.repository.TVRepository
+import com.kira.android.cinemadb.domain.AccountUseCase
+import com.kira.android.cinemadb.domain.DetailsUseCase
+import com.kira.android.cinemadb.domain.MovieUseCase
+import com.kira.android.cinemadb.domain.TVUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

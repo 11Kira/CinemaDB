@@ -49,13 +49,13 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.kira.android.cinemadb.HeaderText
 import com.kira.android.cinemadb.R
-import com.kira.android.cinemadb.components.CircularIconButton
-import com.kira.android.cinemadb.components.ReviewSection
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
-import com.kira.android.cinemadb.util.AppUtil
+import com.kira.android.cinemadb.ui.component.CircularIconButton
+import com.kira.android.cinemadb.ui.component.HeaderText
+import com.kira.android.cinemadb.ui.component.ReviewSection
+import com.kira.android.cinemadb.utils.AppUtil
 import kotlinx.coroutines.flow.SharedFlow
 
 lateinit var viewModel: DetailsViewModel
