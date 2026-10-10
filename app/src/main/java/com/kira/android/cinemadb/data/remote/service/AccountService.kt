@@ -2,10 +2,10 @@ package com.kira.android.cinemadb.data.remote.service
 
 import com.google.gson.JsonObject
 import com.kira.android.cinemadb.model.Account
-import com.kira.android.cinemadb.model.ListResponseObject
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.ResponseObject
 import com.kira.android.cinemadb.model.TVShowResult
+import com.kira.android.cinemadb.model.response.PagingResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -33,12 +33,12 @@ interface AccountService {
         @Header("Authorization") header: String,
         @Path("account_id") accountId: Long,
         @Query("page") page: Int
-    ): Response<ListResponseObject<List<MovieResult>>>
+    ): Response<PagingResponse<List<MovieResult>>>
 
     @GET("account/{account_id}/watchlist/tv")
     suspend fun getTVShowWatchlist(
         @Header("Authorization") header: String,
         @Path("account_id") accountId: Long,
         @Query("page") page: Int
-    ): Response<ListResponseObject<List<TVShowResult>>>
+    ): Response<PagingResponse<List<TVShowResult>>>
 }

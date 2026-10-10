@@ -1,11 +1,11 @@
 package com.kira.android.cinemadb.domain
 
-import com.kira.android.cinemadb.model.ListResponseObject
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
+import com.kira.android.cinemadb.model.response.PagingResponse
 import retrofit2.Response
 
-fun Response<ListResponseObject<List<MovieResult>>>.mapMovieResultToDomain(): List<MovieResult> {
+fun Response<PagingResponse<List<MovieResult>>>.mapMovieResultToDomain(): List<MovieResult> {
     return this.body()?.results?.map { movie ->
         MovieResult(
             id = movie.id,
@@ -28,7 +28,7 @@ fun Response<ListResponseObject<List<MovieResult>>>.mapMovieResultToDomain(): Li
     } ?: emptyList()
 }
 
-fun Response<ListResponseObject<List<TVShowResult>>>.mapTVSeriesResultToDomain(): List<TVShowResult> {
+fun Response<PagingResponse<List<TVShowResult>>>.mapTVSeriesResultToDomain(): List<TVShowResult> {
     return this.body()?.results?.map { tv ->
         TVShowResult(
             id = tv.id,

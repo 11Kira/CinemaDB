@@ -1,8 +1,8 @@
 package com.kira.android.cinemadb.data.remote.service
 
-import com.kira.android.cinemadb.model.ListResponseObject
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
+import com.kira.android.cinemadb.model.response.PagingResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -14,12 +14,12 @@ interface SearchService {
         @Header("Authorization") header: String,
         @Query("query") query: String,
         @Query("page") page: Int
-    ): Response<ListResponseObject<List<MovieResult>>>
+    ): Response<PagingResponse<List<MovieResult>>>
 
     @GET("search/tv")
     suspend fun searchTVShow(
         @Header("Authorization") header: String,
         @Query("query") query: String,
         @Query("page") page: Int
-    ): Response<ListResponseObject<List<TVShowResult>>>
+    ): Response<PagingResponse<List<TVShowResult>>>
 }
