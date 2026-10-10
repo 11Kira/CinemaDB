@@ -1,7 +1,8 @@
 package com.kira.android.cinemadb.util
 
 object AppUtil {
-    fun retrievePosterImageUrl(posterUrl: String): String {
+    fun retrievePosterImageUrl(posterUrl: String?): String {
+        if (posterUrl.isNullOrEmpty()) return ""
         return "https://image.tmdb.org/t/p/original/$posterUrl"
     }
 

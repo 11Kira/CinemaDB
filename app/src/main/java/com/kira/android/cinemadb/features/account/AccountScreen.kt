@@ -28,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
@@ -40,7 +39,11 @@ lateinit var viewModel: AccountViewModel
 
 @Composable
 fun AccountScreen() {
-    viewModel = hiltViewModel()
+    viewModel = androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel(
+        checkNotNull<androidx.lifecycle.ViewModelStoreOwner>(LocalViewModelStoreOwner.current) {
+            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+        }, null
+    )
     MainScreen(viewModel.accountState)
     viewModel.getAccountDetails(7749280)
 }
@@ -75,7 +78,7 @@ fun SetupAccountScreen(account: Account) {
             .background(Color.Black)
             .verticalScroll(rememberScrollState())
     ) {
-        val posterPath = AppUtil.retrievePosterImageUrl(account.avatar.tmdb.avatarPath)
+        val posterPath = AppUtil.retrievePosterImageUrl(account.avatar?.tmdb?.avatarPath)
         Box(
             modifier = Modifier
                 .width(250.dp)
@@ -96,7 +99,7 @@ fun SetupAccountScreen(account: Account) {
         Text(
             textAlign = TextAlign.Center,
             color = Color.White,
-            text = account.username,
+            text = account.username.orEmpty(),
             fontWeight = FontWeight.Medium,
             fontSize = 20.sp
         )

@@ -23,7 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,7 +43,6 @@ import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
@@ -67,7 +66,11 @@ fun DetailsScreen(
     onReviewClick: (Long, Int) -> Unit,
     navController: NavController
 ) {
-    viewModel = hiltViewModel()
+    viewModel = androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel(
+        checkNotNull<androidx.lifecycle.ViewModelStoreOwner>(LocalViewModelStoreOwner.current) {
+            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+        }, null
+    )
     MainScreen(navController, type, viewModel.movieState, onReviewClick)
     when (type) {
         1 -> {
@@ -229,11 +232,11 @@ fun SetupDetails(
                 val casts = ArrayList<String>()
                 if (type == 1) {
                     movie?.credits?.cast?.forEach { cast ->
-                        if (casts.size < 7) casts.add(cast.name)
+                        if (casts.size < 7) cast.name?.let { casts.add(it) }
                     }
                 } else {
                     tvShow?.credits?.cast?.forEach { cast ->
-                        if (casts.size < 7) casts.add(cast.name)
+                        if (casts.size < 7) cast.name?.let { casts.add(it) }
                     }
                 }
 
@@ -250,9 +253,9 @@ fun SetupDetails(
 
                 val genres = ArrayList<String>()
                 if (type == 1) {
-                    movie?.genres?.forEach { genre -> genres.add(genre.name) }
+                    movie?.genres?.forEach { genre -> genre.name?.let { genres.add(it) } }
                 } else {
-                    tvShow?.genres?.forEach { genre -> genres.add(genre.name) }
+                    tvShow?.genres?.forEach { genre -> genre.name?.let { genres.add(it) } }
                 }
 
                 val seasons = if ((tvShow?.numberOfSeasons ?: 0) > 1) "Seasons" else "Season"
@@ -343,7 +346,7 @@ fun SetupDetails(
             verticalAlignment = Alignment.CenterVertically
         ) {
             CircularIconButton(
-                icon = Icons.Default.ArrowBack,
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 onClick = { navController.navigateUp() }
             )
 
