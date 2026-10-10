@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
@@ -39,11 +40,7 @@ lateinit var viewModel: AccountViewModel
 
 @Composable
 fun AccountScreen() {
-    viewModel = androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel(
-        checkNotNull<androidx.lifecycle.ViewModelStoreOwner>(LocalViewModelStoreOwner.current) {
-            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-        }, null
-    )
+    viewModel = hiltViewModel()
     MainScreen(viewModel.accountState)
     viewModel.getAccountDetails(7749280)
 }

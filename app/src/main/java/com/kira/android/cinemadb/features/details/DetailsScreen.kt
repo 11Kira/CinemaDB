@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
@@ -66,11 +67,7 @@ fun DetailsScreen(
     onReviewClick: (Long, Int) -> Unit,
     navController: NavController
 ) {
-    viewModel = androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel(
-        checkNotNull<androidx.lifecycle.ViewModelStoreOwner>(LocalViewModelStoreOwner.current) {
-            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-        }, null
-    )
+    viewModel = hiltViewModel()
     MainScreen(navController, type, viewModel.movieState, onReviewClick)
     when (type) {
         1 -> {
