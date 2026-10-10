@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
@@ -67,9 +68,7 @@ fun TVShowListScreen(
     onItemClick: (Long, Int) -> Unit,
     onScroll: (Float, Float) -> Unit
 ) {
-    viewModel = androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel(checkNotNull<androidx.lifecycle.ViewModelStoreOwner>(LocalViewModelStoreOwner.current) {
-                "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-            }, null)
+    viewModel = hiltViewModel()
     MainTVShowScreen(
         contentPadding,
         onItemClick,
