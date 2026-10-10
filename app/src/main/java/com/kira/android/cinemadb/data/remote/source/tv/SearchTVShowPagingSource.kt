@@ -1,17 +1,20 @@
-package com.kira.android.cinemadb.data.remote.source
+package com.kira.android.cinemadb.data.remote.source.tv
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.kira.android.cinemadb.data.remote.source.SearchRemoteSource
 import com.kira.android.cinemadb.model.TVShowResult
 
-class TrendingTVShowPagingSource(
+class SearchTVShowPagingSource (
     private val header: String,
-    private val remoteSource: TVRemoteSource
+    private val query: String,
+    private val remoteSource: SearchRemoteSource
 ): PagingSource<Int, TVShowResult>() {
+
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, TVShowResult> {
         return try {
             val currentPage = params.key ?: 1
-            val response = remoteSource.getTrendingTVShows(header, page = currentPage)
+            val response = remoteSource.searchTVShow(header, query, page = currentPage)
             val movies = response.body()?.results.orEmpty()
 
             LoadResult.Page(

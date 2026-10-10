@@ -3,10 +3,10 @@ package com.kira.android.cinemadb.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.kira.android.cinemadb.data.remote.source.MovieRemoteSource
-import com.kira.android.cinemadb.data.remote.source.MovieReviewPagingSource
-import com.kira.android.cinemadb.data.remote.source.TopRatedMoviePagingSource
-import com.kira.android.cinemadb.data.remote.source.TrendingMoviePagingSource
+import com.kira.android.cinemadb.data.remote.source.movies.MovieRemoteSource
+import com.kira.android.cinemadb.data.remote.source.movies.MovieReviewPagingSource
+import com.kira.android.cinemadb.data.remote.source.movies.TopRatedMoviePagingSource
+import com.kira.android.cinemadb.data.remote.source.movies.TrendingMoviePagingSource
 import com.kira.android.cinemadb.domain.mapMovieDetailsToDomain
 import com.kira.android.cinemadb.model.AccountStates
 import com.kira.android.cinemadb.model.MovieResult

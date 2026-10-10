@@ -1,23 +1,23 @@
-package com.kira.android.cinemadb.data.remote.source
+package com.kira.android.cinemadb.data.remote.source.tv
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.kira.android.cinemadb.model.UserReviewResult
 
-class MovieReviewPagingSource(
+class TVShowReviewPagingSource(
     private val header: String,
-    private val movieId: Long,
-    private val remoteSource: MovieRemoteSource
+    private val tvSeriesId: Long,
+    private val remoteSource: TVRemoteSource
 ) : PagingSource<Int, UserReviewResult>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UserReviewResult> {
         return try {
             val currentPage = params.key ?: 1
-            val response = remoteSource.getMovieReviews(header, movieId, page = currentPage)
-            val movieReviews = response.body()?.results.orEmpty()
+            val response = remoteSource.getTVShowReviews(header, tvSeriesId, page = currentPage)
+            val tvShowReviews = response.body()?.results.orEmpty()
 
             LoadResult.Page(
-                data = movieReviews,
+                data = tvShowReviews,
                 prevKey = if (currentPage == 1) null else currentPage - 1,
                 nextKey = if (currentPage < response.body()?.totalPages!!) currentPage + 1 else null
             )

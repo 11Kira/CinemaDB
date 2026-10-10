@@ -1,9 +1,9 @@
 package com.kira.android.cinemadb.di
 
 import com.kira.android.cinemadb.data.remote.source.AccountRemoteSource
-import com.kira.android.cinemadb.data.remote.source.MovieRemoteSource
 import com.kira.android.cinemadb.data.remote.source.SearchRemoteSource
-import com.kira.android.cinemadb.data.remote.source.TVRemoteSource
+import com.kira.android.cinemadb.data.remote.source.movies.MovieRemoteSource
+import com.kira.android.cinemadb.data.remote.source.tv.TVRemoteSource
 import com.kira.android.cinemadb.data.repository.AccountRepository
 import com.kira.android.cinemadb.data.repository.MovieRepository
 import com.kira.android.cinemadb.data.repository.SearchRepository

@@ -5,8 +5,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.google.gson.JsonObject
 import com.kira.android.cinemadb.data.remote.source.AccountRemoteSource
-import com.kira.android.cinemadb.data.remote.source.MovieWatchlistPagingSource
-import com.kira.android.cinemadb.data.remote.source.TVShowWatchlistPagingSource
+import com.kira.android.cinemadb.data.remote.source.movies.MovieWatchlistPagingSource
+import com.kira.android.cinemadb.data.remote.source.tv.TVShowWatchlistPagingSource
 import com.kira.android.cinemadb.model.Account
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.ResponseObject

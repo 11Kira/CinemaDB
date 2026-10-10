@@ -1,62 +1,62 @@
-package com.kira.android.cinemadb.data.remote.source
+package com.kira.android.cinemadb.data.remote.source.movies
 
-import com.kira.android.cinemadb.data.remote.service.TVService
+import com.kira.android.cinemadb.data.remote.service.MovieService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class TVRemoteSource @Inject constructor(
-    private val tvService: TVService
+class MovieRemoteSource @Inject constructor(
+    private val movieService: MovieService
 ) {
-    suspend fun getTrendingTVShows(
+    suspend fun getTrendingMovies(
         token: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        tvService.getTrendingTVShows(
+        movieService.getTrendingMovies(
             header = token,
             page = page,
         )
     }
 
-    suspend fun getTopRatedTVShows(
+    suspend fun getTopRatedMovies(
         token: String,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        tvService.getTopRatedTVShows(
+        movieService.getTopRatedMovies(
             header = token,
             page = page
         )
     }
 
-    suspend fun getTVShowReviews(
+    suspend fun getMovieReviews(
         token: String,
-        tvSeriesId: Long,
+        movieId: Long,
         page: Int
     ) = withContext(Dispatchers.IO) {
-        tvService.getTVShowReviews(
+        movieService.getMovieReviews(
             header = token,
-            seriesId = tvSeriesId,
+            movieId = movieId,
             page = page
         )
     }
 
-    suspend fun getTVShowDetails(
+    suspend fun getMovieDetails(
         token: String,
-        tvSeriesId: Long,
+        movieId: Long
     ) = withContext(Dispatchers.IO) {
-        tvService.getTVShowDetails(
+        movieService.getMovieDetails(
             header = token,
-            seriesId = tvSeriesId,
+            movieId = movieId
         )
     }
 
-    suspend fun getTVShowWatchlistDetails(
+    suspend fun getMovieWatchlistDetails(
         token: String,
-        tvSeriesId: Long,
+        movieId: Long
     ) = withContext(Dispatchers.IO) {
-        tvService.getTVShowWatchlistDetails(
+        movieService.getMovieWatchlistDetails(
             header = token,
-            seriesId = tvSeriesId,
+            movieId = movieId
         )
     }
 }

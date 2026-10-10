@@ -1,4 +1,4 @@
-package com.kira.android.cinemadb.data.remote.source
+package com.kira.android.cinemadb.data.remote.source.tv
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

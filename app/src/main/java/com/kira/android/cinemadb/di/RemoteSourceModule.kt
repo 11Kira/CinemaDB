@@ -5,9 +5,9 @@ import com.kira.android.cinemadb.data.remote.service.MovieService
 import com.kira.android.cinemadb.data.remote.service.SearchService
 import com.kira.android.cinemadb.data.remote.service.TVService
 import com.kira.android.cinemadb.data.remote.source.AccountRemoteSource
-import com.kira.android.cinemadb.data.remote.source.MovieRemoteSource
 import com.kira.android.cinemadb.data.remote.source.SearchRemoteSource
-import com.kira.android.cinemadb.data.remote.source.TVRemoteSource
+import com.kira.android.cinemadb.data.remote.source.movies.MovieRemoteSource
+import com.kira.android.cinemadb.data.remote.source.tv.TVRemoteSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -3,9 +3,9 @@ package com.kira.android.cinemadb.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.kira.android.cinemadb.data.remote.source.SearchMoviePagingSource
 import com.kira.android.cinemadb.data.remote.source.SearchRemoteSource
-import com.kira.android.cinemadb.data.remote.source.SearchTVShowPagingSource
+import com.kira.android.cinemadb.data.remote.source.movies.SearchMoviePagingSource
+import com.kira.android.cinemadb.data.remote.source.tv.SearchTVShowPagingSource
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
 import kotlinx.coroutines.flow.Flow

@@ -1,7 +1,8 @@
-package com.kira.android.cinemadb.data.remote.source
+package com.kira.android.cinemadb.data.remote.source.movies
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.kira.android.cinemadb.data.remote.source.AccountRemoteSource
 import com.kira.android.cinemadb.model.MovieResult
 
 class MovieWatchlistPagingSource(
