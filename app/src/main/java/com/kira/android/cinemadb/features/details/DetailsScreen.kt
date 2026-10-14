@@ -92,7 +92,8 @@ fun DetailsScreen(
                     tvShow = null,
                     mediaType,
                     onReviewClick,
-                    onBackClick
+                    onBackClick,
+                    viewModel
                 )
             }
         } else {
@@ -102,7 +103,8 @@ fun DetailsScreen(
                     tvShow = tvShow,
                     mediaType,
                     onReviewClick,
-                    onBackClick
+                    onBackClick,
+                    viewModel
                 )
             }
         }
@@ -120,6 +122,7 @@ fun SetupDetails(
     type: String,
     onReviewClick: (mediaId: Long, type: String) -> Unit,
     onBackClick: () -> Unit,
+    viewModel: DetailsViewModel
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -336,15 +339,15 @@ fun SetupDetails(
                     .clickable {
                         if (type == MediaType.MOVIE.name) {
                             if (movie?.accountStates?.watchlist == true) {
-                                //viewModel.addToWatchlist(type, movie.id, false)
+                                viewModel.addToWatchlist(type, movie.id, false)
                             } else {
-                                //viewModel.addToWatchlist(type, movie?.id ?: 0L, true)
+                                viewModel.addToWatchlist(type, movie?.id ?: 0L, true)
                             }
                         } else {
                             if (tvShow?.accountStates?.watchlist == true) {
-                                //viewModel.addToWatchlist(type, tvShow.id, false)
+                                viewModel.addToWatchlist(type, tvShow.id, false)
                             } else {
-                                //viewModel.addToWatchlist(type, tvShow?.id ?: 0L, true)
+                                viewModel.addToWatchlist(type, tvShow?.id ?: 0L, true)
                             }
                         }
 

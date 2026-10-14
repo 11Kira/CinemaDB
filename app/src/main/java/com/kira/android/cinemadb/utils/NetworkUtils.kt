@@ -8,8 +8,11 @@ import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.ConnectException
 import java.net.UnknownHostException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class NetworkUtils {
+@Singleton
+class NetworkUtils @Inject constructor() {
     fun parseNetworkError(e: Exception): String {
         return when (e) {
             is HttpException -> {
