@@ -1,6 +1,8 @@
 package com.kira.android.cinemadb.data.remote.source.movies
 
 import com.kira.android.cinemadb.data.remote.service.MovieService
+import com.kira.android.cinemadb.model.AccountStates
+import com.kira.android.cinemadb.model.MovieResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -43,7 +45,7 @@ class MovieRemoteSource @Inject constructor(
     suspend fun getMovieDetails(
         token: String,
         movieId: Long
-    ) = withContext(Dispatchers.IO) {
+    ): MovieResult = withContext(Dispatchers.IO) {
         movieService.getMovieDetails(
             header = token,
             movieId = movieId
@@ -53,7 +55,7 @@ class MovieRemoteSource @Inject constructor(
     suspend fun getMovieWatchlistDetails(
         token: String,
         movieId: Long
-    ) = withContext(Dispatchers.IO) {
+    ): AccountStates = withContext(Dispatchers.IO) {
         movieService.getMovieWatchlistDetails(
             header = token,
             movieId = movieId

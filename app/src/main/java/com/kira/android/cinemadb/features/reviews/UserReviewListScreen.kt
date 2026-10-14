@@ -29,6 +29,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.UserReviewResult
+import com.kira.android.cinemadb.model.enums.MediaType
 import com.kira.android.cinemadb.ui.component.DynamicStarRating
 import kotlin.math.roundToInt
 
@@ -37,22 +38,22 @@ lateinit var viewModel: UserReviewViewModel
 @Composable
 fun UserReviewListScreen(
     id: Long,
-    type: Int,
+    type: String,
     navController: NavController
 ) {
     viewModel = hiltViewModel()
     MainScreen(navController, type)
     when (type) {
-        1 -> viewModel.getMovieReviews(id)
-        2 -> viewModel.getTVShowReviews(id)
+        MediaType.MOVIE.name -> viewModel.getMovieReviews(id)
+        MediaType.TV_SHOW.name -> viewModel.getTVShowReviews(id)
     }
 }
 
 @Composable
-fun MainScreen(navController: NavController, type: Int) {
+fun MainScreen(navController: NavController, type: String) {
     val movieReviewlist by rememberUpdatedState(newValue = viewModel.movieReviewPagingState.collectAsLazyPagingItems())
     val tvShowReviewlist by rememberUpdatedState(newValue = viewModel.tvShowReviewPagingState.collectAsLazyPagingItems())
-    if (type == 1) {
+    if (type == MediaType.MOVIE.name) {
         PopulateReviewList(movieReviewlist, navController)
     } else {
         PopulateReviewList(tvShowReviewlist, navController)

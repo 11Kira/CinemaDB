@@ -46,7 +46,6 @@ import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
@@ -54,6 +53,7 @@ import com.kira.android.cinemadb.MainActivity.Companion.TOP_RATED
 import com.kira.android.cinemadb.MainActivity.Companion.TRENDING
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.MovieResult
+import com.kira.android.cinemadb.model.enums.MediaType
 import com.kira.android.cinemadb.ui.component.SearchTextField
 import com.kira.android.cinemadb.ui.component.SegmentedControl
 import com.kira.android.cinemadb.utils.AppUtil
@@ -65,10 +65,12 @@ private var currentlySelected = 0
 @Composable
 fun MovieListScreen(
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit,
+    onItemClick: (Long, String) -> Unit,
     onScroll: (Float, Float) -> Unit
 ) {
-    viewModel = hiltViewModel()
+    viewModel = androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel(checkNotNull<androidx.lifecycle.ViewModelStoreOwner>(LocalViewModelStoreOwner.current) {
+                "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+            }, null)
     MainMovieScreen(
         contentPadding,
         onItemClick,
@@ -79,7 +81,7 @@ fun MovieListScreen(
 @Composable
 fun MainMovieScreen(
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit,
+    onItemClick: (Long, String) -> Unit,
     onScroll: (Float, Float) -> Unit
 ) {
     val movies by rememberUpdatedState(newValue = viewModel.moviesPagingState.collectAsLazyPagingItems())
@@ -199,7 +201,7 @@ fun SearchField(
 fun PopulateMovieGrid(
     movies: LazyPagingItems<MovieResult>,
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit
+    onItemClick: (Long, String) -> Unit
 ) {
     val lazyRowState = rememberLazyStaggeredGridState()
 
@@ -237,8 +239,15 @@ fun PopulateMovieGrid(
                                 .heightIn(
                                     min = 250.dp,
                                     max = 320.dp
-                                ) // Limits the "chaos" of the stagger
-                                .clickable { selectedMovie?.id?.let { onItemClick(it, 1) } },
+                                )
+                                .clickable {
+                                    selectedMovie?.id?.let {
+                                        onItemClick(
+                                            it,
+                                            MediaType.MOVIE.name
+                                        )
+                                    }
+                                },
                             model = posterPath,
                             contentScale = ContentScale.Crop,
                             contentDescription = "Description",

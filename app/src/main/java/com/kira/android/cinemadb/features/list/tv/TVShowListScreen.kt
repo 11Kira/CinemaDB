@@ -54,6 +54,7 @@ import com.kira.android.cinemadb.MainActivity.Companion.TOP_RATED
 import com.kira.android.cinemadb.MainActivity.Companion.TRENDING
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.TVShowResult
+import com.kira.android.cinemadb.model.enums.MediaType
 import com.kira.android.cinemadb.ui.component.SearchTextField
 import com.kira.android.cinemadb.ui.component.SegmentedControl
 import com.kira.android.cinemadb.utils.AppUtil
@@ -65,7 +66,7 @@ private var currentlySelected = 0
 @Composable
 fun TVShowListScreen(
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit,
+    onItemClick: (Long, String) -> Unit,
     onScroll: (Float, Float) -> Unit
 ) {
     viewModel = hiltViewModel()
@@ -79,7 +80,7 @@ fun TVShowListScreen(
 @Composable
 fun MainTVShowScreen(
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit,
+    onItemClick: (Long, String) -> Unit,
     onScroll: (Float, Float) -> Unit
 ) {
     val tvShows by rememberUpdatedState(newValue = viewModel.tvShowPagingState.collectAsLazyPagingItems())
@@ -201,7 +202,7 @@ fun SearchField(
 fun PopulateTVShowGrid(
     tvShows: LazyPagingItems<TVShowResult>,
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit
+    onItemClick: (Long, String) -> Unit
 ) {
     val lazyRowState = rememberLazyStaggeredGridState()
 
@@ -237,8 +238,15 @@ fun PopulateTVShowGrid(
                                 .heightIn(
                                     min = 250.dp,
                                     max = 320.dp
-                                ) // Limits the "chaos" of the stagger
-                                .clickable { selectedTvShow?.id?.let { onItemClick(it, 2) } },
+                                )
+                                .clickable {
+                                    selectedTvShow?.id?.let {
+                                        onItemClick(
+                                            it,
+                                            MediaType.TV_SHOW.name
+                                        )
+                                    }
+                                },
                             model = posterPath,
                             contentScale = ContentScale.Crop,
                             contentDescription = "Description",

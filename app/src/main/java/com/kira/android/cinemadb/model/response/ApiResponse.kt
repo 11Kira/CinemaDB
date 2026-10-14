@@ -1,6 +1,5 @@
 package com.kira.android.cinemadb.model.response
 
-import kotlinx.serialization.Serializable
-
-@Serializable
-class ApiResponse<T>
+data class ApiResponse<T>(
+    val data: T? = null
+)

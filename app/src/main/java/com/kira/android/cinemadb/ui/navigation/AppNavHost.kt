@@ -52,12 +52,12 @@ fun AppNavHost(
         composable<DetailsScreenRoute> { backStackEntry ->
             val args = backStackEntry.toRoute<DetailsScreenRoute>()
             DetailsScreen(
-                id = args.id,
-                type = args.type,
-                onReviewClick = { mediaId, type ->
-                    navController.navigate(UserReviewScreenRoute(mediaId, type))
+                mediaId = args.id,
+                mediaType = args.type,
+                onReviewClick = { mediaId, mediaType ->
+                    navController.navigate(UserReviewScreenRoute(mediaId, mediaType))
                 },
-                navController
+                onBackClick = { navController.navigateUp() }
             )
         }
 
