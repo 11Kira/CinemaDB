@@ -24,7 +24,6 @@ fun AppNavHost(
     ) {
         composable<MoviesRoute> {
             MovieListScreen(
-                contentPadding = contentPadding,
                 onItemClick = { movieId, type ->
                     navController.navigate(DetailsScreenRoute(movieId, type))
                 },

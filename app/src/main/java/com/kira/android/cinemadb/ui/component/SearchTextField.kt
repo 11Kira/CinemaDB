@@ -2,6 +2,8 @@ package com.kira.android.cinemadb.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,71 +51,83 @@ fun SearchTextField(
     focusManager: FocusManager
 ) {
     var isFocused by remember { mutableStateOf(false) }
-    BasicTextField(
-        value = searchText,
-        onValueChange = onSearchTextChange,
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp)
-            .onFocusChanged { isFocused = it.isFocused },
-        singleLine = true,
-        cursorBrush = SolidColor(Color.White),
-        textStyle = TextStyle(color = Color.White, fontSize = 16.sp),
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                keyboardController?.hide()
+            .background(Color.Black)
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
                 focusManager.clearFocus()
             }
-        ),
-        decorationBox = { innerTextField ->
-            Row(
-                modifier = Modifier
-                    .height(38.dp)
-                    .background(color = Color.Transparent)
-                    .border(
-                        width = 1.5.dp,
-                        color = if (isFocused) Color.White else Color.DarkGray,
-                        shape = RoundedCornerShape(24)
-                    )
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                    tint = if (isFocused) Color.White else Color.Gray,
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Box(modifier = Modifier.weight(1f)) {
-                    if (searchText.isEmpty()) {
-                        Text(
-                            modifier = Modifier.align(Alignment.CenterStart),
-                            text = "Search Movie...",
-                            style = TextStyle(
-                                color = Color.Gray,
-                                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                                fontSize = 14.sp,
-                            ),
-                        )
-                    }
-                    innerTextField()
+    ) {
+        BasicTextField(
+            value = searchText,
+            onValueChange = onSearchTextChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 5.dp)
+                .onFocusChanged { isFocused = it.isFocused },
+            singleLine = true,
+            cursorBrush = SolidColor(Color.White),
+            textStyle = TextStyle(color = Color.White, fontSize = 16.sp),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
                 }
-                if (searchText.isNotEmpty()) {
-                    IconButton(
-                        onClick = {
-                            onClearClicked()
-                        },
-                        modifier = Modifier.size(20.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.Clear,
-                            contentDescription = "Clear",
-                            tint = Color.Gray
+            ),
+            decorationBox = { innerTextField ->
+                Row(
+                    modifier = Modifier
+                        .height(38.dp)
+                        .background(color = Color.Transparent)
+                        .border(
+                            width = 1.5.dp,
+                            color = if (isFocused) Color.White else Color.DarkGray,
+                            shape = RoundedCornerShape(24)
                         )
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = if (isFocused) Color.White else Color.Gray,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (searchText.isEmpty()) {
+                            Text(
+                                modifier = Modifier.align(Alignment.CenterStart),
+                                text = "Search Movie...",
+                                style = TextStyle(
+                                    color = Color.Gray,
+                                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                                    fontSize = 14.sp,
+                                ),
+                            )
+                        }
+                        innerTextField()
+                    }
+                    if (searchText.isNotEmpty()) {
+                        IconButton(
+                            onClick = {
+                                onClearClicked()
+                            },
+                            modifier = Modifier.size(20.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Clear,
+                                contentDescription = "Clear",
+                                tint = Color.Gray
+                            )
+                        }
                     }
                 }
             }
-        }
-    )
+        )
+    }
 }

@@ -1,0 +1,183 @@
+package com.kira.android.cinemadb.ui.component
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.toFontFamily
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.paging.compose.LazyPagingItems
+import coil3.compose.AsyncImage
+import com.kira.android.cinemadb.R
+import com.kira.android.cinemadb.features.list.movies.MovieViewModel
+import com.kira.android.cinemadb.model.MovieResult
+import com.kira.android.cinemadb.model.TVShowResult
+import com.kira.android.cinemadb.model.enums.MediaType
+import com.kira.android.cinemadb.utils.AppUtil
+import kotlin.math.roundToInt
+
+@Composable
+fun MediaGrid(
+    movies: LazyPagingItems<MovieResult>? = null,
+    tvShows: LazyPagingItems<TVShowResult>? = null,
+    mediaType: String,
+    onItemClick: (Long, String) -> Unit,
+    viewModel: MovieViewModel
+) {
+    val lazyRowState = rememberLazyStaggeredGridState()
+
+    if (viewModel.scrollToTopState.collectAsState().value) {
+        LaunchedEffect(key1 = true) {
+            lazyRowState.scrollToItem(0)
+            viewModel.updateScrollToTopState(false)
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
+        LazyVerticalStaggeredGrid(
+            state = lazyRowState,
+            modifier = Modifier
+                .fillMaxSize(),
+            contentPadding = PaddingValues(
+                top = 146.dp
+            ),
+            columns = StaggeredGridCells.Fixed(2),
+            verticalItemSpacing = 5.dp,
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            content = {
+                if (mediaType == MediaType.MOVIE.name) {
+                    items(movies?.itemCount ?: 0) { index ->
+                        val selectedMovie = movies?.get(index)
+                        val posterPath =
+                            selectedMovie?.posterPath?.let { AppUtil.retrievePosterImageUrl(it) }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            AsyncImage(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(
+                                        min = 250.dp,
+                                        max = 320.dp
+                                    )
+                                    .clickable {
+                                        selectedMovie?.id?.let {
+                                            onItemClick(
+                                                it,
+                                                mediaType
+                                            )
+                                        }
+                                    },
+                                model = posterPath,
+                                contentScale = ContentScale.Crop,
+                                contentDescription = "Description",
+                                placeholder = painterResource(id = R.drawable.ic_video),
+                                error = painterResource(id = R.drawable.ic_video)
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .align(Alignment.TopEnd)
+                                    .size(35.dp)
+                                    .clip(CircleShape)
+                                    .background(color = Color.Black.copy(alpha = 0.5f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    modifier = Modifier.wrapContentHeight(),
+                                    color = Color.White,
+                                    text = (selectedMovie?.voteAverage?.times(10.0)?.roundToInt()
+                                        ?.div(10.0)).toString(),
+                                    fontSize = 15.sp,
+                                    fontFamily = Font(R.font.roboto_bold).toFontFamily()
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    items(tvShows?.itemCount ?: 0) { index ->
+                        val selectedTvShow = tvShows?.get(index)
+                        val posterPath =
+                            selectedTvShow?.posterPath?.let { AppUtil.retrievePosterImageUrl(it) }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            AsyncImage(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(
+                                        min = 250.dp,
+                                        max = 320.dp
+                                    )
+                                    .clickable {
+                                        selectedTvShow?.id?.let {
+                                            onItemClick(
+                                                it,
+                                                mediaType
+                                            )
+                                        }
+                                    },
+                                model = posterPath,
+                                contentScale = ContentScale.Crop,
+                                contentDescription = "Description",
+                                placeholder = painterResource(id = R.drawable.ic_video),
+                                error = painterResource(id = R.drawable.ic_video)
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .align(Alignment.TopEnd)
+                                    .size(35.dp)
+                                    .clip(CircleShape)
+                                    .background(color = Color.Black.copy(alpha = 0.5f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    modifier = Modifier.wrapContentHeight(),
+                                    color = Color.White,
+                                    text = (selectedTvShow?.voteAverage?.times(10.0)?.roundToInt()
+                                        ?.div(10.0)).toString(),
+                                    fontSize = 15.sp,
+                                    fontFamily = Font(R.font.roboto_bold).toFontFamily()
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+        )
+    }
+}
