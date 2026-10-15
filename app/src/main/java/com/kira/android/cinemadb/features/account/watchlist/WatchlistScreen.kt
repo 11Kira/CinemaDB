@@ -51,6 +51,7 @@ import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
+import com.kira.android.cinemadb.model.enums.MediaType
 import com.kira.android.cinemadb.ui.component.SegmentedControl
 import com.kira.android.cinemadb.utils.AppUtil
 import kotlin.math.roundToInt
@@ -61,7 +62,7 @@ private var currentlySelected = 0
 @Composable
 fun WatchlistScreen(
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit,
+    onItemClick: (Long, String) -> Unit,
     onScroll: (Float, Float) -> Unit
 ) {
     viewModel = hiltViewModel()
@@ -75,7 +76,7 @@ fun WatchlistScreen(
 @Composable
 fun MainWatchlistScreen(
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit,
+    onItemClick: (Long, String) -> Unit,
     onScroll: (Float, Float) -> Unit
 ) {
     val movieWatchlist by rememberUpdatedState(newValue = viewModel.movieWatchlistState.collectAsLazyPagingItems())
@@ -111,9 +112,21 @@ fun MainWatchlistScreen(
             .nestedScroll(nestedScrollConnection)
     ) {
         if (typeSelected.collectAsState().value == "Movies") {
-            PopulateWatchlistGrid(movieWatchlist, null, 1, contentPadding, onItemClick)
+            PopulateWatchlistGrid(
+                movieWatchlist,
+                null,
+                MediaType.MOVIE.name,
+                contentPadding,
+                onItemClick
+            )
         } else {
-            PopulateWatchlistGrid(null, tvShowWatchlist, 2, contentPadding, onItemClick)
+            PopulateWatchlistGrid(
+                null,
+                tvShowWatchlist,
+                MediaType.TV_SHOW.name,
+                contentPadding,
+                onItemClick
+            )
         }
         Column(
             modifier = Modifier
@@ -167,9 +180,9 @@ fun SegmentedControlWatchlist(
 fun PopulateWatchlistGrid(
     movies: LazyPagingItems<MovieResult>? = null,
     tvShows: LazyPagingItems<TVShowResult>? = null,
-    type: Int,
+    type: String,
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit
+    onItemClick: (Long, String) -> Unit
 ) {
     val lazyRowState = rememberLazyStaggeredGridState()
     if (viewModel.scrollToTopState.collectAsState().value) {
@@ -194,13 +207,13 @@ fun PopulateWatchlistGrid(
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             content = {
-                if (type == 1) {
+                if (type == MediaType.MOVIE.name) {
                     items(movies?.itemCount ?: 0) { index ->
                         val selectedMovie = movies?.get(index)
                         GridItemContent(
                             selectedMovie = selectedMovie,
                             selectedTvShow = null,
-                            type = 1,
+                            type = type,
                             onItemClick = { id, type ->
                                 onItemClick(id, type)
                             }
@@ -212,7 +225,7 @@ fun PopulateWatchlistGrid(
                         GridItemContent(
                             selectedMovie = null,
                             selectedTvShow = selectedTvShow,
-                            type = 2,
+                            type = type,
                             onItemClick = { id, type ->
                                 onItemClick(id, type)
                             }
@@ -228,11 +241,15 @@ fun PopulateWatchlistGrid(
 fun GridItemContent(
     selectedMovie: MovieResult? = null,
     selectedTvShow: TVShowResult? = null,
-    type: Int,
-    onItemClick: (Long, Int) -> Unit
+    type: String,
+    onItemClick: (Long, String) -> Unit
 ) {
     val posterPath =
-        if (type == 1) selectedMovie?.posterPath?.let { AppUtil.retrievePosterImageUrl(it) } else selectedTvShow?.posterPath?.let {
+        if (type == MediaType.MOVIE.name) selectedMovie?.posterPath?.let {
+            AppUtil.retrievePosterImageUrl(
+                it
+            )
+        } else selectedTvShow?.posterPath?.let {
             AppUtil.retrievePosterImageUrl(
                 it
             )
@@ -247,12 +264,12 @@ fun GridItemContent(
                 .fillMaxWidth()
                 .heightIn(min = 250.dp, max = 320.dp) // Limits the "chaos" of the stagger
                 .clickable {
-                    if (type == 1) selectedMovie?.id?.let {
+                    if (type == MediaType.MOVIE.name) selectedMovie?.id?.let {
                         onItemClick(
                             it,
-                            1
+                            type
                         )
-                    } else selectedTvShow?.id?.let { onItemClick(it, 2) }
+                    } else selectedTvShow?.id?.let { onItemClick(it, type) }
                 },
             model = posterPath,
             contentScale = ContentScale.Crop,
@@ -273,7 +290,7 @@ fun GridItemContent(
             Text(
                 modifier = Modifier.wrapContentHeight(),
                 color = Color.White,
-                text = if (type == 1) {
+                text = if (type == MediaType.MOVIE.name) {
                     selectedMovie?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0).toString()
                 } else {
                     selectedTvShow?.voteAverage?.times(10.0)?.roundToInt()?.div(10.0).toString()

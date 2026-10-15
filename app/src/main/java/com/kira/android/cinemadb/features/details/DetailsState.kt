@@ -3,8 +3,14 @@ package com.kira.android.cinemadb.features.details
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
 
-sealed class DetailsState {
-    data class ShowError(val error: Any): DetailsState()
-    data class SetMovieDetails(val movieDetails: MovieResult): DetailsState()
-    data class SetTvShowDetails(val tvShowDetails: TVShowResult): DetailsState()
+data class DetailsUiState(
+    val movieDetails: MovieResult? = null,
+    val tvShowDetails: TVShowResult? = null,
+    val isLoading: Boolean = false,
+    val movieWatchlistStatus: Boolean = false,
+    val tvShowWatchlistStatus: Boolean = false
+)
+
+sealed interface DetailsUiEffect {
+    data class ShowSnackbar(val message: String) : DetailsUiEffect
 }

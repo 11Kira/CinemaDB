@@ -1,6 +1,8 @@
 package com.kira.android.cinemadb.data.remote.source.tv
 
 import com.kira.android.cinemadb.data.remote.service.TVService
+import com.kira.android.cinemadb.model.AccountStates
+import com.kira.android.cinemadb.model.TVShowResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -43,7 +45,7 @@ class TVRemoteSource @Inject constructor(
     suspend fun getTVShowDetails(
         token: String,
         tvSeriesId: Long,
-    ) = withContext(Dispatchers.IO) {
+    ): TVShowResult = withContext(Dispatchers.IO) {
         tvService.getTVShowDetails(
             header = token,
             seriesId = tvSeriesId,
@@ -53,7 +55,7 @@ class TVRemoteSource @Inject constructor(
     suspend fun getTVShowWatchlistDetails(
         token: String,
         tvSeriesId: Long,
-    ) = withContext(Dispatchers.IO) {
+    ): AccountStates = withContext(Dispatchers.IO) {
         tvService.getTVShowWatchlistDetails(
             header = token,
             seriesId = tvSeriesId,

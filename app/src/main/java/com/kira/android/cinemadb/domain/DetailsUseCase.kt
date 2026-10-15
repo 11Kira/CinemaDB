@@ -11,7 +11,6 @@ class DetailsUseCase @Inject constructor(
     private val movieRepository: MovieRepository,
     private val tvRepository: TVRepository
 ) {
-
     suspend fun getMovieDetails(
         token: String,
         movieId: Long,

@@ -1,93 +1,118 @@
 package com.kira.android.cinemadb.features.details
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
 import com.kira.android.cinemadb.domain.AccountUseCase
 import com.kira.android.cinemadb.domain.DetailsUseCase
+import com.kira.android.cinemadb.model.enums.MediaType
+import com.kira.android.cinemadb.utils.NetworkUtils
 import com.kira.android.cinemadb.utils.SettingsPrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
-    @ApplicationContext val context : Context,
     private val detailsUseCase: DetailsUseCase,
-    private val accountUseCase: AccountUseCase
-): ViewModel() {
+    private val accountUseCase: AccountUseCase,
+    private val settingsPrefs: SettingsPrefs,
+    private val networkUtils: NetworkUtils,
+) : ViewModel() {
 
-    var header: String
-    var accountId = 0L
+    private val _detailsUiState = MutableStateFlow(DetailsUiState())
+    val detailsUiState = _detailsUiState.asStateFlow()
 
-    private val mutableDetailsState: MutableSharedFlow<DetailsState> = MutableSharedFlow()
-    val movieState
-        get() = mutableDetailsState.asSharedFlow()
+    private val _detailsEffect = Channel<DetailsUiEffect>(Channel.BUFFERED)
+    val detailsEffect = _detailsEffect.receiveAsFlow()
 
-    init {
-        runBlocking {
-            header =  SettingsPrefs(context).getToken.first().toString()
-            accountId = SettingsPrefs(context).getAccountId.first()
+    fun getMovieDetails(movieId: Long) {
+        viewModelScope.launch {
+            _detailsUiState.update { it.copy(isLoading = true) }
+            try {
+                val header = settingsPrefs.getToken.first()
+                val response = detailsUseCase.getMovieDetails(header, movieId)
+                _detailsUiState.update { it.copy(movieDetails = response) }
+            } catch (e: Exception) {
+                val errorMessage = networkUtils.parseNetworkError(e)
+                _detailsEffect.send(DetailsUiEffect.ShowSnackbar(message = errorMessage))
+            } finally {
+                _detailsUiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 
-    fun getMovieDetails(movieId: Long) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
-            runBlocking {
-                mutableDetailsState.emit(DetailsState.ShowError(error))
+    fun getWatchlistStatus(mediaId: Long, mediaType: String) {
+        viewModelScope.launch {
+            _detailsUiState.update { it.copy(isLoading = true) }
+            try {
+                val header = settingsPrefs.getToken.first()
+                if (mediaType == MediaType.MOVIE.name) {
+                    val response = detailsUseCase.getMovieWatchlistDetails(header, mediaId)
+                    _detailsUiState.update { it.copy(movieWatchlistStatus = response.watchlist) }
+                } else {
+                    val response = detailsUseCase.getTVShowWatchlistDetails(header, mediaId)
+                    _detailsUiState.update { it.copy(tvShowWatchlistStatus = response.watchlist) }
+                }
+            } catch (e: Exception) {
+                val errorMessage = networkUtils.parseNetworkError(e)
+                _detailsEffect.send(DetailsUiEffect.ShowSnackbar(message = errorMessage))
+            } finally {
+                _detailsUiState.update { it.copy(isLoading = false) }
             }
-        }) {
-            val result = detailsUseCase.getMovieDetails(header, movieId)
-            val watchListResult = async { detailsUseCase.getMovieWatchlistDetails(header, movieId) }
-            result.accountStates = watchListResult.await()
-
-            mutableDetailsState.emit(DetailsState.SetMovieDetails(result))
         }
     }
 
     fun getTVShowDetails(tvSeriesId: Long) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
-            runBlocking {
-                mutableDetailsState.emit(DetailsState.ShowError(error))
+        if (_detailsUiState.value.tvShowDetails?.id == tvSeriesId) return
+        viewModelScope.launch {
+            _detailsUiState.update { it.copy(isLoading = true) }
+            try {
+                val header = settingsPrefs.getToken.first()
+                val response = detailsUseCase.getTVShowDetails(header, tvSeriesId)
+                _detailsUiState.update { it.copy(tvShowDetails = response) }
+            } catch (e: Exception) {
+                val errorMessage = networkUtils.parseNetworkError(e)
+                _detailsEffect.send(DetailsUiEffect.ShowSnackbar(message = errorMessage))
+            } finally {
+                _detailsUiState.update { it.copy(isLoading = false) }
             }
-        }) {
-            val result = detailsUseCase.getTVShowDetails(header, tvSeriesId)
-            val watchListResult = async { detailsUseCase.getTVShowWatchlistDetails(header, tvSeriesId) }
-            result.accountStates = watchListResult.await()
-
-            mutableDetailsState.emit(DetailsState.SetTvShowDetails(result))
         }
     }
 
-    fun addToWatchlist(mediaType: Int, mediaId: Long, isWatchlist: Boolean) {
+    private fun submitWatchlistObject(jsonObject: JsonObject, mediaType: String, mediaId: Long) {
+        viewModelScope.launch {
+            _detailsUiState.update { it.copy(isLoading = true) }
+            try {
+                val header = settingsPrefs.getToken.first()
+                val accountId = settingsPrefs.getAccountId.first()
+                val response = accountUseCase.addToWatchlist(header, accountId, jsonObject)
+                if (mediaType == MediaType.MOVIE.name && response.success) {
+                    getWatchlistStatus(mediaId, MediaType.MOVIE.name)
+                } else {
+                    getWatchlistStatus(mediaId, MediaType.TV_SHOW.name)
+                }
+            } catch (e: Exception) {
+                val errorMessage = networkUtils.parseNetworkError(e)
+                _detailsEffect.send(DetailsUiEffect.ShowSnackbar(message = errorMessage))
+            } finally {
+                _detailsUiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    fun addToWatchlist(mediaType: String, mediaId: Long, isWatchlist: Boolean) {
         val jsonObject = JsonObject()
-        val type = if (mediaType == 1) "movie" else "tv"
+        val type = if (mediaType == MediaType.MOVIE.name) "movie" else "tv"
         jsonObject.addProperty("media_type", type)
         jsonObject.addProperty("media_id", mediaId)
         jsonObject.addProperty("watchlist", isWatchlist)
         submitWatchlistObject(jsonObject, mediaType, mediaId)
-    }
-
-    private fun submitWatchlistObject(jsonObject: JsonObject, mediaType: Int, mediaId: Long) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
-            runBlocking {
-                mutableDetailsState.emit(DetailsState.ShowError(error))
-            }
-        }) {
-            val invoke = accountUseCase.addToWatchlist(header, accountId, jsonObject)
-            if (mediaType == 1 && invoke.success) {
-                getMovieDetails(mediaId)
-            } else {
-                getTVShowDetails(mediaId)
-            }
-        }
     }
 }

@@ -1,7 +1,6 @@
 package com.kira.android.cinemadb.features.details
 
 import android.text.TextUtils
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,13 +23,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,90 +41,87 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.MovieResult
 import com.kira.android.cinemadb.model.TVShowResult
+import com.kira.android.cinemadb.model.enums.MediaType
 import com.kira.android.cinemadb.ui.component.CircularIconButton
 import com.kira.android.cinemadb.ui.component.HeaderText
 import com.kira.android.cinemadb.ui.component.ReviewSection
 import com.kira.android.cinemadb.utils.AppUtil
-import kotlinx.coroutines.flow.SharedFlow
-
-lateinit var viewModel: DetailsViewModel
 
 @Composable
 fun DetailsScreen(
-    id: Long,
-    type: Int,
-    onReviewClick: (Long, Int) -> Unit,
-    navController: NavController
+    mediaId: Long,
+    mediaType: String,
+    onReviewClick: (Long, String) -> Unit,
+    onBackClick: () -> Unit,
+    viewModel: DetailsViewModel = hiltViewModel()
 ) {
-    viewModel = hiltViewModel()
-    MainScreen(navController, type, viewModel.movieState, onReviewClick)
-    when (type) {
-        1 -> {
-            viewModel.getMovieDetails(id)
-        }
+    val detailsUiState by viewModel.detailsUiState.collectAsStateWithLifecycle()
+    val isAddedToWatchlist =
+        if (mediaType == MediaType.MOVIE.name)
+            detailsUiState.movieWatchlistStatus
+        else
+            detailsUiState.tvShowWatchlistStatus
 
-        2 -> {
-            viewModel.getTVShowDetails(id)
+    LaunchedEffect(key1 = mediaId) {
+        when (mediaType) {
+            MediaType.MOVIE.name -> {
+                viewModel.getMovieDetails(mediaId)
+            }
+
+            MediaType.TV_SHOW.name -> {
+                viewModel.getTVShowDetails(mediaId)
+            }
         }
+        viewModel.getWatchlistStatus(mediaId, mediaType)
     }
-}
 
-@Composable
-fun MainScreen(
-    navController: NavController,
-    type: Int,
-    sharedFlow: SharedFlow<DetailsState>,
-    onReviewClick: (Long, Int) -> Unit
-) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    var selectedMovie by remember { mutableStateOf<MovieResult?>(null) }
-    var selectedTVShow by remember { mutableStateOf<TVShowResult?>(null) }
+    LaunchedEffect(key1 = true) {
+        viewModel.detailsEffect.collect { effect ->
+            when (effect) {
+                is DetailsUiEffect.ShowSnackbar -> {
 
-    LaunchedEffect(key1 = Unit) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            sharedFlow.collect { state ->
-                when (state) {
-                    is DetailsState.SetMovieDetails -> {
-                        selectedMovie = state.movieDetails
-                    }
-
-                    is DetailsState.SetTvShowDetails -> {
-                        selectedTVShow = state.tvShowDetails
-                    }
-
-                    is DetailsState.ShowError -> {
-                        Log.e("Error: ", state.error.toString())
-                    }
                 }
             }
         }
     }
 
-    selectedMovie?.let {
-        SetupDetails(
-            movie = it,
-            tvShow = null,
-            type,
-            navController,
-            onReviewClick
-        )
-    }
-    selectedTVShow?.let {
-        SetupDetails(
-            movie = null,
-            tvShow = it,
-            type,
-            navController,
-            onReviewClick
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (mediaType == MediaType.MOVIE.name) {
+            detailsUiState.movieDetails?.let { movie ->
+                SetupDetails(
+                    movie = movie,
+                    tvShow = null,
+                    mediaId,
+                    mediaType,
+                    onReviewClick,
+                    onBackClick,
+                    isAddedToWatchlist,
+                    viewModel,
+                )
+            }
+        } else {
+            detailsUiState.tvShowDetails?.let { tvShow ->
+                SetupDetails(
+                    movie = null,
+                    tvShow = tvShow,
+                    mediaId,
+                    mediaType,
+                    onReviewClick,
+                    onBackClick,
+                    isAddedToWatchlist,
+                    viewModel
+                )
+            }
+        }
+
+        if (detailsUiState.isLoading && detailsUiState.movieDetails == null) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
     }
 }
 
@@ -135,9 +129,12 @@ fun MainScreen(
 fun SetupDetails(
     movie: MovieResult? = null,
     tvShow: TVShowResult? = null,
-    type: Int,
-    navController: NavController,
-    onReviewClick: (movieId: Long, type: Int) -> Unit
+    mediaId: Long,
+    mediaType: String,
+    onReviewClick: (mediaId: Long, type: String) -> Unit,
+    onBackClick: () -> Unit,
+    isAddedToWatchlist: Boolean,
+    viewModel: DetailsViewModel
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -145,12 +142,11 @@ fun SetupDetails(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 20.dp)
         ) {
             val posterPath = AppUtil.retrievePosterImageUrl(
-                if (type == 1) {
+                if (mediaType == MediaType.MOVIE.name) {
                     movie?.posterPath.toString()
                 } else {
                     tvShow?.posterPath.toString()
@@ -200,7 +196,7 @@ fun SetupDetails(
                     fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                     modifier = Modifier.fillMaxWidth(),
                     text =
-                        if (type == 1) {
+                        if (mediaType == MediaType.MOVIE.name) {
                             movie?.tagline?.ifBlank { movie.title }.toString()
                         } else {
                             tvShow?.tagline?.ifBlank { tvShow.name }.toString()
@@ -216,7 +212,7 @@ fun SetupDetails(
                     fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                     modifier = Modifier
                         .wrapContentWidth(),
-                    text = if (type == 1) {
+                    text = if (mediaType == MediaType.MOVIE.name) {
                         movie?.title.toString()
                     } else {
                         tvShow?.name.toString()
@@ -227,7 +223,7 @@ fun SetupDetails(
                 HeaderText("Cast")
 
                 val casts = ArrayList<String>()
-                if (type == 1) {
+                if (mediaType == MediaType.MOVIE.name) {
                     movie?.credits?.cast?.forEach { cast ->
                         if (casts.size < 7) cast.name?.let { casts.add(it) }
                     }
@@ -249,7 +245,7 @@ fun SetupDetails(
                 HeaderText("Details")
 
                 val genres = ArrayList<String>()
-                if (type == 1) {
+                if (mediaType == MediaType.MOVIE.name) {
                     movie?.genres?.forEach { genre -> genre.name?.let { genres.add(it) } }
                 } else {
                     tvShow?.genres?.forEach { genre -> genre.name?.let { genres.add(it) } }
@@ -263,7 +259,7 @@ fun SetupDetails(
                     fontSize = 14.sp,
                     fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                     modifier = Modifier.fillMaxWidth(),
-                    text = if (type == 1) {
+                    text = if (mediaType == MediaType.MOVIE.name) {
                         "${AppUtil.formatReleaseYear(movie?.releaseDate)} • ${
                             TextUtils.join(
                                 ", ",
@@ -293,19 +289,19 @@ fun SetupDetails(
                     color = Color.White
                 )
 
-                if (type == 1) {
+                if (mediaType == MediaType.MOVIE.name) {
                     ReviewSection(
                         rating = movie?.voteAverage ?: 0.0,
                         reviewCount = movie?.voteCount ?: 0
                     ) {
-                        onReviewClick(movie?.id ?: 0L, type)
+                        onReviewClick(movie?.id ?: 0L, mediaType)
                     }
                 } else {
                     ReviewSection(
                         rating = tvShow?.voteAverage ?: 0.0,
                         reviewCount = tvShow?.voteCount ?: 0
                     ) {
-                        onReviewClick(tvShow?.id ?: 0L, type)
+                        onReviewClick(tvShow?.id ?: 0L, mediaType)
                     }
                 }
 
@@ -318,7 +314,7 @@ fun SetupDetails(
                     modifier = Modifier
                         .fillMaxWidth(),
                     text =
-                        if (type == 1) {
+                        if (mediaType == MediaType.MOVIE.name) {
                             movie?.overview.toString()
                         } else {
                             tvShow?.overview.toString()
@@ -344,7 +340,7 @@ fun SetupDetails(
         ) {
             CircularIconButton(
                 icon = Icons.AutoMirrored.Filled.ArrowBack,
-                onClick = { navController.navigateUp() }
+                onClick = { onBackClick() }
             )
 
             Box(
@@ -353,20 +349,11 @@ fun SetupDetails(
                     .clip(CircleShape)
                     .background(color = Color.Black.copy(alpha = 0.5f))
                     .clickable {
-                        if (type == 1) {
-                            if (movie?.accountStates?.watchlist == true) {
-                                viewModel.addToWatchlist(type, movie.id, false)
-                            } else {
-                                viewModel.addToWatchlist(type, movie?.id ?: 0L, true)
-                            }
+                        if (isAddedToWatchlist) {
+                            viewModel.addToWatchlist(mediaType, mediaId, false)
                         } else {
-                            if (tvShow?.accountStates?.watchlist == true) {
-                                viewModel.addToWatchlist(type, tvShow.id, false)
-                            } else {
-                                viewModel.addToWatchlist(type, tvShow?.id ?: 0L, true)
-                            }
+                            viewModel.addToWatchlist(mediaType, mediaId, true)
                         }
-
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -375,11 +362,7 @@ fun SetupDetails(
                         .wrapContentHeight()
                         .padding(10.dp),
                     color = Color.White,
-                    text = if (type == 1) {
-                        if (movie?.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist"
-                    } else {
-                        if (tvShow?.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist"
-                    },
+                    text = if (isAddedToWatchlist) "Remove from Watchlist" else "Add to Watchlist",
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                     fontSize = 15.sp
                 )

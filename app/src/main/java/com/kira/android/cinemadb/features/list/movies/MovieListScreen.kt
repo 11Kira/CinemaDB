@@ -46,7 +46,7 @@ import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
@@ -54,33 +54,35 @@ import com.kira.android.cinemadb.MainActivity.Companion.TOP_RATED
 import com.kira.android.cinemadb.MainActivity.Companion.TRENDING
 import com.kira.android.cinemadb.R
 import com.kira.android.cinemadb.model.MovieResult
+import com.kira.android.cinemadb.model.enums.MediaType
 import com.kira.android.cinemadb.ui.component.SearchTextField
 import com.kira.android.cinemadb.ui.component.SegmentedControl
 import com.kira.android.cinemadb.utils.AppUtil
 import kotlin.math.roundToInt
 
-lateinit var viewModel: MovieViewModel
 private var currentlySelected = 0
 
 @Composable
 fun MovieListScreen(
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit,
-    onScroll: (Float, Float) -> Unit
+    onItemClick: (Long, String) -> Unit,
+    onScroll: (Float, Float) -> Unit,
+    viewModel: MovieViewModel = hiltViewModel()
 ) {
-    viewModel = hiltViewModel()
     MainMovieScreen(
         contentPadding,
         onItemClick,
-        onScroll
+        onScroll,
+        viewModel
     )
 }
 
 @Composable
 fun MainMovieScreen(
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit,
-    onScroll: (Float, Float) -> Unit
+    onItemClick: (Long, String) -> Unit,
+    onScroll: (Float, Float) -> Unit,
+    viewModel: MovieViewModel
 ) {
     val movies by rememberUpdatedState(newValue = viewModel.moviesPagingState.collectAsLazyPagingItems())
     val categoryList = listOf("Trending", "Top Rated")
@@ -106,7 +108,7 @@ fun MainMovieScreen(
             .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
     ) {
-        PopulateMovieGrid(movies, contentPadding, onItemClick)
+        PopulateMovieGrid(movies, contentPadding, onItemClick, viewModel)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,7 +116,7 @@ fun MainMovieScreen(
                 .background(Color.Black)
                 .statusBarsPadding()
         ) {
-            MovieSegmentedControl(categoryList.toList()) { selectedItem ->
+            MovieSegmentedControl(items = categoryList.toList(), onItemSelection = { selectedItem ->
                 when (selectedItem) {
                     0 -> {
                         if (currentlySelected != 0) {
@@ -134,9 +136,10 @@ fun MainMovieScreen(
                         focusManager.clearFocus()
                     }
                 }
-            }
+            }, viewModel = viewModel)
             SearchField(
-                onClearFocus = { focusManager.clearFocus() }
+                onClearFocus = { focusManager.clearFocus() },
+                viewModel = viewModel
             )
         }
     }
@@ -145,7 +148,8 @@ fun MainMovieScreen(
 @Composable
 fun MovieSegmentedControl(
     items: List<String>,
-    onItemSelection: (selectedItemIndex: Int) -> Unit
+    onItemSelection: (selectedItemIndex: Int) -> Unit,
+    viewModel: MovieViewModel
 ) {
     val selectedTab by remember { mutableStateOf(viewModel.selectedMovieTab) }
 
@@ -162,7 +166,8 @@ fun MovieSegmentedControl(
 
 @Composable
 fun SearchField(
-    onClearFocus: () -> Unit
+    onClearFocus: () -> Unit,
+    viewModel: MovieViewModel
 ) {
     val focusManager = LocalFocusManager.current
     val searchText by viewModel.searchText.collectAsState()
@@ -199,7 +204,8 @@ fun SearchField(
 fun PopulateMovieGrid(
     movies: LazyPagingItems<MovieResult>,
     contentPadding: PaddingValues,
-    onItemClick: (Long, Int) -> Unit
+    onItemClick: (Long, String) -> Unit,
+    viewModel: MovieViewModel
 ) {
     val lazyRowState = rememberLazyStaggeredGridState()
 
@@ -237,8 +243,15 @@ fun PopulateMovieGrid(
                                 .heightIn(
                                     min = 250.dp,
                                     max = 320.dp
-                                ) // Limits the "chaos" of the stagger
-                                .clickable { selectedMovie?.id?.let { onItemClick(it, 1) } },
+                                )
+                                .clickable {
+                                    selectedMovie?.id?.let {
+                                        onItemClick(
+                                            it,
+                                            MediaType.MOVIE.name
+                                        )
+                                    }
+                                },
                             model = posterPath,
                             contentScale = ContentScale.Crop,
                             contentDescription = "Description",

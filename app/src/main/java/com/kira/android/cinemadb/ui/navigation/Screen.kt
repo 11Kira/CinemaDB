@@ -12,7 +12,7 @@ data object TVShowsRoute
 data object WatchlistRoute
 
 @Serializable
-data class DetailsScreenRoute(val id: Long, val type: Int)
+data class DetailsScreenRoute(val id: Long, val type: String)
 
 @Serializable
-data class UserReviewScreenRoute(val id: Long, val type: Int)
+data class UserReviewScreenRoute(val id: Long, val type: String)
