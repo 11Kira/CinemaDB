@@ -100,8 +100,6 @@ fun MainMovieScreen(
                 .background(Color.Black)
                 .statusBarsPadding()
         ) {
-
-
             SegmentedControl(
                 categoryList.toList(),
                 selectedTab,

@@ -68,16 +68,7 @@ fun DetailsScreen(
             detailsUiState.tvShowWatchlistStatus
 
     LaunchedEffect(key1 = mediaId) {
-        when (mediaType) {
-            MediaType.MOVIE.name -> {
-                viewModel.getMovieDetails(mediaId)
-            }
-
-            MediaType.TV_SHOW.name -> {
-                viewModel.getTVShowDetails(mediaId)
-            }
-        }
-        viewModel.getWatchlistStatus(mediaId, mediaType)
+        viewModel.getMediaDetails(mediaId, mediaType)
     }
 
     LaunchedEffect(key1 = true) {
@@ -350,9 +341,9 @@ fun SetupDetails(
                     .background(color = Color.Black.copy(alpha = 0.5f))
                     .clickable {
                         if (isAddedToWatchlist) {
-                            viewModel.addToWatchlist(mediaType, mediaId, false)
+                            viewModel.toggleWatchlist(mediaType, mediaId, false)
                         } else {
-                            viewModel.addToWatchlist(mediaType, mediaId, true)
+                            viewModel.toggleWatchlist(mediaType, mediaId, true)
                         }
                     },
                 contentAlignment = Alignment.Center

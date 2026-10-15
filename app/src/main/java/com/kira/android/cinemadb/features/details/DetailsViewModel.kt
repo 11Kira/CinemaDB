@@ -9,6 +9,7 @@ import com.kira.android.cinemadb.model.enums.MediaType
 import com.kira.android.cinemadb.utils.NetworkUtils
 import com.kira.android.cinemadb.utils.SettingsPrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,33 +33,39 @@ class DetailsViewModel @Inject constructor(
     private val _detailsEffect = Channel<DetailsUiEffect>(Channel.BUFFERED)
     val detailsEffect = _detailsEffect.receiveAsFlow()
 
-    fun getMovieDetails(movieId: Long) {
-        viewModelScope.launch {
-            _detailsUiState.update { it.copy(isLoading = true) }
-            try {
-                val header = settingsPrefs.getToken.first()
-                val response = detailsUseCase.getMovieDetails(header, movieId)
-                _detailsUiState.update { it.copy(movieDetails = response) }
-            } catch (e: Exception) {
-                val errorMessage = networkUtils.parseNetworkError(e)
-                _detailsEffect.send(DetailsUiEffect.ShowSnackbar(message = errorMessage))
-            } finally {
-                _detailsUiState.update { it.copy(isLoading = false) }
-            }
-        }
-    }
-
-    fun getWatchlistStatus(mediaId: Long, mediaType: String) {
+    fun getMediaDetails(mediaId: Long, mediaType: String) {
         viewModelScope.launch {
             _detailsUiState.update { it.copy(isLoading = true) }
             try {
                 val header = settingsPrefs.getToken.first()
                 if (mediaType == MediaType.MOVIE.name) {
-                    val response = detailsUseCase.getMovieWatchlistDetails(header, mediaId)
-                    _detailsUiState.update { it.copy(movieWatchlistStatus = response.watchlist) }
+                    val detailsDeferred = async { detailsUseCase.getMovieDetails(header, mediaId) }
+                    val watchlistDeferred =
+                        async { detailsUseCase.getMovieWatchlistDetails(header, mediaId) }
+
+                    val details = detailsDeferred.await()
+                    val watchlist = watchlistDeferred.await()
+
+                    _detailsUiState.update {
+                        it.copy(
+                            movieDetails = details,
+                            movieWatchlistStatus = watchlist.watchlist
+                        )
+                    }
                 } else {
-                    val response = detailsUseCase.getTVShowWatchlistDetails(header, mediaId)
-                    _detailsUiState.update { it.copy(tvShowWatchlistStatus = response.watchlist) }
+                    val detailsDeferred = async { detailsUseCase.getTVShowDetails(header, mediaId) }
+                    val watchlistDeferred =
+                        async { detailsUseCase.getMovieWatchlistDetails(header, mediaId) }
+
+                    val details = detailsDeferred.await()
+                    val watchlist = watchlistDeferred.await()
+
+                    _detailsUiState.update {
+                        it.copy(
+                            tvShowDetails = details,
+                            tvShowWatchlistStatus = watchlist.watchlist
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 val errorMessage = networkUtils.parseNetworkError(e)
@@ -69,34 +76,29 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    fun getTVShowDetails(tvSeriesId: Long) {
-        if (_detailsUiState.value.tvShowDetails?.id == tvSeriesId) return
-        viewModelScope.launch {
-            _detailsUiState.update { it.copy(isLoading = true) }
-            try {
-                val header = settingsPrefs.getToken.first()
-                val response = detailsUseCase.getTVShowDetails(header, tvSeriesId)
-                _detailsUiState.update { it.copy(tvShowDetails = response) }
-            } catch (e: Exception) {
-                val errorMessage = networkUtils.parseNetworkError(e)
-                _detailsEffect.send(DetailsUiEffect.ShowSnackbar(message = errorMessage))
-            } finally {
-                _detailsUiState.update { it.copy(isLoading = false) }
-            }
-        }
-    }
-
-    private fun submitWatchlistObject(jsonObject: JsonObject, mediaType: String, mediaId: Long) {
+    fun toggleWatchlist(mediaType: String, mediaId: Long, targetWatchlistState: Boolean) {
         viewModelScope.launch {
             _detailsUiState.update { it.copy(isLoading = true) }
             try {
                 val header = settingsPrefs.getToken.first()
                 val accountId = settingsPrefs.getAccountId.first()
+                val jsonObject = JsonObject().apply {
+                    addProperty(
+                        "media_type",
+                        if (mediaType == MediaType.MOVIE.name) "movie" else "tv"
+                    )
+                    addProperty("media_id", mediaId)
+                    addProperty("watchlist", targetWatchlistState)
+                }
                 val response = accountUseCase.addToWatchlist(header, accountId, jsonObject)
-                if (mediaType == MediaType.MOVIE.name && response.success) {
-                    getWatchlistStatus(mediaId, MediaType.MOVIE.name)
-                } else {
-                    getWatchlistStatus(mediaId, MediaType.TV_SHOW.name)
+                if (response.success) {
+                    _detailsUiState.update { state ->
+                        if (mediaType == MediaType.MOVIE.name) {
+                            state.copy(movieWatchlistStatus = targetWatchlistState)
+                        } else {
+                            state.copy(tvShowWatchlistStatus = targetWatchlistState)
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 val errorMessage = networkUtils.parseNetworkError(e)
@@ -105,14 +107,5 @@ class DetailsViewModel @Inject constructor(
                 _detailsUiState.update { it.copy(isLoading = false) }
             }
         }
-    }
-
-    fun addToWatchlist(mediaType: String, mediaId: Long, isWatchlist: Boolean) {
-        val jsonObject = JsonObject()
-        val type = if (mediaType == MediaType.MOVIE.name) "movie" else "tv"
-        jsonObject.addProperty("media_type", type)
-        jsonObject.addProperty("media_id", mediaId)
-        jsonObject.addProperty("watchlist", isWatchlist)
-        submitWatchlistObject(jsonObject, mediaType, mediaId)
     }
 }
