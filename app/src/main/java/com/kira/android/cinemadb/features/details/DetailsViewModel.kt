@@ -33,13 +33,33 @@ class DetailsViewModel @Inject constructor(
     val detailsEffect = _detailsEffect.receiveAsFlow()
 
     fun getMovieDetails(movieId: Long) {
-        if (_detailsUiState.value.movieDetails?.id == movieId) return
         viewModelScope.launch {
             _detailsUiState.update { it.copy(isLoading = true) }
             try {
                 val header = settingsPrefs.getToken.first()
                 val response = detailsUseCase.getMovieDetails(header, movieId)
                 _detailsUiState.update { it.copy(movieDetails = response) }
+            } catch (e: Exception) {
+                val errorMessage = networkUtils.parseNetworkError(e)
+                _detailsEffect.send(DetailsUiEffect.ShowSnackbar(message = errorMessage))
+            } finally {
+                _detailsUiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    fun getWatchlistStatus(mediaId: Long, mediaType: String) {
+        viewModelScope.launch {
+            _detailsUiState.update { it.copy(isLoading = true) }
+            try {
+                val header = settingsPrefs.getToken.first()
+                if (mediaType == MediaType.MOVIE.name) {
+                    val response = detailsUseCase.getMovieWatchlistDetails(header, mediaId)
+                    _detailsUiState.update { it.copy(movieWatchlistStatus = response.watchlist) }
+                } else {
+                    val response = detailsUseCase.getTVShowWatchlistDetails(header, mediaId)
+                    _detailsUiState.update { it.copy(tvShowWatchlistStatus = response.watchlist) }
+                }
             } catch (e: Exception) {
                 val errorMessage = networkUtils.parseNetworkError(e)
                 _detailsEffect.send(DetailsUiEffect.ShowSnackbar(message = errorMessage))
@@ -74,9 +94,9 @@ class DetailsViewModel @Inject constructor(
                 val accountId = settingsPrefs.getAccountId.first()
                 val response = accountUseCase.addToWatchlist(header, accountId, jsonObject)
                 if (mediaType == MediaType.MOVIE.name && response.success) {
-                    getMovieDetails(mediaId)
+                    getWatchlistStatus(mediaId, MediaType.MOVIE.name)
                 } else {
-                    getTVShowDetails(mediaId)
+                    getWatchlistStatus(mediaId, MediaType.TV_SHOW.name)
                 }
             } catch (e: Exception) {
                 val errorMessage = networkUtils.parseNetworkError(e)

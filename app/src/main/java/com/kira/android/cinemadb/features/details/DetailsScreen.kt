@@ -61,6 +61,11 @@ fun DetailsScreen(
     viewModel: DetailsViewModel = hiltViewModel()
 ) {
     val detailsUiState by viewModel.detailsUiState.collectAsStateWithLifecycle()
+    val isAddedToWatchlist =
+        if (mediaType == MediaType.MOVIE.name)
+            detailsUiState.movieWatchlistStatus
+        else
+            detailsUiState.tvShowWatchlistStatus
 
     LaunchedEffect(key1 = mediaId) {
         when (mediaType) {
@@ -72,6 +77,7 @@ fun DetailsScreen(
                 viewModel.getTVShowDetails(mediaId)
             }
         }
+        viewModel.getWatchlistStatus(mediaId, mediaType)
     }
 
     LaunchedEffect(key1 = true) {
@@ -90,10 +96,12 @@ fun DetailsScreen(
                 SetupDetails(
                     movie = movie,
                     tvShow = null,
+                    mediaId,
                     mediaType,
                     onReviewClick,
                     onBackClick,
-                    viewModel
+                    isAddedToWatchlist,
+                    viewModel,
                 )
             }
         } else {
@@ -101,9 +109,11 @@ fun DetailsScreen(
                 SetupDetails(
                     movie = null,
                     tvShow = tvShow,
+                    mediaId,
                     mediaType,
                     onReviewClick,
                     onBackClick,
+                    isAddedToWatchlist,
                     viewModel
                 )
             }
@@ -119,9 +129,11 @@ fun DetailsScreen(
 fun SetupDetails(
     movie: MovieResult? = null,
     tvShow: TVShowResult? = null,
-    type: String,
+    mediaId: Long,
+    mediaType: String,
     onReviewClick: (mediaId: Long, type: String) -> Unit,
     onBackClick: () -> Unit,
+    isAddedToWatchlist: Boolean,
     viewModel: DetailsViewModel
 ) {
     Box(
@@ -134,7 +146,7 @@ fun SetupDetails(
                 .padding(bottom = 20.dp)
         ) {
             val posterPath = AppUtil.retrievePosterImageUrl(
-                if (type == MediaType.MOVIE.name) {
+                if (mediaType == MediaType.MOVIE.name) {
                     movie?.posterPath.toString()
                 } else {
                     tvShow?.posterPath.toString()
@@ -184,7 +196,7 @@ fun SetupDetails(
                     fontFamily = Font(R.font.roboto_bold).toFontFamily(),
                     modifier = Modifier.fillMaxWidth(),
                     text =
-                        if (type == MediaType.MOVIE.name) {
+                        if (mediaType == MediaType.MOVIE.name) {
                             movie?.tagline?.ifBlank { movie.title }.toString()
                         } else {
                             tvShow?.tagline?.ifBlank { tvShow.name }.toString()
@@ -200,7 +212,7 @@ fun SetupDetails(
                     fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                     modifier = Modifier
                         .wrapContentWidth(),
-                    text = if (type == MediaType.MOVIE.name) {
+                    text = if (mediaType == MediaType.MOVIE.name) {
                         movie?.title.toString()
                     } else {
                         tvShow?.name.toString()
@@ -211,7 +223,7 @@ fun SetupDetails(
                 HeaderText("Cast")
 
                 val casts = ArrayList<String>()
-                if (type == MediaType.MOVIE.name) {
+                if (mediaType == MediaType.MOVIE.name) {
                     movie?.credits?.cast?.forEach { cast ->
                         if (casts.size < 7) cast.name?.let { casts.add(it) }
                     }
@@ -233,7 +245,7 @@ fun SetupDetails(
                 HeaderText("Details")
 
                 val genres = ArrayList<String>()
-                if (type == MediaType.MOVIE.name) {
+                if (mediaType == MediaType.MOVIE.name) {
                     movie?.genres?.forEach { genre -> genre.name?.let { genres.add(it) } }
                 } else {
                     tvShow?.genres?.forEach { genre -> genre.name?.let { genres.add(it) } }
@@ -247,7 +259,7 @@ fun SetupDetails(
                     fontSize = 14.sp,
                     fontFamily = Font(R.font.roboto_regular).toFontFamily(),
                     modifier = Modifier.fillMaxWidth(),
-                    text = if (type == MediaType.MOVIE.name) {
+                    text = if (mediaType == MediaType.MOVIE.name) {
                         "${AppUtil.formatReleaseYear(movie?.releaseDate)} • ${
                             TextUtils.join(
                                 ", ",
@@ -277,19 +289,19 @@ fun SetupDetails(
                     color = Color.White
                 )
 
-                if (type == MediaType.MOVIE.name) {
+                if (mediaType == MediaType.MOVIE.name) {
                     ReviewSection(
                         rating = movie?.voteAverage ?: 0.0,
                         reviewCount = movie?.voteCount ?: 0
                     ) {
-                        onReviewClick(movie?.id ?: 0L, type)
+                        onReviewClick(movie?.id ?: 0L, mediaType)
                     }
                 } else {
                     ReviewSection(
                         rating = tvShow?.voteAverage ?: 0.0,
                         reviewCount = tvShow?.voteCount ?: 0
                     ) {
-                        onReviewClick(tvShow?.id ?: 0L, type)
+                        onReviewClick(tvShow?.id ?: 0L, mediaType)
                     }
                 }
 
@@ -302,7 +314,7 @@ fun SetupDetails(
                     modifier = Modifier
                         .fillMaxWidth(),
                     text =
-                        if (type == MediaType.MOVIE.name) {
+                        if (mediaType == MediaType.MOVIE.name) {
                             movie?.overview.toString()
                         } else {
                             tvShow?.overview.toString()
@@ -337,20 +349,11 @@ fun SetupDetails(
                     .clip(CircleShape)
                     .background(color = Color.Black.copy(alpha = 0.5f))
                     .clickable {
-                        if (type == MediaType.MOVIE.name) {
-                            if (movie?.accountStates?.watchlist == true) {
-                                viewModel.addToWatchlist(type, movie.id, false)
-                            } else {
-                                viewModel.addToWatchlist(type, movie?.id ?: 0L, true)
-                            }
+                        if (isAddedToWatchlist) {
+                            viewModel.addToWatchlist(mediaType, mediaId, false)
                         } else {
-                            if (tvShow?.accountStates?.watchlist == true) {
-                                viewModel.addToWatchlist(type, tvShow.id, false)
-                            } else {
-                                viewModel.addToWatchlist(type, tvShow?.id ?: 0L, true)
-                            }
+                            viewModel.addToWatchlist(mediaType, mediaId, true)
                         }
-
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -359,11 +362,7 @@ fun SetupDetails(
                         .wrapContentHeight()
                         .padding(10.dp),
                     color = Color.White,
-                    text = if (type == MediaType.MOVIE.name) {
-                        if (movie?.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist"
-                    } else {
-                        if (tvShow?.accountStates?.watchlist == true) "Remove from Watchlist" else "Add to Watchlist"
-                    },
+                    text = if (isAddedToWatchlist) "Remove from Watchlist" else "Add to Watchlist",
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
                     fontSize = 15.sp
                 )

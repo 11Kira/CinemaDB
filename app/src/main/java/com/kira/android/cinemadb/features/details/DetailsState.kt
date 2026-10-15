@@ -6,7 +6,9 @@ import com.kira.android.cinemadb.model.TVShowResult
 data class DetailsUiState(
     val movieDetails: MovieResult? = null,
     val tvShowDetails: TVShowResult? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val movieWatchlistStatus: Boolean = false,
+    val tvShowWatchlistStatus: Boolean = false
 )
 
 sealed interface DetailsUiEffect {

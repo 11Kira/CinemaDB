@@ -22,8 +22,7 @@ fun Response<PagingResponse<List<MovieResult>>>.mapMovieResultToDomain(): List<M
             runtime = movie.runtime.or(0),
             genres = movie.genres,
             originCountry = movie.originCountry,
-            credits = movie.credits,
-            accountStates = movie.accountStates
+            credits = movie.credits
         )
     } ?: emptyList()
 }
@@ -47,8 +46,7 @@ fun Response<PagingResponse<List<TVShowResult>>>.mapTVSeriesResultToDomain(): Li
             originCountry = tv.originCountry,
             firstAirDate = tv.firstAirDate,
             lastAirDate = tv.lastAirDate,
-            credits = tv.credits,
-            accountStates = tv.accountStates
+            credits = tv.credits
         )
     } ?: emptyList()
 }
@@ -69,8 +67,7 @@ fun MovieResult.mapMovieDetailsToDomain(): MovieResult {
         runtime = this.runtime,
         genres = this.genres,
         originCountry = this.originCountry,
-        credits = this.credits,
-        accountStates = this.accountStates
+        credits = this.credits
     )
 }
 
@@ -92,7 +89,6 @@ fun TVShowResult.mapTVShowDetailsToDomain(): TVShowResult {
         originCountry = this.originCountry,
         firstAirDate = this.firstAirDate,
         lastAirDate = this.lastAirDate,
-        credits = this.credits,
-        accountStates = this.accountStates
+        credits = this.credits
     )
 }
